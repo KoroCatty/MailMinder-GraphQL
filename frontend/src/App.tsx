@@ -21,7 +21,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'react-bootstrap/dist/react-bootstrap.min.js'
 
 function App() {
-  // ログインチェック
+  // ログインチェック (ローカルストレージ)
   const [loggedIn, setLoggedIn] = useState(localStorage.getItem("token_GraphQL") ? true : false);
 
   return (

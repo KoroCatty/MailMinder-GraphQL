@@ -1,4 +1,5 @@
 import { useState, useRef } from "react"
+import { useNavigate } from "react-router-dom";
 
 // Apollo
 import { useMutation } from "@apollo/client";
@@ -19,6 +20,8 @@ const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
 
   const authForm = useRef<HTMLFormElement>(null);
 
+  const navigate = useNavigate();
+
   // Mutations
   const [signupUser, { data: signupData, loading, error }] = useMutation(SIGNUP_USER);
 
@@ -27,6 +30,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
       console.log(data)
       // mutaion.ts で定義したものを取得しローカルに保存
       localStorage.setItem("token_GraphQL", data.signinUser.token);
+      navigate("/");
       setLoggedIn(true);
     }
   });

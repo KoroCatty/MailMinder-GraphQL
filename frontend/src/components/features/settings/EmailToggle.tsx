@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+// import  { useState } from "react";
 
 // Emotion
 import { css } from "@emotion/react";
@@ -17,20 +17,19 @@ interface ToggleSwitchProps {
   onChange?: (checked: boolean) => void;
 }
 
-const EmailToggle: React.FC<ToggleSwitchProps> = ({
-  initial = false,
-  onChange,
-}) => {
-  const [checked, setChecked] = useState(initial);
+const EmailToggle: React.FC<ToggleSwitchProps> = (
+  // initial = false, onChange 
+) => {
+  // const [checked, setChecked] = useState(initial);
 
-  const handleToggle = () => {
-    const newChecked = !checked;
-    setChecked(newChecked);
+  // const handleToggle = () => {
+  //   const newChecked = !checked;
+  //   setChecked(newChecked);
 
-    if (onChange) {
-      onChange(newChecked);
-    }
-  };
+  //   if (onChange) {
+  //     onChange(newChecked);
+  //   }
+  // };
 
   return (
     <section css={toggleSwitch}>

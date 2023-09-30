@@ -4,7 +4,7 @@ import { useState } from "react";
 import GoogleSearch from "./GoogleSearch";
 
 // bootstrap
-import { Form, Button } from "react-bootstrap";
+import { Form } from "react-bootstrap";
 
 // Emotion
 import { css } from "@emotion/react";
