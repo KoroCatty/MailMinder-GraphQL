@@ -1,0 +1,113 @@
+=====================================
+Get All users
+=====================================
+query Users {
+  users {
+    id
+    firstName
+    lastName
+    email
+  }
+}
+=====================================
+Get 1 user (this is the same as the one below)
+=====================================
+{
+  user(id: 1) {
+    email
+    firstName
+    id
+  }
+}
+=====================================
+Get 1 user
+=====================================
+query User($aaa: ID!) {
+  user(id: $aaa) {
+    id
+    firstName
+    lastName
+    email
+  }
+}
+
+{
+  "aaa": "1"
+}
+
+=====================================
+Create a User
+=====================================
+mutation signupUser($userNew: UserInput!) {
+  signupUser(userNew: $userNew) {
+    id
+    email
+    firstName
+    lastName
+  }
+}
+{
+  "userNew": {
+    "firstName": "koro",
+    "lastName": "kojima",
+    "email": "koro@email.com",
+    "password": "123456"
+  }
+}
+=====================================
+Sign in a User (Login)
+=====================================
+mutation SigninUser($userSignin: UserSigninInput!) {
+  signinUser(userSignin: $userSignin) {
+    token
+  }
+}
+
+{
+  "userSignin": {
+    "email": "koro@email.com",
+    "password": "123456"
+  }
+}
+
+=====================================
+Create a message
+=====================================
+<!-- トークン必要 -->
+mutation CreateMessage($receiverId: Int!, $text: String) {
+  createMessage(receiverId: $receiverId, text: $text) {
+    id
+    text
+    receiverId
+    senderId
+    createdAt
+  }
+}
+{
+  "receiverId": 3,
+  "text": "お元気ですか"
+}
+
+=====================================
+Get all messages
+=====================================
+query MessagesByUser($receiverId: Int!) {
+  messagesByUser(receiverId: $receiverId) {
+    id
+    text
+    receiverId
+    senderId
+    createdAt
+  }
+}
+
+{
+  "receiverId": 3
+}
+
+
+
+
+
+
+

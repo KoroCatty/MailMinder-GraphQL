@@ -1,0 +1,35 @@
+// import React, { Fragment } from 'react';
+import { useNavigate } from 'react-router-dom';
+
+// Emotion
+import { css } from '@emotion/react';
+const BackButtonStyle = css`
+    button {
+    margin: 20px 0;
+    padding: 10px 20px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    background-color: #fff;
+    cursor: pointer;
+    text-align: start;
+    text-align: left;
+    display: inline;
+  }
+`;
+
+const BackButton: React.FC = () => {
+  const navigate = useNavigate();
+
+  const handleGoBack = () => {
+    navigate(-1);
+  };
+
+  return (
+    <div css={BackButtonStyle} className='backButton'>
+      <button onClick={handleGoBack}>戻る</button>
+    </div>
+  );
+}
+
+export default BackButton;
+
