@@ -119,6 +119,22 @@ const HomeForms = () => {
 
     }
   };
+
+
+const handleImageChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
+  setSelectedImage(e.target.value);
+  setFormData({
+    ...formData,
+    imgUrl: e.target.value
+  })
+}
+
+
+
+
+
+
+
   // console.log(selectedImage)
   // blob:http://localhost:3000/1d5663c7-b254-4d62-abb6-48150c91a4f8
   return (
@@ -126,11 +142,12 @@ const HomeForms = () => {
       <h2 className="text-center m-4">Register Your reminder</h2>
 
       <form onSubmit={handleSubmit} >
-        {/*  */}
+        {/* TITLE */}
         <input
           name="title"
           type="text"
-          placeholder="Type Your Title"
+          style={{ width: "100%", height: "40px" }}
+          placeholder=" Title here"
           onChange={(e) => handleChange(e)}
         />
 
@@ -138,17 +155,17 @@ const HomeForms = () => {
         <br />
         <br />
 
-        {/*  */}
+        {/* CONTENT */}
         <textarea
-          placeholder="Type Your Sentences"
+          placeholder="Contents here"
           name="content"
           onChange={(e) => handleChange(e)}
         />
 
-        {/*  */}
+        {/* IMAGE */}
         <div className="imageArea">
           <Form.Group controlId="formFileLg" className="mb-3">
-            <Form.Label>Large file input example</Form.Label>
+            <Form.Label style={{ fontSize:"2rem" }}>From Your Local File</Form.Label>
             <Form.Control
               className="imgChooseBtn"
               type="file"
@@ -159,7 +176,21 @@ const HomeForms = () => {
             />
           </Form.Group>
 
-          {/* 画像があれば表示 */}
+          <br />
+          <div style={{fontSize:"2rem"}}>OR</div>
+          <br />
+
+          {/* Past Image URL */}
+          <label style={{ fontSize:"2rem", marginTop:"40px" }}>Paste Image URL</label>
+          <input
+            name="imgUrl"
+            type="text"
+            placeholder="Paste the image URL here"
+            style={{ width: "100%", height: "40px", marginBottom: "40px" }}
+            onChange={handleImageChange2}
+          />
+
+          {/* DISPLAY IMG  画像があれば表示 */}
           <div className="imageWrap">
             {!selectedImage && <img src="/imgs/noImg.jpeg" alt="no Image" />}
             {selectedImage && <img src={selectedImage} alt="chosen Image" />}
@@ -167,7 +198,7 @@ const HomeForms = () => {
         </div>
 
         {/* Button */}
-        <button type="submit" className="RegisterBtn" >Register</button>
+        <button type="submit" className="RegisterBtn">Register</button>
       </form>
 
       {/* //! component */}
