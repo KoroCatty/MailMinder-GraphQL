@@ -1,4 +1,3 @@
-// import { gql } from 'apollo-server';
 import { gql } from 'graphql-tag';
 
 //! ==========================================================
@@ -8,7 +7,7 @@ const typeDefs = gql`
 # QUERY
   type Query {
     users: [User!]! # return an array
-    messagesByUser(receiverId: Int!):[Message!]!
+    PostsByUser(id: ID!): [Post!]! # resolverで定義した名前を使う
   }
 
 #//!  実際にクライエントに返すデータの型(これを使い回す)
@@ -19,6 +18,18 @@ const typeDefs = gql`
     email: String
     # password: String # never return password to client
   }
+
+#//!  実際にクライエントに返すデータの型(これを使い回す)
+  type Post {
+    id: ID!
+    title: String!
+    content: String!
+    imgUrl: String!
+    createdAt: Date!
+    updatedAt: Date!
+    user : User! # PostモデルにはUserモデルが含まれている
+  }
+
   #//! CREATE A USER
   #//* My own input type 1 (mutationで使える)
   input UserInput {
@@ -39,16 +50,15 @@ const typeDefs = gql`
     password: String!
   }
 
-  scalar Date # これは scalar type なので、自分で定義しなくてもいい
+  scalar Date # 
 
-  #//! CREATE A MESSAGE INPUT 
-  type Message {
-  id: ID!
-  text: String!
-  receiverId: Int!
-  senderId: Int!
-  createdAt: Date! # これは scalar type なので、自分で定義しなくてもいい
+  # //! CREATE A POST INPUT
+  input PostInput {
+    title: String!
+    content: String!
+    imgUrl: String!
   }
+
 
   # MUTATION
    type Mutation {
@@ -58,8 +68,8 @@ const typeDefs = gql`
     # SIGNIN USER
     signinUser(userSignin: UserSigninInput!): Token! #トークンを返す
 
-    # CREATE A MESSAGE
-    createMessage( receiverId: Int!, text: String ): Message!
+    # CREATE A POST
+    createPost(postNew: PostInput!): Post! # これが playground で出現
   }
 `;
 

@@ -1,5 +1,5 @@
-// This is your Prisma schema file,
-// learn more about it in the docs: https://pris.ly/d/prisma-schema
+// Every time you change this file, update MySQL DB by
+// npx prisma db push
 
 generator client {
   provider = "prisma-client-js"
@@ -11,27 +11,29 @@ datasource db {
 }
 
 model User {
-  id Int @id @default(autoincrement() )
+  id        Int      @id @default(autoincrement())
   firstName String
-  lastName String
-  email String @unique
-  password String
-  createdAt DateTime @default(now() )
+  lastName  String
+  email     String   @unique
+  password  String
+  createdAt DateTime @default(now())
 
-  // Message Table との関係性
-  // a user can receive many messages なので配列
-  // receiver Message[] @relation(name: "receiver")
-  // sender Message[] @relation(name: "sender") 
+  // Post Table との関係性
+  posts Post[] // 1対多の関係なので配列 (a user can have many posts)
 }
 
-// model Message {
-//   id Int @id @default(autoincrement() )
-//   text String
-//   // receiverId is the foreign key referencing the User Table id
-//   receiverId Int
-//   receiver User @relation(name:"receiver", fields: [receiverId], references: [id]) 
-  
-//   senderId Int
-//   sender User @relation(name:"sender", fields: [senderId], references: [id])
-//   createdAt DateTime @default(now() )
-// }
+
+// 1対多のリレーションシップの典型的な方法は、"多" の側（この場合は Post）に  Userへの参照（外部キー）を持たせる。なので User table には　postId とレコードは作らない
+model Post {
+  id        Int      @id @default(autoincrement())
+  title     String
+  content   String
+  imgUrl    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+// 1対多の関係なので、Post table に userId を追加する
+  userId Int
+  user   User @relation(fields: [userId], references: [id])
+}
+

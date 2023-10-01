@@ -65,8 +65,8 @@ mutation SigninUser($userSignin: UserSigninInput!) {
 
 {
   "userSignin": {
-    "email": "koro@email.com",
-    "password": "123456"
+    "email": "kaz@email.com",
+    "password": "1111"
   }
 }
 
@@ -105,9 +105,49 @@ query MessagesByUser($receiverId: Int!) {
   "receiverId": 3
 }
 
+=====================================
+Create a Post
+=====================================
+mutation CreatePost($postNew: PostInput!) {
+  createPost(postNew: $postNew) {
+    id
+    title
+    content
+    imgUrl
+    createdAt
+    updatedAt
+  }
+}
+
+{
+  "postNew": {
+    "content": "Test content です",
+    "title": "テスト　タイトルです",
+    "imgUrl": "/imgs/hero3.gif" 
+  }
+}
 
 
+=====================================
+Get a Post by User ID
+=====================================
+  query getPostsById($postsByUserId: ID!) {
+    PostsByUser(id: $postsByUserId) {
+      id
+      title
+      content
+      imgUrl
+      createdAt
+      updatedAt
+      user {
+        id
+        firstName
+        lastName
+        email
+      }
+    }
+  }
 
-
-
-
+  {
+  "postsByUserId": 1
+}

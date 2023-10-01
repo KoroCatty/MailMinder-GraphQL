@@ -1,26 +1,17 @@
 
 import { gql } from '@apollo/client';
 
-//! GET ALL USERS
-export const GET_ALL_USERS = gql`
-  query getAllUsers {
-    users {
+//! GET POSTS BY ID
+export const GET_POSTS_BY_ID = gql`
+  query getPostsById($uid: ID!) { # getPostsById の命名は何でもok
+    PostsByUser(id: $uid) { # resolver で定義した名前
       id
-      firstName
-      lastName
-      email
-    }
-  }
-`
-//! GET USER BY ID
-export const GET_ALL_MESSAGES = gql`
-  query MessagesByUser($receiverId: Int!) {
-    messagesByUser(receiverId: $receiverId) {
-      id
-      text
-      receiverId
-      senderId
+      title
+      content
+      imgUrl
       createdAt
+      updatedAt
+
     }
   }
 `

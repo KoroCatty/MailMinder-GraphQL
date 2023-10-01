@@ -10,6 +10,8 @@ const homeHeroStyles = css`
   img {
     width: 100vw;
     height: 40vh;
+    /* object-fit: cover; */
+    background-size: cover;
   }
   .titleWrap {
     position: absolute;
@@ -37,13 +39,12 @@ const HomeHero = () => {
   return (
     <>
       <section css={homeHeroStyles}>
-        <Image src="/imgs/Diamond.jpg" fluid />
+        <Image src="/imgs/hero3.gif" fluid />
 
-        <div className='titleWrap'>
+        {/* <div className='titleWrap'>
           <h1>Email Reminder</h1>
-
           <button>Start</button>
-        </div>
+        </div> */}
 
       </section>
     </>

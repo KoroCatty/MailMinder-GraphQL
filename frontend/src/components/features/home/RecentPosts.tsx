@@ -1,62 +1,70 @@
-// import Container from 'react-bootstrap/Container';
-// import Row from 'react-bootstrap/Row';
-// import Col from 'react-bootstrap/Col';
+// Apollo Client
+import { useQuery } from '@apollo/client';
+import { GET_POSTS_BY_ID } from '../../../graphql/queries';
 
-// import Button from 'react-bootstrap/Button';
-// import Card from 'react-bootstrap/Card';
-
-// 画像のURLを配列に保存
-const images = [
-  {
-    id: 1,
-    src: '/imgs/Diamond.jpg',
-    title: "expensive computation",
-    content: "This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",
-    timeCreated: "2021-09-01T00:00:00.000Z",
-  },
-  {
-    id: 2,
-    src: '/imgs/smile_design.jpg',
-    title: "Card title",
-    content: "This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",
-    timeCreated: "2021-09-01T00:00:00.000Z",
-  },
-  {
-    id: 3,
-    src: '/imgs/universal.jpg',
-    title: "Card title",
-    content: "This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",
-    timeCreated: "2021-09-01T00:00:00.000Z",
-  },
-  {
-    id: 4,
-    src: '/imgs/noImg.jpeg',
-    title: "Card title",
-    content: "This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",
-    timeCreated: "2021-09-01T00:00:00.000Z",
-  },
-];
+// TYPES
+type PostType = {
+  id: number,
+  title: string,
+  content: string,
+  imgUrl: string,
+  createdAt: string,
+  updatedAt: string,
+  user: {
+    id: number,
+    name: string,
+    email: string,
+    createdAt: string,
+    updatedAt: string
+  }
+}
 
 const RecentPosts = () => {
+
+  const { data, loading, error } = useQuery(GET_POSTS_BY_ID, {
+    variables: {
+      uid: Number() // backend (resolver) で id を指定しているので、空にする
+    }
+  });
+// destructuring
+  const  { PostsByUser }  = data ? data : [];
+
+  // if(data) console.log(data);
+
   return (
     <div className="container">
+      {/* // TODO Fix this later */}
+      {data && loading ? (<h1>Loading...</h1>) : ("")} 
+      {data &&  error ? (<h1>Error...</h1>) : ("")}
+      
+      {data ? (
+        <>
+          <h1 style={{fontSize:"3rem", textAlign:"center"}}>Recent Posts</h1>
 
-      <h2>Recent Posts</h2>
-    <div className="row">
-      {images.map((image) => (
-        <div className="col-md-3 col-12 mb-4" key={image.id}>
-          <div className="card">
-            <img src={image.src} className="card-img-top" alt={image.title} />
-            <div className="card-body">
-              <h5 className="card-title">{image.title}</h5>
-              <p className="card-text">{image.content}</p>
-              <p className="card-text"><small className="text-muted">{image.timeCreated}</small></p>
-            </div>
+          <div className="row">
+            {PostsByUser.map((item: PostType) => (
+              <div className="col-md-3 col-12 mb-4" key={item.id}>
+
+                <div className="card">
+                  <img src={item.imgUrl} className="card-img-top" alt={item.title} />
+
+                  <div className="card-body">
+                    <h5 className="card-title">{item.title}</h5>
+                    <p className="card-text">{item.content}</p>
+                    <p className="card-text"><small className="text-muted">{item.createdAt}</small></p>
+                  </div>
+
+                </div>
+              </div>
+            ))}
           </div>
-        </div>
-      ))}
+        </>
+      ) : ("")}
+
+
+
+
     </div>
-  </div>
   )
 }
 

@@ -44,8 +44,8 @@ const GoogleSearch = () => {
   const handleSubmit = (event: React.FormEvent) => {
     event.preventDefault();
 
-  // クリエイティブ・コモンズの画像を検索するための追加のパラメータ
-  // tbs=sur:fmcは"free to use or share, even commercially"（商業的利用や共有も自由）という意味のフィルタ
+  // Creative Commons の画像を検索するための追加のパラメータ
+  // tbs=sur:fmc は"free to use or share, even commercially"（商業的利用や共有も自由）という意味のフィルタ
   const creativeCommonsFilter = '&as_rights=(cc_publicdomain|cc_attribute|cc_sharealike).-(cc_noncommercial|cc_nonderived)';
 
   window.open(`https://www.google.com/search?tbm=isch&q=${encodeURIComponent(searchTerm)}${creativeCommonsFilter}`, '_blank');

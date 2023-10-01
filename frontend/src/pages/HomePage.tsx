@@ -25,7 +25,7 @@ const HomePage = () => {
       <Container>
         <RecentPosts />
         <HomeForms />
-        <MonthPosts />
+        {/* <MonthPosts /> */}
       </Container>
     </main>
   )

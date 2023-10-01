@@ -61,7 +61,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
       // login 
       loginUser({
         variables: {
-          userSignin: formData // フォームに入力されたデータを送る
+          userSignin: formData // フォームに入力されたデータを送る (mutation.ts 定義)
         }
       })
     } else {
@@ -132,12 +132,6 @@ const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
           <br />
 
           {/* link */}
-          {/* {showLogin ? (
-            <Link to ="/signup">Don't have an account? Sign up</Link>
-          ) : (
-            <Link to ="/login">Already have an account? Login</Link>
-          )} */}
-
           <div onClick={() => {
             setShowLogin((preValue) => !preValue) // toggle login/signup
             setFormData({}) // clear form data

@@ -21,15 +21,16 @@ export const LOGIN_USER = gql`
   }
 `;
 
-//! Create Message (Send Message)
-export const SEND_MEG = gql`
-  mutation CreateMessage($receiverId: Int!, $text: String!) {
-    createMessage(receiverId: $receiverId, text: $text) {
+//! Create A Post
+export const CREATE_POST = gql`
+  mutation CreatePost($postNew: PostInput!) {
+    createPost(postNew: $postNew) {
       id
-      text
-      receiverId 
-      senderId
+      title
+      content
+      imgUrl
       createdAt
+      updatedAt
     }
   }
 `;

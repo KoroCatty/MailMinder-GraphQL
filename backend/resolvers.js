@@ -1,11 +1,6 @@
 // プリズマのクライアントをインポート
 import PC from '@prisma/client';
 
-// Apollo エラーハンドリング
-// import { ApolloError, AuthenticationError, ForbiddenError } from 'apollo-server';
-// import { ForbiddenError,  } from '@apollo/server';
-
-
 import bcrypt from 'bcryptjs';
 
 import jwt from 'jsonwebtoken';
@@ -42,29 +37,24 @@ const resolvers = {
     },
 
     //* -----------------------------------------------
-    //* GET ALL MESSAGES BY USER
+    //* GET ALL POSTS BY USER ID
     //* -----------------------------------------------
-    messagesByUser: async (_, args, context) => {
-      await console.log(args.receiverId + "🥶")
-      console.log(context.userId + "🤠")
+    PostsByUser: async (_, args, context) => {
+      console.log(context.userId + "🥶") // ログイン者のID
+      console.log(context)
 
-      // ログインチェック (context使用)
-      if(!context.userId) { throw new Error("You must be logged in 😱") }
+      // Error means you are not allowed to do this
+      if (!context.userId) throw Error("You must be logged in 😱")
 
-      const messages = await prisma.message.findMany({
-        // 2つのユーザー間のすべてのメッセージを取得 (複数の条件をOR論理で結合)
+      // 自分の投稿を全て取得 (postはPostモデル in typeDefs.js)
+      const posts = await prisma.post.findMany({
+        orderBy: { createdAt: "desc" }, // 新しい順に並べる
         where: {
-          OR: [
-            {senderId: context.userId,  receiverId: args.receiverId},
-            {senderId: args.receiverId, receiverId: context.userId}
-          ]
-        },
-        orderBy: { createdAt: "desc" } // 新しい順に並べる
-      })
-      return messages;
+          userId: context.userId // 自分の投稿を取得(ログイン者)
+        }, 
+      });
+      return posts;
     },
-
-    //* GET SINGLE USER
   },
 
   Mutation: {
@@ -121,13 +111,14 @@ const resolvers = {
       console.log(token + " 🤬Tokenを作りました🤬");
       return { token: token };
     },
+
     //* ===============================================
-    //* CREATE A MESSAGE
+    //* CREATE A POST
     //* ===============================================
-    // これら parent, args, context は ApolloServer(ユーザから) 渡される
-    createMessage: async (_, args, context) => {
-      console.log(args.receiverId + "😈")
-      console.log(args.text + "🤫")
+    createPost: async (_, args, context) => {
+      console.log(args.postNew.title + "😈")
+      console.log(args.postNew.content + "🤫")
+      console.log(args.postNew.imgUrl + "👹")
       console.log(context.userId + "👹")
 
       // ログインしてなかったらエラー(contextで先に確認できる)
@@ -136,17 +127,18 @@ const resolvers = {
       }
 
       //! save to DB
-       // message は prisma.schema で定義済みのモデル
-      const newMessage = await prisma.message.create({
+      // post は prisma.schema で定義済みのモデル
+      const newPost = await prisma.post.create({
         data: {
-          text: args.text,
-          receiverId: args.receiverId,
-          senderId: context.userId
+          title: args.postNew.title,
+          content: args.postNew.content,
+          imgUrl: args.postNew.imgUrl,
+          userId: context.userId
         }
       })
-      return newMessage;
-
+      return newPost;
     }
+
   }
 }
 
