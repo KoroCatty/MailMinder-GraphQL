@@ -5,6 +5,8 @@ import bcrypt from 'bcryptjs';
 
 import jwt from 'jsonwebtoken';
 
+import fs from 'fs'; // file system module (built-in) これは、ファイルを読み書きするためのモジュール
+
 // プリズマクライエントのインスタンスを格納
 const prisma = new PC.PrismaClient();
 
@@ -58,6 +60,35 @@ const resolvers = {
   },
 
   Mutation: {
+    //* ===============================================
+    //! UPLOAD IMAGE FILE
+    //* ===============================================
+    uploadFile: async (_, { file }) => {
+      const { createReadStream, filename, mimetype } = await file;
+      const stream = createReadStream();
+      
+      // ファイルをディスクに保存するためのヘルパー関数
+      const saveFile = (readableStream, pathToSave) => new Promise((resolve, reject) => {
+          const writeStream = fs.createWriteStream(pathToSave);
+          readableStream
+              .pipe(writeStream)
+              .on("finish", () => resolve())
+              .on("error", reject);
+      });
+
+      // 保存するパスを指定
+      const pathToSave = `uploads/${filename}`;
+      try {
+          await saveFile(stream, pathToSave);
+      } catch (err) {
+          console.error("Failed to save file:", err);
+          throw new Error("Failed to upload file.");
+      }
+
+      // ファイル情報を返す
+      return { filename, mimetype, path: pathToSave }; // 追加でpathも返すと良いでしょう
+  },
+
     //* ===============================================
     //* CREATE USER
     //* ===============================================

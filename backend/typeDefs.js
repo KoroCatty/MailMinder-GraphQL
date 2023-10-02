@@ -59,8 +59,17 @@ const typeDefs = gql`
     imgUrl: String!
   }
 
+  scalar Upload # Uploadはスカラー型
 
-  # MUTATION
+# //! IMAGE FILE TYPE
+  type File {
+  filename: String!
+  mimetype: String!
+  encoding: String
+}
+
+
+  # MUTATION (これらを resolver で使う)
    type Mutation {
     # CREATE USER
     signupUser(userNew: UserInput!): User! # return a single user (配列じゃない)
@@ -70,6 +79,9 @@ const typeDefs = gql`
 
     # CREATE A POST
     createPost(postNew: PostInput!): Post! # これが playground で出現
+
+    # UPLOAD IMAGE
+    uploadFile(file: Upload!): File! # Uploadはスカラー型 
   }
 `;
 

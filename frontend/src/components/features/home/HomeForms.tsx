@@ -6,6 +6,7 @@ import { CREATE_POST } from '../../../graphql/mutations';
 
 // components
 import GoogleSearch from "./GoogleSearch";
+import Selfie from "../../common/Selfie";
 
 // bootstrap
 import { Form } from "react-bootstrap";
@@ -32,7 +33,7 @@ const homeFormsStyles = css`
   }
 
   .imageWrap {
-    width: 30%;
+    width: 40%;
 
     img {
     width: 100%;
@@ -97,9 +98,9 @@ const HomeForms = () => {
       }
     })
   }
-
+  // 画像を選択した時に発火する関数 
   //* ========================================
-  //* 画像を選択した時に発火する関数 (when img is chosen)
+  //* (when img is chosen)
   //* ========================================
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // <input type="file">から選択されたファイルのリストを提供するFileListオブジェクトを返し、[0]は選択されたファイルのリストの最初のファイルを指し、あれば返す
@@ -121,18 +122,32 @@ const HomeForms = () => {
   };
 
 
-const handleImageChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
-  setSelectedImage(e.target.value);
-  setFormData({
-    ...formData,
-    imgUrl: e.target.value
-  })
-}
+  const handleImageChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
+    setSelectedImage(e.target.value);
+    setFormData({
+      ...formData,
+      imgUrl: e.target.value // 追加
+    })
+  }
 
-
-
-
-
+  const handleImageChange3 = (image64: string | null) => {
+    
+    // Check if image64 (or selectedImage if you prefer) is not null before reading its length
+    if (image64 && image64.length > 1000) {
+      setSelectedImage(image64);
+      // Handle error - maybe return a user-friendly error message
+      setFormData({
+        ...formData,
+        imgUrl: image64
+      });
+    } else {
+     console.log("Too Big")
+      // Proceed with saving to the database
+      // ...your code to save the image to the database
+    }
+  };
+  
+  
 
 
   // console.log(selectedImage)
@@ -165,7 +180,7 @@ const handleImageChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
         {/* IMAGE */}
         <div className="imageArea">
           <Form.Group controlId="formFileLg" className="mb-3">
-            <Form.Label style={{ fontSize:"2rem" }}>From Your Local File</Form.Label>
+            <Form.Label style={{ fontSize: "2rem" }}>From Your Local File</Form.Label>
             <Form.Control
               className="imgChooseBtn"
               type="file"
@@ -177,11 +192,11 @@ const handleImageChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
           </Form.Group>
 
           <br />
-          <div style={{fontSize:"2rem"}}>OR</div>
+          <div style={{ fontSize: "2rem" }}>OR</div>
           <br />
 
-          {/* Past Image URL */}
-          <label style={{ fontSize:"2rem", marginTop:"40px" }}>Paste Image URL</label>
+          {/* Paste Image URL */}
+          <label style={{ fontSize: "2rem", marginTop: "40px" }}>Paste Image URL</label>
           <input
             name="imgUrl"
             type="text"
@@ -191,11 +206,17 @@ const handleImageChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
           />
 
           {/* DISPLAY IMG  画像があれば表示 */}
-          <div className="imageWrap">
+          <div className="imageWrap d-flex">
             {!selectedImage && <img src="/imgs/noImg.jpeg" alt="no Image" />}
             {selectedImage && <img src={selectedImage} alt="chosen Image" />}
+
+            {/* SELFIE COMPONENT (Pass the function )*/}
+            <Selfie handleImageChange3={handleImageChange3 }  />
           </div>
+
         </div>
+
+
 
         {/* Button */}
         <button type="submit" className="RegisterBtn">Register</button>

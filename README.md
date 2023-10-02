@@ -133,6 +133,15 @@ we need to add "type": "module" in package.json
 
       ### cors
       - npm install cors
+
+      ### jsonwebtoken
+      - npm install jsonwebtoken
+
+      ### multer
+      - npm install multer
+
+      ### express
+      - npm install express
          
 
 # PRISMA SETUP
