@@ -13,14 +13,12 @@ import jwt from 'jsonwebtoken';
 
 //* ==============================================================
 //* 画像アップロード用 multer & express
-// import multer from 'multer';
-// const storage = multer.memoryStorage(); // これは、アップロードされたファイルをメモリに保存する設定です。必要に応じてディスクストレージを使用することもできます。
-// const upload = multer({ storage });
 
 import multer from "multer";
 import path from "path"; // path module はファイルパスを操作するため(buit-in)
 
 import express from "express";
+const app = express();
 
 // which storage/server  we want to use  (cb = callback)
 const storage = multer.diskStorage({
@@ -62,6 +60,10 @@ const upload = multer({ storage, fileFilter });
 
 // 'image' という名前の単一の画像をアップロードするためのミドルウェアを設定
 const uploadSingleImage = upload.single('image');
+
+app.post('/upload', uploadSingleImage, (req, res) => {
+  res.json({ file: req.file });
+});
 
 //* ==============================================================
 

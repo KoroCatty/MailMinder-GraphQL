@@ -142,6 +142,14 @@ we need to add "type": "module" in package.json
 
       ### express
       - npm install express
+
+      ### graphql-upload
+      - npm install graphql-upload
+
+      ### apollo-upload-client (for image upload?)
+      npm install apollo-upload-client
+
+      graphql-tools (deprecated)
          
 
 # PRISMA SETUP

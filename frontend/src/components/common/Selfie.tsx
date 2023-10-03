@@ -51,6 +51,7 @@ const Selfie: React.FC<SelfieProps> = ({ handleImageChange3 }) => {
       context.drawImage(player, 0, 0, canvas.width, canvas.height); 
       setImage64(canvas.toDataURL()); // canvasからBase64形式の画像データを取得
     };
+   
 
     // "capture"ボタンにクリックイベントリスナを追加
     const captureButton = document.getElementById("capture");
@@ -62,25 +63,6 @@ const Selfie: React.FC<SelfieProps> = ({ handleImageChange3 }) => {
       };
     }
   }
-  
-
-
-
-  // 送信時の処理
-  // async function handleSubmit() {
-  //   const data = { image64 };
-  //   const options = {
-  //     method: "POST",
-  //     headers: {
-  //       "Content-Type": "application/json",
-  //     },
-  //     body: JSON.stringify(data),// 送信するデータをJSON形式に変換
-  //   };
-
-  //   const response = await fetch("http://localhost:3000/api", options);
-  //   const json = await response.json();
-  //   console.log(json);
-  // }
 
   // JSXを返す
   return (

@@ -4,6 +4,9 @@ import { useState } from "react";
 import { useMutation } from '@apollo/client';
 import { CREATE_POST } from '../../../graphql/mutations';
 
+// Image file mutation
+import { UPLOAD_FILE } from '../../../graphql/mutations';
+
 // components
 import GoogleSearch from "./GoogleSearch";
 import Selfie from "../../common/Selfie";
@@ -74,6 +77,12 @@ const HomeForms = () => {
   if (loading) { <h1>Loading...</h1> }
   if (error) { <h1>Error...</h1> }
 
+
+  // Image file mutation
+  const [UploadFile, { data2, loading2, error2 }] = useMutation(UPLOAD_FILE);
+  console.log(data2)
+
+
   //! ======================================================
   //! When forms typed
   //! ======================================================
@@ -96,12 +105,21 @@ const HomeForms = () => {
       variables: {
         postNew: formData // postNew は mutation.ts で定義したもの
       }
-    })
+    });
+
+    // 画像ファイルを保存
+    UploadFile({
+      variables: {
+        file: selectedImage
+        // file: formData.imgUrl
+      }
+    });
   }
-  // 画像を選択した時に発火する関数 
+
   //* ========================================
-  //* (when img is chosen)
+  //* (when the Img is chosen)  画像を選択した時に発火する関数 
   //* ========================================
+  // chose image from local file
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     // <input type="file">から選択されたファイルのリストを提供するFileListオブジェクトを返し、[0]は選択されたファイルのリストの最初のファイルを指し、あれば返す
     const file = e.target.files && e.target.files[0];
@@ -111,29 +129,31 @@ const HomeForms = () => {
 
       const imageUrl = URL.createObjectURL(file);
       setSelectedImage(imageUrl);
+      // setSelectedImage(file); 
 
       // update formData with the image URL
       setFormData({
         ...formData,
         imgUrl: imageUrl
       });
-
     }
   };
 
-
+// Paste Image URL
   const handleImageChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setSelectedImage(e.target.value);
+    const imageUrl = e.target.value;
+    setSelectedImage(imageUrl);
     setFormData({
       ...formData,
-      imgUrl: e.target.value // 追加
-    })
+      imgUrl: imageUrl
+    });
   }
 
+  // Selfie Image
   const handleImageChange3 = (image64: string | null) => {
     
     // Check if image64 (or selectedImage if you prefer) is not null before reading its length
-    if (image64 && image64.length > 1000) {
+    if (image64 && image64.length > 10000) {
       setSelectedImage(image64);
       // Handle error - maybe return a user-friendly error message
       setFormData({
@@ -142,6 +162,7 @@ const HomeForms = () => {
       });
     } else {
      console.log("Too Big")
+     window.alert("Too Big")
       // Proceed with saving to the database
       // ...your code to save the image to the database
     }
@@ -202,7 +223,7 @@ const HomeForms = () => {
             type="text"
             placeholder="Paste the image URL here"
             style={{ width: "100%", height: "40px", marginBottom: "40px" }}
-            onChange={handleImageChange2}
+            onChange={handleImageChange2 }
           />
 
           {/* DISPLAY IMG  画像があれば表示 */}
@@ -213,9 +234,7 @@ const HomeForms = () => {
             {/* SELFIE COMPONENT (Pass the function )*/}
             <Selfie handleImageChange3={handleImageChange3 }  />
           </div>
-
         </div>
-
 
 
         {/* Button */}

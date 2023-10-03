@@ -71,41 +71,6 @@ mutation SigninUser($userSignin: UserSigninInput!) {
 }
 
 =====================================
-Create a message
-=====================================
-<!-- トークン必要 -->
-mutation CreateMessage($receiverId: Int!, $text: String) {
-  createMessage(receiverId: $receiverId, text: $text) {
-    id
-    text
-    receiverId
-    senderId
-    createdAt
-  }
-}
-{
-  "receiverId": 3,
-  "text": "お元気ですか"
-}
-
-=====================================
-Get all messages
-=====================================
-query MessagesByUser($receiverId: Int!) {
-  messagesByUser(receiverId: $receiverId) {
-    id
-    text
-    receiverId
-    senderId
-    createdAt
-  }
-}
-
-{
-  "receiverId": 3
-}
-
-=====================================
 Create a Post
 =====================================
 mutation CreatePost($postNew: PostInput!) {

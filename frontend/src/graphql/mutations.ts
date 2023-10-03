@@ -3,7 +3,7 @@ import { gql } from "@apollo/client";
 //! Sign Up (Create User)
 export const SIGNUP_USER = gql`
   mutation signupUser($userNew: UserInput!) {
-    signupUser(userNew: $userNew) {
+    signupUser(userNew: $userNew) { # signupUser is defined in resolvers.js
       id
       email
       firstName
@@ -31,6 +31,17 @@ export const CREATE_POST = gql`
       imgUrl
       createdAt
       updatedAt
+    }
+  }
+`;
+
+//! Upload an Image File
+export const UPLOAD_FILE = gql`
+  mutation UploadFile($file: Upload!) {
+    uploadFile(file: $file) {
+      filename
+      mimetype
+      encoding
     }
   }
 `;
