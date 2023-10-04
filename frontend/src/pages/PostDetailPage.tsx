@@ -1,4 +1,5 @@
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 // bootstrap
 import { Container } from 'react-bootstrap';
@@ -8,7 +9,26 @@ import BackButton from '../components/common/BackButton';
 
 // Apollo Client
 import { useQuery } from '@apollo/client';
+import { useMutation } from '@apollo/client';
+
+// queries & mutations
 import { GET_POSTS_BY_ID } from '../graphql/queries';
+import { DELETE_POST_BY_ID } from '../graphql/mutations';
+
+
+//* types 
+type postProp = {
+  id: string;
+  title: string;
+  content: string;
+  imgUrl: string;
+  createdAt: string;
+  updatedAt: string;
+};
+type PostsQueryCacheResult = {
+  PostsByUser: postProp[];
+};
+
 
 // Emotion CSS
 import { css } from '@emotion/react';
@@ -32,9 +52,9 @@ const PostDetailPageStyle = css`
   }
 `;
 
-
 //! ============================================================
 const PostsDetailPage = () => {
+  // useParams
   // useParamsは文字列を返すので、Number()を使うことで数値に変換すること
   const { id } = useParams<{ id: string }>();
   // console.log(typeof id) // string
@@ -46,17 +66,45 @@ const PostsDetailPage = () => {
     },
   });
 
-//* types 
-type postProp = {
-  id: string;
-  title: string;
-  content: string;
-  imgUrl: string;
-  createdAt: string;
-  updatedAt: string;
-};
+  // useNavigate
+  const navigate = useNavigate();
 
 
+
+  // DELETE POST MUTATION
+  const [deletePostById, { error: deleteErr, loading: deleteLoading }] = useMutation(DELETE_POST_BY_ID, {
+    variables: {
+      id: id
+    },
+    // refetchQueries: ['GET_POSTS_BY_ID'],
+    // awaitRefetchQueries: true, // refetchQueriesを実行する前にmutationを完了させる
+
+    update(cache, { data: { deletePost } }) {
+      const data = cache.readQuery<PostsQueryCacheResult>({ query: GET_POSTS_BY_ID });
+      if (!data) return;
+
+      const { PostsByUser } = data;
+      cache.writeQuery({
+        query: GET_POSTS_BY_ID,
+        data: { PostsByUser: PostsByUser.filter(post => post.id !== deletePost.id) },
+      });
+    }
+
+  });
+
+  //* types 
+  type postProp = {
+    id: string;
+    title: string;
+    content: string;
+    imgUrl: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+
+  //! ============================================================
+  //! JSX
+  //! ============================================================
   return (
     <main css={PostDetailPageStyle}>
       <Container>
@@ -87,27 +135,26 @@ type postProp = {
               : (<p>No posts found.</p>))
         }
 
+        {/* EDIT BUTTON */}
+        <Link to={`/editpost/${id}`}>
+          <button className="btn btn-primary mb-4" style={{ width: "100%" }} >Edit</button>
+        </Link>
 
 
 
-        {/* MAPPING */}
-        {/* {images.map((item) => {
-          if (item.id === Number(id)) {// Number()を使うことで文字列を数値に変換
-            return (
-              <div key={item.id} className='detailItem'>
-                <p>{item.timeCreated.substring(0, 10)}</p>
-                <h2>{item.title}</h2>
-                <img
-                  src={item.src}
-                  alt={`post image ${id}`}
-                  className='mx-auto d-block'
-                />
-                <p>{item.content}</p>
-              </div>
-            )
-          }
-        }
-        )} */}
+        {/* DELETE BUTTON */}
+        <button
+          className="btn btn-danger btn-sm"
+          onClick={(e) => {
+            e.preventDefault();
+            window.confirm('Are you sure you want to delete this post?') &&
+              deletePostById();
+            navigate("/postlist")
+          }}
+        >
+          {deleteErr ? 'Deleting...' : 'Delete'}
+          {deleteLoading ? 'Deleting...' : 'Delete'} 
+        </button>
 
       </Container>
     </main>

@@ -1,6 +1,8 @@
 import { useParams } from 'react-router-dom';
 import { useState } from 'react';
 
+import BackButton from '../components/common/BackButton';
+
 // Emotion
 import { css } from '@emotion/react';
 const editPageStyle = css`
@@ -62,7 +64,7 @@ const data = [
 //! ======================================================
 //! Main
 //! ======================================================
-const Editpage = () => {
+const EditPostPage = () => {
   // useparam のIDを使い各項目を更新する
   const { id } = useParams<{ id: string }>();
   const [currentData, setCurrentData] = useState(data);
@@ -106,6 +108,8 @@ const Editpage = () => {
   return (
     <main css={editPageStyle}>
       <h2 className="text-center m-4">Edit Your reminder</h2>
+    
+<BackButton />
 
       <div className="container">
         <div className="row">
@@ -156,4 +160,4 @@ const Editpage = () => {
   );
 }
 
-export default Editpage;
+export default EditPostPage;

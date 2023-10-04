@@ -40,7 +40,7 @@ function Header() {
               {loggedIn ? (
                 <>
                   <Nav.Link as={Link} to="/">Home</Nav.Link>
-                  <Nav.Link as={Link} to="/posts">Posts</Nav.Link>
+                  <Nav.Link as={Link} to="/postlist">Posts</Nav.Link>
                   <Nav.Link as={Link} to="/settings">Settings</Nav.Link>
                 </>
               ) : (

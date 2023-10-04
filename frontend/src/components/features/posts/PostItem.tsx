@@ -1,4 +1,6 @@
 import { useMutation } from '@apollo/client';
+
+// queries & mutations
 import { DELETE_POST_BY_ID } from '../../../graphql/mutations';
 import { GET_POSTS_BY_ID } from '../../../graphql/queries';  // Import the query
 
@@ -22,6 +24,7 @@ type PostsQueryCacheResult = {
 };
 
 const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
+  // DELETE POST MUTATION
   const [deletePostById, { error, loading }] = useMutation(DELETE_POST_BY_ID, {
     variables: { id: postProp.id },
     // refetchQueries: ['GET_POSTS_BY_ID'],
@@ -51,6 +54,15 @@ const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
         </Card.Body>
       </Link>
       {error && <p>Error! {error.message}</p>}
+
+      {/* EDIT BUTTON */}
+      <Link to={`/editpost/${postProp.id}`}>
+        <button className="btn btn-primary mb-4" style={{width:"100%"}} >Edit</button>
+      </Link>
+
+
+
+      {/* DELETE BUTTON */}
       <button
         className="btn btn-danger btn-sm"
         onClick={(e) => {
@@ -61,6 +73,7 @@ const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
       >
         {loading ? 'Deleting...' : 'Delete'}
       </button>
+
     </Card>
   );
 };
