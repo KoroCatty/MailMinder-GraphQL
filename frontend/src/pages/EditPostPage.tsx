@@ -32,11 +32,11 @@ const editPageStyle = css`
 // 画像のURLを配列に保存
 const data = [
   {
-    id: 1,
+    id: 64,
     src: '/imgs/Diamond.jpg',
     title: "expensive computation",
     content: "This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",
-    timeCreated: "2021-09-01T00:00:00.000Z",
+    createdAt: "2021-09-01T00:00:00.000Z",
   },
   {
     id: 2,
@@ -60,6 +60,7 @@ const data = [
     timeCreated: "2021-09-01T00:00:00.000Z",
   },
 ];
+
 
 //! ======================================================
 //! Main
@@ -102,22 +103,43 @@ const EditPostPage = () => {
     console.log(updateImage);
   };
 
+
+
+//* ================================================
+  //   // HOOKS
+  //   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+
+  //   const [formData, setFormData] = useState({});
+  
+  // // Paste Image URL
+  // const handleImageChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const imageUrl = e.target.value;
+  //   setSelectedImage(imageUrl);
+  //   setFormData({
+  //     ...formData,
+  //     imgUrl: imageUrl
+  //   });
+  // }
+//* ================================================
+  
+
   //! ======================================================
   //! JSX
   //! ======================================================
   return (
     <main css={editPageStyle}>
-      <h2 className="text-center m-4">Edit Your reminder</h2>
-    
-<BackButton />
+      <h2 className="text-center m-4">Edit Your Post</h2>
+
+      <BackButton />
 
       <div className="container">
         <div className="row">
+
           {/* MAPPING */}
           {currentData.map((item) => {
             if (item.id === Number(id)) {
               return (
-                <div key={item.id} className='detailItem'>
+                <form key={item.id} className='detailItem'>
 
                   {/* Title */}
                   <input
@@ -135,6 +157,17 @@ const EditPostPage = () => {
                     className='mx-auto d-block'
                   />
 
+
+                  {/* Paste Image URL */}
+                  {/* <label style={{ fontSize: "2rem", marginTop: "40px" }}>Paste Image URL</label>
+                  <input
+                    name="imgUrl"
+                    type="text"
+                    placeholder="Paste the image URL here"
+                    style={{ width: "100%", height: "40px", marginBottom: "40px" }}
+                    onChange={handleImageChange2}
+                  /> */}
+
                   <input
                     className="imgChooseBtn"
                     type="file"
@@ -147,8 +180,10 @@ const EditPostPage = () => {
                     value={item.content}
                     onChange={(e) => handleContentChange(item.id, e.target.value)}
                   />
-                  <p>{item.content}</p>
-                </div>
+
+                  {/* Button */}
+                  <button type="submit" className="RegisterBtn">Register</button>
+                </form>
               );
             } else {
               return null;
