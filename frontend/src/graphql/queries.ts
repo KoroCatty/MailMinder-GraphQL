@@ -16,6 +16,33 @@ export const GET_POSTS_BY_ID = gql`
   }
 `
 
+//! GET POSTS BY ID WITH LIMIT
+export const GET_POSTS_BY_ID_LIMIT = gql`
+  query getPostsByIdLimit($uid: ID!, $limit: Int) { # getPostsById の命名は何でもok
+    PostsByUserLimit(id: $uid, limit: $limit) { # resolver で定義した名前
+      id
+      title
+      content
+      imgUrl
+      createdAt
+      updatedAt
+    }
+  }
+`
+
+// //! GET ALL POSTS
+// export const GET_ALL_POSTS = gql`
+//   query getAllPosts {
+//     AllPosts {
+//       id
+//       title
+//       content
+//       imgUrl
+//       createdAt
+//       updatedAt
+//     }
+//   }
+// `;
 
 
 

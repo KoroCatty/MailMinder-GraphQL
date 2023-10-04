@@ -57,7 +57,32 @@ const resolvers = {
       });
       return posts;
     },
+
+
+    //* -----------------------------------------------
+    //* GET ALL POSTS BY USER ID LIMIT 4
+    //* -----------------------------------------------
+    PostsByUserLimit: async (_, args, context) => {
+      console.log(context.userId + "🥶") // ログイン者のID
+      console.log(context)
+
+      // Error means you are not allowed to do this
+      if (!context.userId) throw Error("You must be logged in 😱")
+
+      // 自分の投稿を全て取得 (postはPostモデル in typeDefs.js)
+      const posts = await prisma.post.findMany({
+        orderBy: { createdAt: "desc" }, // 新しい順に並べる
+        where: {
+          userId: context.userId // 自分の投稿を取得(ログイン者)
+        },
+        take: args.limit, // 追加: limitの適用 
+      });
+      return posts;
+    },
+    
   },
+
+  
 
   Mutation: {
     //* ===============================================
@@ -122,11 +147,23 @@ const resolvers = {
       console.log(args.postNew.content + "🤫")
       console.log(args.postNew.imgUrl + "👹")
       console.log(context.userId + "👹")
+      console.log(args.postNew.imgFile + "💀👻");
 
       // ログインしてなかったらエラー(contextで先に確認できる)
       if (!context.userId) {
         throw new Error("You must be logged in (Contextにトークンがありません)😱");
       }
+
+      // ファイルをサーバーに保存
+      // const { createReadStream, filename } = await args.postNew.imgFile;
+      // const pathToSave = join(process.cwd(), 'uploads', filename);
+      // const stream = createReadStream();
+
+      // await new Promise((resolve, reject) => {
+      //   stream.pipe(createWriteStream(pathToSave))
+      //     .on('finish', resolve)
+      //     .on('error', reject);
+      // });
 
       //! save to DB
       // post は prisma.schema で定義済みのモデル
@@ -139,47 +176,6 @@ const resolvers = {
         }
       })
       return newPost;
-    },
-
-    //* ===============================================
-    //! UPLOAD IMAGE FILE
-    //* ===============================================
-    uploadFile: async (_, { file }) => {
-      // ファイル情報をコンソールに表示
-      console.log(file + "👹");
-      console.log(file.filename + "👹");
-      console.log(file.mimetype + "👹");
-      console.log(file.encoding + "👹");
-      console.log(file.createReadStream + "👹");
-
-      // 提供されたファイルから読み取りストリームと他の情報を取得
-      const { createReadStream, filename, mimetype } = await file;
-      const stream = createReadStream();
-
-      // ディスクにファイルを保存するためのヘルパー関数
-      const saveFile = (readableStream, pathToSave) => new Promise((resolve, reject) => {
-        // 指定されたパスにストリームを書き込む
-        const writeStream = fs.createWriteStream(pathToSave);
-        readableStream
-          .pipe(writeStream)
-          .on("finish", () => resolve()) // 完了時にresolve
-          .on("error", reject); // エラー時にreject
-      });
-
-      // ファイルを保存するためのパスを指定
-      const pathToSave = `uploads/${filename}`;
-      try {
-        // ヘルパー関数を使ってファイルを保存
-        await saveFile(stream, pathToSave);
-      } catch (err) {
-        // ファイル保存時のエラーをコンソールに表示
-        console.error("Failed to save file:", err);
-        // ユーザーへのエラーメッセージをスロー
-        throw new Error("Failed to upload file.");
-      }
-
-      // 成功時にファイル情報を返す
-      return { filename, mimetype, path: pathToSave };
     },
 
 

@@ -6,9 +6,11 @@ import { Container } from 'react-bootstrap';
 // components
 import BackButton from '../components/common/BackButton';
 
+// Apollo Client
+import { useQuery } from '@apollo/client';
+import { GET_POSTS_BY_ID } from '../graphql/queries';
 
-
-// Emotion
+// Emotion CSS
 import { css } from '@emotion/react';
 const PostDetailPageStyle = css`
   max-width: 800px;
@@ -30,42 +32,30 @@ const PostDetailPageStyle = css`
   }
 `;
 
-// 画像のURLを配列に保存
-const images = [
-  {
-    id: 1,
-    src: '/imgs/Diamond.jpg',
-    title: "expensive computation",
-    content: "This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",
-    timeCreated: "2021-09-01T00:00:00.000Z",
-  },
-  {
-    id: 2,
-    src: '/imgs/smile_design.jpg',
-    title: "Card title",
-    content: "This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",
-    timeCreated: "2021-09-01T00:00:00.000Z",
-  },
-  {
-    id: 3,
-    src: '/imgs/universal.jpg',
-    title: "Card title",
-    content: "This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",
-    timeCreated: "2021-09-01T00:00:00.000Z",
-  },
-  {
-    id: 4,
-    src: '/imgs/noImg.jpeg',
-    title: "Card title",
-    content: "This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",
-    timeCreated: "2021-09-01T00:00:00.000Z",
-  },
-];
 
+//! ============================================================
 const PostsDetailPage = () => {
   // useParamsは文字列を返すので、Number()を使うことで数値に変換すること
   const { id } = useParams<{ id: string }>();
-  // console.log(typeof id)
+  // console.log(typeof id) // string
+
+  // GET All POSTS by User ID
+  const { data, loading, error } = useQuery(GET_POSTS_BY_ID, {
+    variables: {
+      uid: id
+    },
+  });
+
+//* types 
+type postProp = {
+  id: string;
+  title: string;
+  content: string;
+  imgUrl: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 
   return (
     <main css={PostDetailPageStyle}>
@@ -74,10 +64,34 @@ const PostsDetailPage = () => {
 
         {/* component */}
         <BackButton />
-        
+
+        {/* URL の id と DB の id を比較し一致するものを取得 */}
+        {data ? (data?.PostsByUser.filter((item: postProp) => Number(item.id) === Number(id)).map((filteredItem: postProp) => (
+          <div key={filteredItem.id} className='detailItem'>
+            {/* <p>{cat.createdAt.substring(0, 10)}</p> */}
+
+            <p>{new Date(filteredItem.createdAt).toLocaleString()}</p>
+            <h2>{filteredItem.title}</h2>
+            <img
+              src={filteredItem.imgUrl}
+              alt={`post image ${id}`}
+              className='mx-auto d-block'
+            />
+            <p>{filteredItem.content}</p>
+          </div>
+        )))
+          : (loading
+            ? (<p>Loading...</p>)
+            : (error)
+              ? (<p>Error: {error.message}</p>)
+              : (<p>No posts found.</p>))
+        }
+
+
+
 
         {/* MAPPING */}
-        {images.map((item) => {
+        {/* {images.map((item) => {
           if (item.id === Number(id)) {// Number()を使うことで文字列を数値に変換
             return (
               <div key={item.id} className='detailItem'>
@@ -92,7 +106,8 @@ const PostsDetailPage = () => {
               </div>
             )
           }
-        })}
+        }
+        )} */}
 
       </Container>
     </main>

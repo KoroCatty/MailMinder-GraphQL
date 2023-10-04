@@ -26,7 +26,7 @@ function Header() {
 
   // ログインチェック (ローカルストレージ)
   const [loggedIn, setLoggedIn] = useState(localStorage.getItem("token_GraphQL") ? true : false);
-  console.log(loggedIn)
+  // console.log(loggedIn)
 
   return (
     <>

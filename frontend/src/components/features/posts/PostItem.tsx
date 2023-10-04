@@ -1,31 +1,34 @@
 import { Link } from 'react-router-dom';
 
-
 // bootstrap
 import Card from 'react-bootstrap/Card';
 import Col from 'react-bootstrap/Col';
 import Row from 'react-bootstrap/Row';
 
 //* types 
-type ImageProp = {
-  id: number;
-  src: string;
+type PostPropType = {
+  id: string;
+  title: string;
+  content: string;
+  imgUrl: string;
+  createdAt: string;
+  updatedAt: string;
 };
 
-//* types 
-type PostItemProps = {
-  imagesProp: ImageProp[];
-};
+// 配列で渡ってきた prop なので、それに配列の型を指定
+type PostProp = {
+  postProp: PostPropType[];
+}
 
-const PostItem: React.FC<PostItemProps> = ({ imagesProp }) => {
+// Looping through the Prop
+const PostItem: React.FC<PostProp> = ({ postProp }) => {
   return (
     <Row xs={1} md={2} className="g-4">
-      {imagesProp.map((item) => (
-        // {Array.from({ length: 4 }).map((item, idx) => (
+      {postProp.map((item) => (
         <Col key={item.id}>
           <Card>
             <Link to={`/postdetails/${item.id}`}>
-              <Card.Img variant="top" src={item.src} style={{ width: "100px", height: "100px" }} />
+              <Card.Img variant="top" src={item.imgUrl} style={{ width: "100px", height: "100px" }} />
               <Card.Body>
                 <Card.Title>Card title</Card.Title>
                 <Card.Text>

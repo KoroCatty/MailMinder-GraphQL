@@ -14,56 +14,56 @@ import jwt from 'jsonwebtoken';
 //* ==============================================================
 //* 画像アップロード用 multer & express
 
-import multer from "multer";
-import path from "path"; // path module はファイルパスを操作するため(buit-in)
+// import multer from "multer";
+// import path from "path"; // path module はファイルパスを操作するため(buit-in)
 
-import express from "express";
-const app = express();
+// import express from "express";
+// const app = express();
 
-// which storage/server  we want to use  (cb = callback)
-const storage = multer.diskStorage({
-  destination(req, file, cb) {
-    // null is for error | 画像は root の uploads からサーバーに保存される
-    cb(null, "uploads/");
-  },
-  //! Create a file name
-  // fieldname = image なので image-163123123.jpg というファイル名になる
-  filename(req, file, cb) {
-    cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`); 
-  },
-});
+// // which storage/server  we want to use  (cb = callback)
+// const storage = multer.diskStorage({
+//   destination(req, file, cb) {
+//     // null is for error | 画像は root の uploads からサーバーに保存される
+//     cb(null, "uploads/");
+//   },
+//   //! Create a file name
+//   // fieldname = image なので image-163123123.jpg というファイル名になる
+//   filename(req, file, cb) {
+//     cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`); 
+//   },
+// });
 
-// check file type
-// 関数 fileFilter はアップロードされるファイルのタイプを検証
-function fileFilter(req, file, cb) {
+// // check file type
+// // 関数 fileFilter はアップロードされるファイルのタイプを検証
+// function fileFilter(req, file, cb) {
 
-  // 受け入れられるファイルの拡張子を正規表現で定義
-  const filetypes = /jpe?g|png|webp/;
-    // 受け入れられるMIMEタイプ（ファイルの種類）を正規表現で定義
-  const mimetypes = /image\/jpe?g|image\/png|image\/webp/;
+//   // 受け入れられるファイルの拡張子を正規表現で定義
+//   const filetypes = /jpe?g|png|webp/;
+//     // 受け入れられるMIMEタイプ（ファイルの種類）を正規表現で定義
+//   const mimetypes = /image\/jpe?g|image\/png|image\/webp/;
 
-   // アップロードされたファイルの拡張子が受け入れられるものかテスト
-  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+//    // アップロードされたファイルの拡張子が受け入れられるものかテスト
+//   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
 
-   // アップロードされたファイルのMIMEタイプが受け入れられるものかテスト
-  const mimetype = mimetypes.test(file.mimetype);
+//    // アップロードされたファイルのMIMEタイプが受け入れられるものかテスト
+//   const mimetype = mimetypes.test(file.mimetype);
 
-  // 拡張子とMIMEタイプの両方が受け入れられる場合、ファイルを受け入れる
-  if (extname && mimetype) {
-    cb(null, true);
-  } else {
-    cb(new Error('Images only!'), false);
-  }
-}
-// multerの設定を適用して、アップロード機能を初期化
-const upload = multer({ storage, fileFilter });
+//   // 拡張子とMIMEタイプの両方が受け入れられる場合、ファイルを受け入れる
+//   if (extname && mimetype) {
+//     cb(null, true);
+//   } else {
+//     cb(new Error('Images only!'), false);
+//   }
+// }
+// // multerの設定を適用して、アップロード機能を初期化
+// const upload = multer({ storage, fileFilter });
 
-// 'image' という名前の単一の画像をアップロードするためのミドルウェアを設定
-const uploadSingleImage = upload.single('image');
+// // 'image' という名前の単一の画像をアップロードするためのミドルウェアを設定
+// const uploadSingleImage = upload.single('image');
 
-app.post('/upload', uploadSingleImage, (req, res) => {
-  res.json({ file: req.file });
-});
+// app.post('/upload', uploadSingleImage, (req, res) => {
+//   res.json({ file: req.file });
+// });
 
 //* ==============================================================
 

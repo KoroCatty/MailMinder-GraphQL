@@ -4,9 +4,6 @@ import { useState } from "react";
 import { useMutation } from '@apollo/client';
 import { CREATE_POST } from '../../../graphql/mutations';
 
-// Image file mutation
-import { UPLOAD_FILE } from '../../../graphql/mutations';
-
 // components
 import GoogleSearch from "./GoogleSearch";
 import Selfie from "../../common/Selfie";
@@ -77,12 +74,6 @@ const HomeForms = () => {
   if (loading) { <h1>Loading...</h1> }
   if (error) { <h1>Error...</h1> }
 
-
-  // Image file mutation
-  const [UploadFile, { data2, loading2, error2 }] = useMutation(UPLOAD_FILE);
-  console.log(data2)
-
-
   //! ======================================================
   //! When forms typed
   //! ======================================================
@@ -101,19 +92,16 @@ const HomeForms = () => {
     console.log(formData);
 
     // DBに保存
-    CreatePost({
-      variables: {
-        postNew: formData // postNew は mutation.ts で定義したもの
-      }
-    });
+    try {
+      CreatePost({
+        variables: {
+          postNew: formData // postNew は mutation.ts で定義したもの
+        }
+      });
+    } catch (error) {
+      console.log(error)
+    }
 
-    // 画像ファイルを保存
-    UploadFile({
-      variables: {
-        file: selectedImage
-        // file: formData.imgUrl
-      }
-    });
   }
 
   //* ========================================
@@ -121,23 +109,18 @@ const HomeForms = () => {
   //* ========================================
   // chose image from local file
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // <input type="file">から選択されたファイルのリストを提供するFileListオブジェクトを返し、[0]は選択されたファイルのリストの最初のファイルを指し、あれば返す
     const file = e.target.files && e.target.files[0];
     if (file) {
-      // URL.createObjectURL(file)は、選択されたファイルのURLを生成。このURLは、<img>タグなどのsrc属性でファイルを直接参照するために使用できます。
-      // setSelectedImage(URL.createObjectURL(file));
-
-      const imageUrl = URL.createObjectURL(file);
-      setSelectedImage(imageUrl);
-      // setSelectedImage(file); 
-
-      // update formData with the image URL
+      setSelectedImage(URL.createObjectURL(file));
+  
+      // FormDataを更新
       setFormData({
         ...formData,
-        imgUrl: imageUrl
+        imgFile: file, // これが重要です！
       });
     }
   };
+  
 
 // Paste Image URL
   const handleImageChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -169,10 +152,6 @@ const HomeForms = () => {
   };
   
   
-
-
-  // console.log(selectedImage)
-  // blob:http://localhost:3000/1d5663c7-b254-4d62-abb6-48150c91a4f8
   return (
     <section css={homeFormsStyles}>
       <h2 className="text-center m-4">Register Your reminder</h2>

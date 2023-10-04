@@ -8,6 +8,7 @@ const typeDefs = gql`
   type Query {
     users: [User!]! # return an array
     PostsByUser(id: ID!): [Post!]! # resolverで定義した名前を使う
+    PostsByUserLimit(id: ID!): [Post!]! # resolverで定義した名前を使う
   }
 
 #//!  実際にクライエントに返すデータの型(これを使い回す)
@@ -56,7 +57,8 @@ const typeDefs = gql`
   input PostInput {
     title: String!
     content: String!
-    imgUrl: String!
+    # imgUrl: String!
+    imgUrl: Upload!
   }
 
   scalar Upload # Uploadはスカラー型
@@ -80,8 +82,6 @@ const typeDefs = gql`
     # CREATE A POST
     createPost(postNew: PostInput!): Post! # これが playground で出現
 
-    # UPLOAD IMAGE
-    uploadFile(file: Upload!): File! # Uploadはスカラー型 
   }
 `;
 

@@ -104,6 +104,10 @@ we need to add "type": "module" in package.json
          ### This is for development only, therefore, good for production deployment.
 
          ###  proxy: {'/api': 'http://localhost:5001', // プロキシの設定(バックエンドのポート番号) }, in vite.config.ts
+         
+
+      ## npm install apollo-upload-client
+
 
 
    ### Back-end
