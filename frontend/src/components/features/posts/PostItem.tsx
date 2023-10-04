@@ -1,84 +1,68 @@
-import { Link } from 'react-router-dom';
-
-// bootstrap
-import Card from 'react-bootstrap/Card';
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
-
-// Apollo Client
 import { useMutation } from '@apollo/client';
 import { DELETE_POST_BY_ID } from '../../../graphql/mutations';
+import { GET_POSTS_BY_ID } from '../../../graphql/queries';  // Import the query
 
-//* types 
-type PostPropType = {
-  id: string ;
+import { Link } from 'react-router-dom';
+import Card from 'react-bootstrap/Card';
+
+// TYPES
+export type PostPropType = {
+  id: string | number;
   title: string;
   content: string;
   imgUrl: string;
-  createdAt: string;
-  updatedAt: string;
 };
 
-// 配列で渡ってきた prop なので、それに配列の型を指定
-type PostProp = {
-  postProp: PostPropType[];
-}
+type PostPropTypeComponent = {
+  postProp: PostPropType;
+};
 
-// Looping through the Prop
-const PostItem: React.FC<PostProp> = ({ postProp }) => {
-  console.log(postProp)
+type PostsQueryCacheResult = {
+  PostsByUser: PostPropType[];
+};
 
+const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
+  const [deletePostById, { error, loading }] = useMutation(DELETE_POST_BY_ID, {
+    variables: { id: postProp.id },
+    // refetchQueries: ['GET_POSTS_BY_ID'],
+    awaitRefetchQueries: true, // refetchQueriesを実行する前にmutationを完了させる
 
-
-  const [deletePostById, { data, error, loading }] = useMutation(DELETE_POST_BY_ID, {
-    variables: {
-      id: postProp.id
-    },
-    // これらを refetch する
-    refetchQueries: [ 'GET_POSTS_BY_ID' ],
+    update(cache, { data: { deletePost } }) {
+      const data = cache.readQuery<PostsQueryCacheResult>({ query: GET_POSTS_BY_ID });
+      if (!data) return; 
+      
+      const { PostsByUser } = data;
+      cache.writeQuery({
+        query: GET_POSTS_BY_ID,
+        data: { PostsByUser: PostsByUser.filter(post => post.id !== deletePost.id) },
+      });
+    }
   });
-console.log(data)
 
   return (
-    <Row xs={1} md={2} className="g-4">
-      {postProp.map((item) => (
+    <Card>
+      <Link to={`/postdetails/${postProp.id}`}>
+        <Card.Img variant="top" src={postProp.imgUrl} style={{ width: "300px", height: "300px", margin: "0 auto", display: "block" }} />
+        <Card.Body>
+          <Card.Title>{postProp.title}</Card.Title>
+          <Card.Text>
+            {postProp.content}
+          </Card.Text>
+        </Card.Body>
+      </Link>
+      {error && <p>Error! {error.message}</p>}
+      <button
+        className="btn btn-danger btn-sm"
+        onClick={(e) => {
+          e.preventDefault();
+          window.confirm('Are you sure you want to delete this post?') &&
+            deletePostById();
+        }}
+      >
+        {loading ? 'Deleting...' : 'Delete'}
+      </button>
+    </Card>
+  );
+};
 
-        
-        <Col key={item.id}>
-          <Card>
-            <Link to={`/postdetails/${item.id}`}>
-              <Card.Img variant="top" src={item.imgUrl} style={{ width: "100px", height: "100px" }} />
-              <Card.Body>
-                <Card.Title>Card title</Card.Title>
-                <Card.Text>
-                  This is a longer card with supporting text below as a natural
-                  lead-in to additional content. This content is a little bit
-                  longer.
-                </Card.Text>
-
-
-
-                {error && <p>Error! ${error.message}</p>}
-                <button
-                  className="btn btn-danger btn-sm"
-                  // onClickハンドラはマウスイベントオブジェクトを引数として受け取ります。そのため、直接 deletePostById をonClickにアサインすることはできないので、アロー関数を使って、e.preventDefault()を実行してから deletePost を実行するようにします。
-                  onClick={(e) => {
-                    e.preventDefault();
-                    window.confirm('Are you sure you want to delete this post?') &&
-                    deletePostById();
-                  }}
-                >
-                  {/* {loading ? 'Deleting...' : <FaTrash />} */}
-                  {loading ? 'Deleting...' : 'Delete'}
-                </button>
-
-              </Card.Body>
-            </Link>
-          </Card>
-        </Col>
-      ))}
-    </Row>
-  )
-}
-
-export default PostItem
+export default PostCard;
