@@ -20,7 +20,7 @@ const resolvers = {
     //* -----------------------------------------------
     // context は server.js で定義済みで、ログインしていると、そのユーザーの情報が入っている
     users: async (_, args, context) => {
-      console.log(context.userId + "🥶")
+      console.log(context.userId + "🥶🐴")
       console.log(context)
 
       // forbidden error means you are not allowed to do this
@@ -42,7 +42,7 @@ const resolvers = {
     //* GET ALL POSTS BY USER ID
     //* -----------------------------------------------
     PostsByUser: async (_, args, context) => {
-      console.log(context.userId + "🥶") // ログイン者のID
+      console.log(context.userId + "🥶🐣") // ログイン者のID
       console.log(context)
 
       // Error means you are not allowed to do this
@@ -65,6 +65,7 @@ const resolvers = {
     PostsByUserLimit: async (_, args, context) => {
       console.log(context.userId + "🥶") // ログイン者のID
       console.log(context)
+      console.log(args.limit + "🥶👀")
 
       // Error means you are not allowed to do this
       if (!context.userId) throw Error("You must be logged in 😱")
@@ -79,10 +80,10 @@ const resolvers = {
       });
       return posts;
     },
-    
+
   },
 
-  
+
 
   Mutation: {
     //* ===============================================
@@ -178,6 +179,26 @@ const resolvers = {
       return newPost;
     },
 
+    //* ===============================================
+    //* DELETE A POST
+    //* ===============================================
+    deletePost: async (_, args, context) => {
+      console.log(args.id + "🦋")
+      console.log(context.userId + "🐝")
+
+      // ログインしてなかったらエラー(contextで先に確認できる)
+      if (!context.userId) {
+        throw new Error("You must be logged in (Contextにトークンがありません)😱");
+      }
+
+      // post は prisma.schema で定義済みのモデル
+      const deletedPost = await prisma.post.delete({
+        where: {
+          id: parseInt(args.id)
+        }
+      });
+      return deletedPost;
+    }
 
   }
 }

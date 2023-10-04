@@ -22,7 +22,7 @@ function PostsList() {
   return (
     <>
       <BackButton />
-      <h1 className="text-center m-5">Monthly Posts List</h1>
+      <h1 className="text-center m-5">All Posts List</h1>
 
       {/* Give a Prop */}
       <PostItem postProp={data.PostsByUser} />

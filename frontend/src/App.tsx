@@ -51,7 +51,6 @@ function App() {
                 <Route path="/" index element={<HomePage />} />
                 <Route path="/login" element={<AuthPage setLoggedIn={setLoggedIn} />} />
                 <Route path="*" element={<NotFound />} />
-                <Route path="*" element={<NotFound />} />
               </Route>
             </Routes>
           </>

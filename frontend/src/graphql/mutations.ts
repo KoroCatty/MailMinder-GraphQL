@@ -35,3 +35,15 @@ export const CREATE_POST = gql`
   }
 `;
 
+// //! DELETE A POST BY ID
+export const DELETE_POST_BY_ID = gql`
+  mutation deletePostById($id: ID!) {
+    deletePost(id: $id) {
+      id
+      title
+      content
+      imgUrl
+    }
+  }
+`;
+

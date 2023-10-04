@@ -11,7 +11,7 @@ import Selfie from "../../common/Selfie";
 // bootstrap
 import { Form } from "react-bootstrap";
 
-// Emotion
+// Emotion CSS
 import { css } from "@emotion/react";
 
 const homeFormsStyles = css`

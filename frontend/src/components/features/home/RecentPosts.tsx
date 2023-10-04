@@ -25,12 +25,11 @@ const RecentPosts = () => {
 
   const { data, loading, error } = useQuery(GET_POSTS_BY_ID_LIMIT, {
     variables: {
-      limit: Number(4),
       uid: Number(), // backend (resolver) で id を指定しているので、空にする
+      limit: Number(4),
     },
   }, 
   );
-  console.log(data)
 // destructuring
   const  { PostsByUserLimit }  = data ? data : [];
 

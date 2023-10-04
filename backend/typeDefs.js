@@ -8,7 +8,7 @@ const typeDefs = gql`
   type Query {
     users: [User!]! # return an array
     PostsByUser(id: ID!): [Post!]! # resolverで定義した名前を使う
-    PostsByUserLimit(id: ID!): [Post!]! # resolverで定義した名前を使う
+    PostsByUserLimit(id: ID!, limit: Int!): [Post!]! # limit を使ったresolver関数
   }
 
 #//!  実際にクライエントに返すデータの型(これを使い回す)
@@ -81,6 +81,9 @@ const typeDefs = gql`
 
     # CREATE A POST
     createPost(postNew: PostInput!): Post! # これが playground で出現
+
+    # DELETE A POST
+    deletePost(id: ID!): Post!
 
   }
 `;
