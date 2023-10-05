@@ -148,6 +148,7 @@ const resolvers = {
       console.log(args.postNew.content + "🤫")
       console.log(args.postNew.imgUrl + "👹")
       console.log(context.userId + "👹")
+
       console.log(args.postNew.imgFile + "💀👻");
 
       // ログインしてなかったらエラー(contextで先に確認できる)
@@ -172,7 +173,8 @@ const resolvers = {
         data: {
           title: args.postNew.title,
           content: args.postNew.content,
-          imgUrl: args.postNew.imgUrl,
+          // imgUrl: args.postNew.imgUrl,
+          imgUrl: args.postNew.imgUrl ? args.postNew.imgUrl : "/imgs/noImg.jpeg",  // <-- default image added
           userId: context.userId
         }
       })

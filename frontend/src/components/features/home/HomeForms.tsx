@@ -101,18 +101,16 @@ const HomeForms = () => {
     } catch (error) {
       console.log(error)
     }
-
   }
 
-  //* ========================================
-  //* (when the Img is chosen)  画像を選択した時に発火する関数 
-  //* ========================================
-  // chose image from local file
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //* ===================================================
+  //* Choose image from local file 画像を選択した時に発火する関数 
+  //* ===================================================
+  const chooseImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0];
     if (file) {
       setSelectedImage(URL.createObjectURL(file));
-  
+
       // FormDataを更新
       setFormData({
         ...formData,
@@ -120,10 +118,11 @@ const HomeForms = () => {
       });
     }
   };
-  
 
-// Paste Image URL
-  const handleImageChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //* ===================================================
+  //* Paste Image URL 
+  //* ===================================================
+  const pasteImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const imageUrl = e.target.value;
     setSelectedImage(imageUrl);
     setFormData({
@@ -132,9 +131,11 @@ const HomeForms = () => {
     });
   }
 
-  // Selfie Image
-  const handleImageChange3 = (image64: string | null) => {
-    
+  //* ===================================================
+  //*  Selfie Image
+  //* ===================================================
+  const selfieImage = (image64: string | null) => {
+
     // Check if image64 (or selectedImage if you prefer) is not null before reading its length
     if (image64 && image64.length > 10000) {
       setSelectedImage(image64);
@@ -144,14 +145,14 @@ const HomeForms = () => {
         imgUrl: image64
       });
     } else {
-     console.log("Too Big")
-     window.alert("Too Big")
+      console.log("Too Big")
+      window.alert("Too Big")
       // Proceed with saving to the database
       // ...your code to save the image to the database
     }
   };
-  
-  
+
+
   return (
     <section css={homeFormsStyles}>
       <h2 className="text-center m-4">Register Your reminder</h2>
@@ -186,7 +187,8 @@ const HomeForms = () => {
               type="file"
               size="lg"
               accept="image/*" // 画像ファイルのみを選択できるようにする
-              onChange={handleImageChange}
+              // onChange={handleImageChange}
+              onChange={chooseImage}
               name="image"
             />
           </Form.Group>
@@ -202,7 +204,8 @@ const HomeForms = () => {
             type="text"
             placeholder="Paste the image URL here"
             style={{ width: "100%", height: "40px", marginBottom: "40px" }}
-            onChange={handleImageChange2 }
+            // onChange={handleImageChange2 }
+            onChange={pasteImage}
           />
 
           {/* DISPLAY IMG  画像があれば表示 */}
@@ -211,7 +214,8 @@ const HomeForms = () => {
             {selectedImage && <img src={selectedImage} alt="chosen Image" />}
 
             {/* SELFIE COMPONENT (Pass the function )*/}
-            <Selfie handleImageChange3={handleImageChange3 }  />
+            {/* <Selfie handleImageChange3={handleImageChange3 }  /> */}
+            <Selfie selfieImage={selfieImage} />
           </div>
         </div>
 

@@ -57,8 +57,7 @@ const typeDefs = gql`
   input PostInput {
     title: String!
     content: String!
-    # imgUrl: String!
-    imgUrl: Upload!
+    imgUrl: Upload
   }
 
   scalar Upload # Uploadはスカラー型

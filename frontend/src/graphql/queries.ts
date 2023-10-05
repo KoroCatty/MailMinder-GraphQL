@@ -11,7 +11,6 @@ export const GET_POSTS_BY_ID = gql`
       imgUrl
       createdAt
       updatedAt
-
     }
   }
 `
