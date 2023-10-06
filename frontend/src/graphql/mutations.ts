@@ -48,15 +48,13 @@ export const DELETE_POST_BY_ID = gql`
 `;
 
 //! UPDATE A POST BY ID
-// export const UPDATE_POST_BY_ID = gql`
-//   mutation updatePostById($id: ID!, $postUpdate: PostInput!) {
-//     updatePost(id: $id, postUpdate: $postUpdate) {
-//       id
-//       title
-//       content
-//       imgUrl
-//       createdAt
-//       updatedAt
-//     }
-//   }
-// `;
+export const UPDATE_POST_BY_ID = gql`
+  mutation updatePostById($id: ID!, $postUpdate: PostInput!) {
+    updatePost(id: $id, postUpdate: $postUpdate) {
+      id
+      title
+      content
+      imgUrl
+    }
+  }
+`;

@@ -200,7 +200,37 @@ const resolvers = {
         }
       });
       return deletedPost;
-    }
+    },
+
+    //* ===============================================
+    //* UPDATE A POST
+    //* ===============================================
+    updatePost: async (_, args, context) => {
+      console.log(args.id + "🦋")
+      console.log(args.postUpdate.title + "🐝")
+      console.log(args.postUpdate.content + "🐝")
+      console.log(args.postUpdate.imgUrl + "🐝")
+      console.log(context.userId + "🐝")
+
+      // ログインしてなかったらエラー(contextで先に確認できる)
+      if (!context.userId) {
+        throw new Error("You must be logged in (Contextにトークンがありません)😱");
+      }
+
+      // post は prisma.schema で定義済みのモデル
+      const updatedPost = await prisma.post.update({
+        where: {
+          id: parseInt(args.id)
+        },
+        data: {
+          title: args.postUpdate.title,
+          content: args.postUpdate.content,
+          imgUrl: args.postUpdate.imgUrl,
+          updatedAt: new Date().toISOString(), // 更新日時を追加
+        }
+      });
+      return updatedPost;
+    },
 
   }
 }

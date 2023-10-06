@@ -4,6 +4,13 @@ import { gql } from 'graphql-tag';
 //! Schema
 //! ==========================================================
 const typeDefs = gql`
+  scalar Date # 
+  scalar Upload # Uploadはスカラー型
+
+  type Token {
+    token: String!
+  }
+
 # QUERY
   type Query {
     users: [User!]! # return an array
@@ -40,18 +47,12 @@ const typeDefs = gql`
     password: String!
   }
 
-  type Token {
-    token: String!
-  }
-
   #//! SIGNIN A USER INPUT
   #//* My own input type 2 (mutationで使える)
   input UserSigninInput {
     email: String!
     password: String!
   }
-
-  scalar Date # 
 
   # //! CREATE A POST INPUT
   input PostInput {
@@ -60,7 +61,12 @@ const typeDefs = gql`
     imgUrl: Upload
   }
 
-  scalar Upload # Uploadはスカラー型
+  # //! UPDATE A POST INPUT
+  input PostUpdateInput {
+    title: String!
+    content: String!
+    imgUrl: Upload
+  }
 
 # //! IMAGE FILE TYPE
   type File {
@@ -83,6 +89,9 @@ const typeDefs = gql`
 
     # DELETE A POST
     deletePost(id: ID!): Post!
+
+    # UPDATE A POST
+    updatePost(id: ID!, postUpdate: PostUpdateInput!): Post!
 
   }
 `;

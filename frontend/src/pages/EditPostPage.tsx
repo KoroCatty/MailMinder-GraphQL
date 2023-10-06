@@ -8,7 +8,10 @@ import GoogleSearch from '../components/features/home/GoogleSearch';
 
 // Apollo client
 import { useQuery } from '@apollo/client';
+import { useMutation } from '@apollo/client';
+
 import { GET_POSTS_BY_ID } from '../graphql/queries';
+import { UPDATE_POST_BY_ID } from '../graphql/mutations';
 
 // bootstrap
 import { Form } from "react-bootstrap";
@@ -43,16 +46,18 @@ const editPageStyle = css`
 //! Main
 //! ======================================================
 const EditPostPage = () => {
-  // useParam の ID を使い各項目を更新する
+  // useParam 
   const { id: idUrl } = useParams<{ id: string }>();
-  console.log(idUrl)
 
-  // GET POSTS BY ID (Apollo Client)
+  //* GET POSTS BY ID (Apollo Client)
   const { data, } = useQuery(GET_POSTS_BY_ID, {
     variables: {
       uid: Number(idUrl), // queries.ts で uid を定義している
     }
   });
+
+  //* UPDATE POST BY ID (Apollo Client)
+  const [updatePostById] = useMutation(UPDATE_POST_BY_ID);
 
   // Initialize with an empty array or a suitable default value.
   const [currentData, setCurrentData] = useState({
@@ -72,7 +77,7 @@ const EditPostPage = () => {
     // }
   });
 
-  // TYPES
+  // TYPES (data.PostsByUser)
   type FormDataType = {
     id: number;
     title: string;
@@ -89,7 +94,6 @@ const EditPostPage = () => {
   //* useEffect
   useEffect(() => {
     if (data && data.PostsByUser) {
-      // setCurrentData([data.PostsByUser]);
       const idToFind = Number(idUrl); // 特定のID
       const filteredData = data?.PostsByUser.filter((item: FormDataType) => Number(item.id) === idToFind);
 
@@ -163,7 +167,35 @@ const EditPostPage = () => {
       // ...your code to save the image to the database
     }
   };
-  //* ================================================
+  //? ================================================
+  //? Submit
+  //? ================================================
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault(); // prevent default form submission
+  
+    try {
+      const response = await updatePostById({
+        variables: {
+          id: currentData.id, // assuming the mutation requires the id to update the correct post
+          title: currentData.title,
+          content: currentData.content,
+          imgUrl: selectedImage || currentData.imgUrl, // Use selectedImage if it's available, else use currentData.imgUrl
+          // add other necessary fields if required
+        }
+      });
+  
+      if (response.data) {
+        // Handle success. Maybe redirect user or show success message.
+        console.log("Post updated successfully", response.data);
+      }
+    } catch (error) {
+      // Handle error. Maybe show error message to user.
+      console.error("Error updating post:", error);
+    }
+  };
+  
+
+
 
   //! ======================================================
   //! JSX
@@ -183,7 +215,7 @@ const EditPostPage = () => {
           )}
 
           {currentData && (
-            <form className='detailItem'>
+            <form  onSubmit={handleSubmit} className='detailItem'>
 
               <h1>USER ID: {currentData.id}</h1>
 
