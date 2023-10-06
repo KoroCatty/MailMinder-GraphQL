@@ -28,7 +28,7 @@ model Post {
   id        Int      @id @default(autoincrement())
   title     String
   content   String
-  imgUrl    String   @db.VarChar(15000) // 10000文字まで可能
+  imgUrl    String   @db.VarChar(15000) // 15000文字まで可能
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

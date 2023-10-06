@@ -49,7 +49,7 @@ mutation signupUser($userNew: UserInput!) {
 {
   "userNew": {
     "firstName": "koro",
-    "lastName": "kojima",
+    "lastName": "kay",
     "email": "koro@email.com",
     "password": "123456"
   }
