@@ -65,7 +65,10 @@ const typeDefs = gql`
   input PostUpdateInput {
     title: String!
     content: String!
+    # expecting a file upload. If you're sending a URL or base64 string instead of a file, this could be causing the issue.
     imgUrl: Upload
+    # imgUrl: String
+    updatedAt: Date
   }
 
 # //! IMAGE FILE TYPE
@@ -91,8 +94,8 @@ const typeDefs = gql`
     deletePost(id: ID!): Post!
 
     # UPDATE A POST
+    # Here, the mutation expects an id and a postUpdate object of type PostUpdateInput. This PostUpdateInput has fields title, content, imgUrl, and updatedAt.
     updatePost(id: ID!, postUpdate: PostUpdateInput!): Post!
-
   }
 `;
 

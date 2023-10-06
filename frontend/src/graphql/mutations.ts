@@ -3,7 +3,8 @@ import { gql } from "@apollo/client";
 //! Sign Up (Create User)
 export const SIGNUP_USER = gql`
   mutation signupUser($userNew: UserInput!) {
-    signupUser(userNew: $userNew) { # signupUser is defined in resolvers.js
+    signupUser(userNew: $userNew) {
+      # signupUser is defined in resolvers.js
       id
       email
       firstName
@@ -49,12 +50,14 @@ export const DELETE_POST_BY_ID = gql`
 
 //! UPDATE A POST BY ID
 export const UPDATE_POST_BY_ID = gql`
-  mutation updatePostById($id: ID!, $postUpdate: PostInput!) {
-    updatePost(id: $id, postUpdate: $postUpdate) {
+  mutation updatePostById($postUpdate: PostUpdateInput!, $updatePostId: ID!) {
+    updatePost(postUpdate: $postUpdate, id: $updatePostId) {
       id
       title
       content
       imgUrl
+      createdAt
+      updatedAt
     }
   }
 `;

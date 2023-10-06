@@ -92,7 +92,6 @@ mutation CreatePost($postNew: PostInput!) {
   }
 }
 
-
 =====================================
 Get a Post by User ID
 =====================================
@@ -115,4 +114,29 @@ Get a Post by User ID
 
   {
   "postsByUserId": 1
+}
+
+
+=====================================
+UPDATE a Post
+=====================================
+mutation UpdatePost($postUpdate: PostUpdateInput!, $updatePostId: ID!) {
+  updatePost(postUpdate: $postUpdate, id: $updatePostId) {
+    id
+    title
+    content
+    imgUrl
+    createdAt
+    updatedAt
+  }
+}
+
+{
+  "updatePostId": "72",
+  "postUpdate": {
+    "content": "null",
+    "imgUrl": "null",
+    "title": "null",
+    "updatedAt": "aaa"
+  }
 }

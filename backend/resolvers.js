@@ -207,7 +207,7 @@ const resolvers = {
     //* ===============================================
     updatePost: async (_, args, context) => {
       console.log(args.id + "🦋")
-      console.log(args.postUpdate.title + "🐝")
+      console.log(args.postUpdate.title + "🐝 - UPDATED -")
       console.log(args.postUpdate.content + "🐝")
       console.log(args.postUpdate.imgUrl + "🐝")
       console.log(context.userId + "🐝")

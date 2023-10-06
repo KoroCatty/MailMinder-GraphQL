@@ -168,7 +168,7 @@ const EditPostPage = () => {
     }
   };
   //? ================================================
-  //? Submit
+  //? Submit (UPDATE BUTTON)
   //? ================================================
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // prevent default form submission
@@ -176,11 +176,14 @@ const EditPostPage = () => {
     try {
       const response = await updatePostById({
         variables: {
-          id: currentData.id, // assuming the mutation requires the id to update the correct post
-          title: currentData.title,
-          content: currentData.content,
-          imgUrl: selectedImage || currentData.imgUrl, // Use selectedImage if it's available, else use currentData.imgUrl
-          // add other necessary fields if required
+          updatePostId: currentData.id, // ここで指定したIDのデータを更新する
+          postUpdate: {
+            title: currentData.title,
+            content: currentData.content,
+            imgUrl: selectedImage || currentData.imgUrl, // Use selectedImage if it's available, else use currentData.imgUrl
+            updatedAt: new Date().toISOString(),
+          }
+          
         }
       });
   
@@ -190,7 +193,7 @@ const EditPostPage = () => {
       }
     } catch (error) {
       // Handle error. Maybe show error message to user.
-      console.error("Error updating post:", error);
+      console.error("Error updating post - アップデートエラー:", error);
     }
   };
   
@@ -204,6 +207,7 @@ const EditPostPage = () => {
     <main css={editPageStyle}>
       <h2 className="text-center m-4">Edit Your Post</h2>
       <small>Created At: {currentData.createdAt.substring(0, 16).replace("T", " ")}</small>
+      <h2>{currentData?.updatedAt.substring(0, 16).replace("T", " ")}</h2>
 
       {/* COMPONENT */}
       <BackButton />
