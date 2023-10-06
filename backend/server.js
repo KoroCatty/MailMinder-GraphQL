@@ -11,6 +11,49 @@ import crypto from 'crypto';
 
 import jwt from 'jsonwebtoken';
 
+// node mailer
+import nodemailer from 'nodemailer';
+
+// node cron
+import cron from 'node-cron';
+
+// email message options
+const mailOptions = {
+  from: process.env.EMAIL_FROM,
+  to: process.env.EMAIL_TO,
+  subject: 'Sending Email using Node.js',
+  text: 'That was easy!'
+};
+
+// email transport configuration
+const transporter = nodemailer.createTransport({
+  service: process.env.EMAIL_SERVICE,
+  host: process.env.EMAIL_HOST,
+  port: process.env.EMAIL_PORT,
+  auth: {
+    user: process.env.EMAIL_FROM,
+    pass: process.env.EMAIL_PASS,
+  },
+});
+
+// send email every 10 seconds
+cron.schedule('*/10 * * * * *', () => {
+
+// Send Email 8:00 AM every day
+// cron.schedule('0 8 * * *', () => { 
+  transporter.sendMail(mailOptions, function(error, info) {
+    if (error) {
+      console.log(error);
+    } else {
+      console.log("Email sent: " + info.response);
+      scheduled: true;
+      timezone: "Asia/Tokyo";
+    }
+  });
+});
+
+
+
 //* ==============================================================
 //* 画像アップロード用 multer & express
 

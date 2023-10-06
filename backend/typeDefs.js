@@ -94,7 +94,7 @@ const typeDefs = gql`
     deletePost(id: ID!): Post!
 
     # UPDATE A POST
-    # Here, the mutation expects an id and a postUpdate object of type PostUpdateInput. This PostUpdateInput has fields title, content, imgUrl, and updatedAt.
+    # The mutation expects an id and a postUpdate object of type PostUpdateInput. This PostUpdateInput has fields title, content, imgUrl, and updatedAt.
     updatePost(id: ID!, postUpdate: PostUpdateInput!): Post!
   }
 `;

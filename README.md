@@ -154,6 +154,12 @@ we need to add "type": "module" in package.json
       npm install apollo-upload-client
 
       graphql-tools (deprecated)
+
+      ### node mailer
+        - npm install nodemailer
+
+      ### node-cron
+         - npm install node-cron
          
 
 # PRISMA SETUP

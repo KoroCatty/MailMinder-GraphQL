@@ -51,6 +51,7 @@ const homeFormsStyles = css`
     background-color: #c84d4d;
     box-shadow: 0 0 5px #ccc;
     color: white;
+    font-size: 1.8rem;
     cursor: pointer;
     margin-top: 8px;
     display: block;

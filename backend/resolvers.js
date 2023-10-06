@@ -50,7 +50,7 @@ const resolvers = {
 
       // 自分の投稿を全て取得 (postはPostモデル in typeDefs.js)
       const posts = await prisma.post.findMany({
-        orderBy: { createdAt: "desc" }, // 新しい順に並べる
+        orderBy: { updatedAt: "desc" }, // 更新された順（または新しく作成された順）に並べる
         where: {
           userId: context.userId // 自分の投稿を取得(ログイン者)
         },
@@ -72,7 +72,7 @@ const resolvers = {
 
       // 自分の投稿を全て取得 (postはPostモデル in typeDefs.js)
       const posts = await prisma.post.findMany({
-        orderBy: { createdAt: "desc" }, // 新しい順に並べる
+        orderBy: { updatedAt: "desc" }, // 更新された順（または新しく作成された順）に並べる
         where: {
           userId: context.userId // 自分の投稿を取得(ログイン者)
         },

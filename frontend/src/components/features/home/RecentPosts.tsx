@@ -51,8 +51,8 @@ const RecentPosts = () => {
             {PostsByUserLimit.map((item: PostType) => (
               <div className="col-md-3 col-12 mb-4" key={item.id}>
 
-                <Link to={`/postdetails/${item.id}`} className="card">
-                  <img src={item.imgUrl} className="card-img-top" alt={item.title} />
+                <Link to={`/postdetails/${item.id}`} className="card" style={{height: "252px"}}>
+                  <img src={item.imgUrl} className="card-img-top" style={{width:"100%",height: "160px", objectFit:"cover"}} alt={item.title} />
 
                   <div className="card-body">
                     <h5 className="card-title">{item.title}</h5>
