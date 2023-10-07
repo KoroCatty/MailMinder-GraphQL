@@ -1,3 +1,12 @@
+// 各ユーザーに、そのユーザーだけが持っている投稿をランダムに5件送る場合のロジック
+
+// すべてのユーザーを取得する
+// 各ユーザーに対して、そのユーザーが持っている投稿の数を取得する
+// 5件の投稿をランダムに取得する
+// その投稿をメールの本文として組み立てる
+// そのユーザーのメールアドレスにメールを送る
+
+
 // プリズマのクライアントをインポート
 import PC from '@prisma/client';
 
@@ -36,7 +45,7 @@ const sendEmail = cron.schedule('*/10 * * * * *', async () => {
           userId: user.id // ループされた仮定しているユーザーIDのフィールド名
         }
       });
-      console.log(userPostCount + "🎲 ユーザーの投稿数")
+      console.log( "📋 ユーザーの投稿数" + userPostCount )
 
       // スキップする投稿の数を計算
       // 5件以上の投稿がある場合、ランダムに5件を取得するために、スキップする投稿の数を計算
@@ -64,9 +73,13 @@ const sendEmail = cron.schedule('*/10 * * * * *', async () => {
         <h2>Title: ${post.title}</h2>
         <p>Hello ${user.firstName} !</p>
         <p>Text: ${post.content}</p>
-        <img src="${post.imgUrl}" alt="Post Image">
+
+        <img src="${post.imgUrl}" alt="No Post Image" onerror="this.onerror=null; this.src='./noImg.jpeg';" style="width: 300px; height: 200px" >
+
+        <img src="/imgs/hero3.gif">
+
         <br>
-        <a href="http://localhost:3000/posts/${post.id}">Click here to view the post</a>
+        <a href="http://localhost:3000/postdetails/${post.id}">Click here to view the post</a>
         <br>
         <hr>
       `).join('');
