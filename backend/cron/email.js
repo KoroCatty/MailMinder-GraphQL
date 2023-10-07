@@ -7,10 +7,8 @@
 // そのユーザーのメールアドレスにメールを送る
 
 
-import express from 'express';
 import path from 'path';
-const __dirname = path.resolve(); 
-
+const __dirname = path.resolve();
 
 
 // プリズマのクライアントをインポート
@@ -24,6 +22,9 @@ import nodemailer from 'nodemailer';
 
 // node cron
 import cron from 'node-cron';
+
+// Send Email 8:00 AM every day
+// cron.schedule('0 8 * * *', () => { 
 
 // send email every 20 seconds
 const sendEmail = cron.schedule('*/10 * * * * *', async () => {
@@ -74,9 +75,13 @@ const sendEmail = cron.schedule('*/10 * * * * *', async () => {
         continue;  // このユーザーの投稿がない場合、次のユーザーに移動
       }
 
-      const attachments = []; // push のための空配列を用意
+      // 4. E メールの本文を組み立てる
+      const attachments = [];
       const htmlContent = userPosts.map((post, index) => {
         let imgTag;
+
+        const oldPath = post.imgUrl;
+        const newPath = oldPath.substring('../../'.length); // 部分削除
 
         // Local files
         // ローカルのパスが'/'または'.'で始まる場合、画像はローカルにある
@@ -84,42 +89,42 @@ const sendEmail = cron.schedule('*/10 * * * * *', async () => {
         if (post.imgUrl.startsWith('/') || post.imgUrl.startsWith('.')) {
           const cidValue = `postimage${index}`;
           attachments.push({
-            // filename: `post_${index}.jpeg`,
             filename: post.imgUrl,
-
-            // path: post.imgUrl,
-            //! frontの場合はfrontのフォルダ、backの場合はbackの uploads フォルダ
-            path:  post.imgUrl ? '' : `${__dirname}/uploads/${post.imgUrl}`,
-            cid: cidValue
+            path: `${__dirname}/uploads/${newPath}`,
+            cid: cidValue // cid は、画像をメール本文に埋め込むためのもの(upload した画像がEmail内で表示される様になる)
           });
-          // console.log(cidValue) // postimage1
 
-          imgTag = `<img src="cid:${cidValue}" alt="No Post Image" style="width: 300px; height: 200px" >`;
+          // src属性にcid:CIDの値を指定することで、添付された画像を参照 (必須)
+          imgTag = `<img src="cid:${cidValue}" alt="Post Image" style="width: 300px; height: 200px;">`;
 
           // Remote files
         } else {
-          imgTag = `<img src="${post.imgUrl}" alt="No Post Image" onerror="this.onerror=null; this.src='./noImg.jpeg';" style="width: 300px; height: 200px" >`;
+          imgTag = `<img src="${post.imgUrl}" alt="Post Image" onerror="this.onerror=null; this.src='./noImg.jpeg';" style="width: 300px; height: 200px;">`;
         }
 
         return `
-          <h2>Title: ${post.title}</h2>
-          <p>Hello ${user.firstName} !</p>
-          <p>Text: ${post.content}</p>
-          ${imgTag}
-          <br>
-          <a href="http://localhost:3000/postdetails/${post.id}">Click here to view the post</a>
-          <br>
-          <hr>
+          <div style="border-bottom: 1px solid #e0e0e0; padding: 10px 0;">
+            <h2 style="font-size: 16px; margin: 0 0 10px;">Title: ${post.title}</h2>
+            <p style="margin: 0 0 10px;">Text: ${post.content}</p>
+            ${imgTag}
+            <div style="margin-top: 10px;">
+              <a href="http://localhost:3000/postdetails/${post.id}" style="color: #337ab7; text-decoration: none;">Click here to view the post</a>
+            </div>
+          </div>
           `;
       }).join('');
+
+      // ランダムで subject のあいさつを変える
+      const greetings = ["Today's 5 posts😁", 'How are you?😃', "Check today's posts🫡", "Don't forget to check🥹"];
+      const randomGreeting = greetings[Math.floor(Math.random() * greetings.length)];
+
 
       // E メールの内容を定義
       const mailContent = {
         from: process.env.EMAIL_FROM,
         to: user.email,
-        subject: `Your 5 posts!`,
+        subject: `Hi ${user.firstName}! ${randomGreeting} `,
         html: htmlContent,
-
         attachments: attachments // 添付ファイルの配列
       };
 
@@ -131,9 +136,12 @@ const sendEmail = cron.schedule('*/10 * * * * *', async () => {
   } catch (error) {
     console.error("エラー Error sending email with post content:", error);
   }
-});
-
-
+},
+{
+  scheduled: true, // 予定されたタスクを実行するかどうか
+  timezone: "Asia/Tokyo" // タイムゾーン
+}
+);
 
 export default sendEmail;
 
@@ -165,8 +173,8 @@ export default sendEmail;
 //   // send email every 10 seconds
 //   cron.schedule('*/20 * * * * *', () => {
 
-//     // Send Email 8:00 AM every day
-//     // cron.schedule('0 8 * * *', () => { 
+// Send Email 8:00 AM every day
+// cron.schedule('0 8 * * *', () => {
 //     transporter.sendMail(mailOptions, function (error, info) {
 //       if (error) {
 //         console.log(error);

@@ -58,7 +58,7 @@ const typeDefs = gql`
   input PostInput {
     title: String!
     content: String!
-    imgUrl: Upload
+    imgUrl: String
   }
 
   # //! UPDATE A POST INPUT
