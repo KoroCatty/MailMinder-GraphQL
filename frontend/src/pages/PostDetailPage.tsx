@@ -69,8 +69,6 @@ const PostsDetailPage = () => {
   // useNavigate
   const navigate = useNavigate();
 
-
-
   // DELETE POST MUTATION
   const [deletePostById, { error: deleteErr, loading: deleteLoading }] = useMutation(DELETE_POST_BY_ID, {
     variables: {

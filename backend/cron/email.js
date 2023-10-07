@@ -7,6 +7,12 @@
 // そのユーザーのメールアドレスにメールを送る
 
 
+import express from 'express';
+import path from 'path';
+const __dirname = path.resolve(); 
+
+
+
 // プリズマのクライアントをインポート
 import PC from '@prisma/client';
 
@@ -37,7 +43,7 @@ const sendEmail = cron.schedule('*/10 * * * * *', async () => {
     const allUsers = await prisma.user.findMany();
 
     // ユーザーの数だけループ
-    for (const user of allUsers) { 
+    for (const user of allUsers) {
 
       // 2. そのユーザーが持っている投稿の数を取得
       const userPostCount = await prisma.post.count({ // count は、投稿の数を数える
@@ -45,7 +51,7 @@ const sendEmail = cron.schedule('*/10 * * * * *', async () => {
           userId: user.id // ループされた仮定しているユーザーIDのフィールド名
         }
       });
-      console.log( "📋 ユーザーの投稿数" + userPostCount )
+      console.log("📋 ユーザーの投稿数" + userPostCount)
 
       // スキップする投稿の数を計算
       // 5件以上の投稿がある場合、ランダムに5件を取得するために、スキップする投稿の数を計算
@@ -68,37 +74,62 @@ const sendEmail = cron.schedule('*/10 * * * * *', async () => {
         continue;  // このユーザーの投稿がない場合、次のユーザーに移動
       }
 
-      // 4. そのデータを mailOptions オブジェクトで E メールの本文に組み込む
-      const htmlContent = userPosts.map(post => `
-        <h2>Title: ${post.title}</h2>
-        <p>Hello ${user.firstName} !</p>
-        <p>Text: ${post.content}</p>
+      const attachments = []; // push のための空配列を用意
+      const htmlContent = userPosts.map((post, index) => {
+        let imgTag;
 
-        <img src="${post.imgUrl}" alt="No Post Image" onerror="this.onerror=null; this.src='./noImg.jpeg';" style="width: 300px; height: 200px" >
+        // Local files
+        // ローカルのパスが'/'または'.'で始まる場合、画像はローカルにある
+        // Eメール内に画像を埋め込む方法として、CIDを利用して画像を直接メール本文に埋め込む
+        if (post.imgUrl.startsWith('/') || post.imgUrl.startsWith('.')) {
+          const cidValue = `postimage${index}`;
+          attachments.push({
+            // filename: `post_${index}.jpeg`,
+            filename: post.imgUrl,
 
-        <img src="/imgs/hero3.gif">
+            // path: post.imgUrl,
+            //! frontの場合はfrontのフォルダ、backの場合はbackの uploads フォルダ
+            path:  post.imgUrl ? '' : `${__dirname}/uploads/${post.imgUrl}`,
+            cid: cidValue
+          });
+          // console.log(cidValue) // postimage1
 
-        <br>
-        <a href="http://localhost:3000/postdetails/${post.id}">Click here to view the post</a>
-        <br>
-        <hr>
-      `).join('');
+          imgTag = `<img src="cid:${cidValue}" alt="No Post Image" style="width: 300px; height: 200px" >`;
+
+          // Remote files
+        } else {
+          imgTag = `<img src="${post.imgUrl}" alt="No Post Image" onerror="this.onerror=null; this.src='./noImg.jpeg';" style="width: 300px; height: 200px" >`;
+        }
+
+        return `
+          <h2>Title: ${post.title}</h2>
+          <p>Hello ${user.firstName} !</p>
+          <p>Text: ${post.content}</p>
+          ${imgTag}
+          <br>
+          <a href="http://localhost:3000/postdetails/${post.id}">Click here to view the post</a>
+          <br>
+          <hr>
+          `;
+      }).join('');
 
       // E メールの内容を定義
       const mailContent = {
         from: process.env.EMAIL_FROM,
         to: user.email,
         subject: `Your 5 posts!`,
-        html: htmlContent
+        html: htmlContent,
+
+        attachments: attachments // 添付ファイルの配列
       };
 
       // 5. nodemailer を使用して E メールを送信
       const info = await transporter.sendMail(mailContent);
-      console.log(`Email sent to ${user.email}: ${info.response}`);
+      console.log(`Email sent to ${user.email}: ${info.response}`.cyan.bold.underline);
     }
 
   } catch (error) {
-    console.error("Error sending email with post content:", error);
+    console.error("エラー Error sending email with post content:", error);
   }
 });
 

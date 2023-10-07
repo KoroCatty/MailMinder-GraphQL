@@ -6,8 +6,9 @@ export default defineConfig({
   plugins: [react()],
   server: {
     port: 3000,
-    // proxy: {
-    //   "/": "http://localhost:5001", // プロキシの設定(バックエンドのポート番号)
-    // },
+    proxy: {
+      // フロントエンドのサーバーで/uploadsにアクセスされたとき、それをhttp://localhost:5001（バックエンドのアドレス）に転送する
+      // "/uploads": "http://localhost:5001/uploads", 
+    },
   },
 });
