@@ -24,10 +24,10 @@ import nodemailer from 'nodemailer';
 import cron from 'node-cron';
 
 // Send Email 8:00 AM every day
-// cron.schedule('0 8 * * *', () => { 
+  const sendEmail = cron.schedule('0 8 * * *', async () => {
 
-// send email every 20 seconds
-const sendEmail = cron.schedule('*/10 * * * * *', async () => {
+// send email every 10 seconds
+// const sendEmail = cron.schedule('*/10 * * * * *', async () => {
   try {
     // email transport configuration
     const transporter = nodemailer.createTransport({

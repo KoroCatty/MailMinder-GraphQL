@@ -16,7 +16,7 @@ import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 
 // Sending Email Function
-// import sendEmail  from './cron/email.js';
+import sendEmail  from './cron/email.js';
 
 // Initialize express
 const app = express();
