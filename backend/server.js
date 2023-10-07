@@ -100,6 +100,29 @@ const server = new ApolloServer({
   //! ver 4 からは context がここで定義できない 
 })
 
+//* ==============================================================
+//* Deploy Settings
+//* ==============================================================
+if (process.env.NODE_ENV === 'production') {
+  // Express will serve up production assets
+  // like our main.js file, or main.css file!
+  // Express が production 環境の assets を提供するようにする
+  app.use(express.static(path.join(__dirname, 'frontend/build')));
+
+  // Express will serve up the front-end index.html file
+  // if it doesn't recognize the route
+  // Express が route を認識できない場合は、front-end の index.html ファイルを提供する
+  const path = require('path');
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'));
+  });
+} else {
+  app.get('/', (req, res) => {
+    res.send('API is running...');
+  });
+}
+//* ==============================================================
+
 
 // Define the startServer function
 async function startServer() {
