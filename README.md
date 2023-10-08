@@ -6,6 +6,15 @@
    This application stores your Vocabulary you registered and reminds you to review them by sending Email to you. You can add, edit, delete and review your vocabulary. You can also search your vocabulary by word or meaning.
    Easy to stop sending email by clicking the button on the Home page.
 
+# Before Deployment in main.tsx (frontend)
+   * Change the uploadLink variable
+   
+      uri: 'http://localhost:5001'
+
+      to
+
+      uri: 'https://remindapp.onrender.com/' 
+      
 
 ## Installation
    To install necessary dependencies, run the following command:
@@ -104,6 +113,10 @@ we need to add "type": "module" in package.json
          ### This is for development only, therefore, good for production deployment.
 
          ###  proxy: {'/api': 'http://localhost:5001', // プロキシの設定(バックエンドのポート番号) }, in vite.config.ts
+         
+
+      ## npm install apollo-upload-client
+
 
 
    ### Back-end
@@ -150,6 +163,16 @@ we need to add "type": "module" in package.json
       npm install apollo-upload-client
 
       graphql-tools (deprecated)
+
+      ### node mailer
+        - npm install nodemailer
+
+      ### node-cron
+         - npm install node-cron
+      
+      ### swap to StandAlone to express server (for Deployment)
+      
+         npm install express cors body-parser
          
 
 # PRISMA SETUP

@@ -22,12 +22,13 @@ const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
 
   const navigate = useNavigate();
 
-  // Mutations
+  // Mutations (Sign Up)
   const [signupUser, { data: signupData, loading, error }] = useMutation(SIGNUP_USER);
 
+  // Mutations (Login)
   const [loginUser, { data: loginData, loading: loginLoading, error: loginError }] = useMutation(LOGIN_USER, {
     onCompleted(data) {
-      console.log(data)
+
       // mutaion.ts で定義したものを取得しローカルに保存
       localStorage.setItem("token_GraphQL", data.signinUser.token);
       navigate("/");
@@ -55,7 +56,6 @@ const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
   //! ======================================================
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(formData);
 
     if (showLogin) {
       // login 
@@ -77,9 +77,10 @@ const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
 
   return (
     <>
-      <div>
+      <div style={{textAlign: "center", marginTop: "100px"}}>
         {/* サインアップ時 */}
         {signupData && <h1>{signupData.signupUser.firstName}You Signed Up!</h1>}
+        
         {/* ログイン時 */}
         {loginData && <h1>{loginData.signinUser.firstName}You Logged In!</h1>}
 
@@ -87,9 +88,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
         {error && <div>{error.message}</div>}
         {loginError && <div>{loginError.message}</div>}
 
-
         <form onSubmit={handleSubmit} ref={authForm}>
-
           {!showLogin && (
             <>
               <input

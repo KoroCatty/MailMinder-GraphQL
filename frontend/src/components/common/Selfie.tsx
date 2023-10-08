@@ -1,13 +1,13 @@
 // Reactの関数や型をインポート
 import { useState, useRef } from "react";
 
-// handleImageChange3の型を定義するためのインターフェース
+// selfieImage の型を定義するためのインターフェース
 interface SelfieProps {
-  handleImageChange3: (image64: string | null) => void;
+  selfieImage: (image64: string | null) => void;
 }
 
 // SelfieというReactの関数コンポーネント
-const Selfie: React.FC<SelfieProps> = ({ handleImageChange3 }) => {
+const Selfie: React.FC<SelfieProps> = ({ selfieImage }) => {
   // 画像のBase64形式の文字列を保存するためのstate
   const [image64, setImage64] = useState<string | null>(null);
 
@@ -88,7 +88,7 @@ const Selfie: React.FC<SelfieProps> = ({ handleImageChange3 }) => {
       ></canvas>
       
       {/* キャプチャされた画像を送信するボタン */}
-      <div onClick={() => handleImageChange3(image64)} className="btn btn-success w-100 my-2">
+      <div onClick={() => selfieImage(image64)} className="btn btn-success w-100 my-2">
         Submit
       </div>
 

@@ -1,4 +1,5 @@
-import { useParams } from 'react-router-dom';
+import { useParams, Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 
 // bootstrap
 import { Container } from 'react-bootstrap';
@@ -6,9 +7,30 @@ import { Container } from 'react-bootstrap';
 // components
 import BackButton from '../components/common/BackButton';
 
+// Apollo Client
+import { useQuery } from '@apollo/client';
+import { useMutation } from '@apollo/client';
+
+// queries & mutations
+import { GET_POSTS_BY_ID } from '../graphql/queries';
+import { DELETE_POST_BY_ID } from '../graphql/mutations';
 
 
-// Emotion
+//* types 
+type postProp = {
+  id: string;
+  title: string;
+  content: string;
+  imgUrl: string;
+  createdAt: string;
+  updatedAt: string;
+};
+type PostsQueryCacheResult = {
+  PostsByUser: postProp[];
+};
+
+
+// Emotion CSS
 import { css } from '@emotion/react';
 const PostDetailPageStyle = css`
   max-width: 800px;
@@ -30,43 +52,57 @@ const PostDetailPageStyle = css`
   }
 `;
 
-// 画像のURLを配列に保存
-const images = [
-  {
-    id: 1,
-    src: '/imgs/Diamond.jpg',
-    title: "expensive computation",
-    content: "This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",
-    timeCreated: "2021-09-01T00:00:00.000Z",
-  },
-  {
-    id: 2,
-    src: '/imgs/smile_design.jpg',
-    title: "Card title",
-    content: "This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",
-    timeCreated: "2021-09-01T00:00:00.000Z",
-  },
-  {
-    id: 3,
-    src: '/imgs/universal.jpg',
-    title: "Card title",
-    content: "This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",
-    timeCreated: "2021-09-01T00:00:00.000Z",
-  },
-  {
-    id: 4,
-    src: '/imgs/noImg.jpeg',
-    title: "Card title",
-    content: "This is a longer card with supporting text below as a natural lead-in to additional content. This content is a little bit longer.",
-    timeCreated: "2021-09-01T00:00:00.000Z",
-  },
-];
-
+//! ============================================================
 const PostsDetailPage = () => {
+  // useParams
   // useParamsは文字列を返すので、Number()を使うことで数値に変換すること
   const { id } = useParams<{ id: string }>();
-  // console.log(typeof id)
+  // console.log(typeof id) // string
 
+  // GET All POSTS by User ID
+  const { data, loading, error } = useQuery(GET_POSTS_BY_ID, {
+    variables: {
+      uid: id
+    },
+  });
+
+  // useNavigate
+  const navigate = useNavigate();
+
+  // DELETE POST MUTATION
+  const [deletePostById, { error: deleteErr, loading: deleteLoading }] = useMutation(DELETE_POST_BY_ID, {
+    variables: {
+      id: id
+    },
+    // refetchQueries: ['GET_POSTS_BY_ID'],
+    // awaitRefetchQueries: true, // refetchQueriesを実行する前にmutationを完了させる
+
+    update(cache, { data: { deletePost } }) {
+      const data = cache.readQuery<PostsQueryCacheResult>({ query: GET_POSTS_BY_ID });
+      if (!data) return;
+
+      const { PostsByUser } = data;
+      cache.writeQuery({
+        query: GET_POSTS_BY_ID,
+        data: { PostsByUser: PostsByUser.filter(post => post.id !== deletePost.id) },
+      });
+    }
+
+  });
+
+  //* types 
+  type postProp = {
+    id: string;
+    title: string;
+    content: string;
+    imgUrl: string;
+    createdAt: string;
+    updatedAt: string;
+  };
+
+  //! ============================================================
+  //! JSX
+  //! ============================================================
   return (
     <main css={PostDetailPageStyle}>
       <Container>
@@ -74,25 +110,49 @@ const PostsDetailPage = () => {
 
         {/* component */}
         <BackButton />
-        
 
-        {/* MAPPING */}
-        {images.map((item) => {
-          if (item.id === Number(id)) {// Number()を使うことで文字列を数値に変換
-            return (
-              <div key={item.id} className='detailItem'>
-                <p>{item.timeCreated.substring(0, 10)}</p>
-                <h2>{item.title}</h2>
-                <img
-                  src={item.src}
-                  alt={`post image ${id}`}
-                  className='mx-auto d-block'
-                />
-                <p>{item.content}</p>
-              </div>
-            )
-          }
-        })}
+        {/* URL の id と DB の id を比較し一致するものを取得 */}
+        {data ? (data?.PostsByUser.filter((item: postProp) => Number(item.id) === Number(id)).map((filteredItem: postProp) => (
+          <div key={filteredItem.id} className='detailItem'>
+            {/* <p>{cat.createdAt.substring(0, 10)}</p> */}
+
+            <p>{new Date(filteredItem.createdAt).toLocaleString()}</p>
+            <h2>{filteredItem.title}</h2>
+            <img
+              src={filteredItem.imgUrl}
+              alt={`post image ${id}`}
+              className='mx-auto d-block'
+            />
+            <p>{filteredItem.content}</p>
+          </div>
+        )))
+          : (loading
+            ? (<p>Loading...</p>)
+            : (error)
+              ? (<p>Error: {error.message}</p>)
+              : (<p>No posts found.</p>))
+        }
+
+        {/* EDIT BUTTON */}
+        <Link to={`/editpost/${id}`}>
+          <button className="btn btn-primary mb-4" style={{ width: "100%" }} >Edit</button>
+        </Link>
+
+
+
+        {/* DELETE BUTTON */}
+        <button
+          className="btn btn-danger btn-sm"
+          onClick={(e) => {
+            e.preventDefault();
+            window.confirm('Are you sure you want to delete this post?') &&
+              deletePostById();
+            navigate("/postlist")
+          }}
+        >
+          {deleteErr ? 'Deleting...' : 'Delete'}
+          {deleteLoading ? 'Deleting...' : 'Delete'} 
+        </button>
 
       </Container>
     </main>

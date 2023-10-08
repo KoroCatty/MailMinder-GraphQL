@@ -4,10 +4,18 @@ import { gql } from 'graphql-tag';
 //! Schema
 //! ==========================================================
 const typeDefs = gql`
+  scalar Date # 
+  scalar Upload # Uploadはスカラー型
+
+  type Token {
+    token: String!
+  }
+
 # QUERY
   type Query {
     users: [User!]! # return an array
     PostsByUser(id: ID!): [Post!]! # resolverで定義した名前を使う
+    PostsByUserLimit(id: ID!, limit: Int!): [Post!]! # limit を使ったresolver関数
   }
 
 #//!  実際にクライエントに返すデータの型(これを使い回す)
@@ -39,10 +47,6 @@ const typeDefs = gql`
     password: String!
   }
 
-  type Token {
-    token: String!
-  }
-
   #//! SIGNIN A USER INPUT
   #//* My own input type 2 (mutationで使える)
   input UserSigninInput {
@@ -50,16 +54,22 @@ const typeDefs = gql`
     password: String!
   }
 
-  scalar Date # 
-
   # //! CREATE A POST INPUT
   input PostInput {
     title: String!
     content: String!
-    imgUrl: String!
+    imgUrl: String
   }
 
-  scalar Upload # Uploadはスカラー型
+  # //! UPDATE A POST INPUT
+  input PostUpdateInput {
+    title: String!
+    content: String!
+    # expecting a file upload. If you're sending a URL or base64 string instead of a file, this could be causing the issue.
+    imgUrl: Upload
+    # imgUrl: String
+    updatedAt: Date
+  }
 
 # //! IMAGE FILE TYPE
   type File {
@@ -80,8 +90,12 @@ const typeDefs = gql`
     # CREATE A POST
     createPost(postNew: PostInput!): Post! # これが playground で出現
 
-    # UPLOAD IMAGE
-    uploadFile(file: Upload!): File! # Uploadはスカラー型 
+    # DELETE A POST
+    deletePost(id: ID!): Post!
+
+    # UPDATE A POST
+    # The mutation expects an id and a postUpdate object of type PostUpdateInput. This PostUpdateInput has fields title, content, imgUrl, and updatedAt.
+    updatePost(id: ID!, postUpdate: PostUpdateInput!): Post!
   }
 `;
 

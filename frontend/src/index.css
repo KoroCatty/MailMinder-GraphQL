@@ -22,6 +22,7 @@ time, mark, audio, video {
 	font-size: 100%;
 	font: inherit;
 	vertical-align: baseline;
+	/* font-family: 'Roboto', sans-serif; */
 }
 /* HTML5 display-role reset for older browsers */
 article, aside, details, figcaption, figure, 
@@ -49,7 +50,10 @@ table {
 /* rest of app styles */
 
 body {
-  color: white ;
-  background-color: #242424 ;
+  /* color: white ; */
+  /* background-color: #242424 ; */
+  background-color: #ffffff;
+
+
 }
 

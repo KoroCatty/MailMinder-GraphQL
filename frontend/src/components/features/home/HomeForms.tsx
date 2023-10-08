@@ -4,9 +4,6 @@ import { useState } from "react";
 import { useMutation } from '@apollo/client';
 import { CREATE_POST } from '../../../graphql/mutations';
 
-// Image file mutation
-import { UPLOAD_FILE } from '../../../graphql/mutations';
-
 // components
 import GoogleSearch from "./GoogleSearch";
 import Selfie from "../../common/Selfie";
@@ -14,10 +11,28 @@ import Selfie from "../../common/Selfie";
 // bootstrap
 import { Form } from "react-bootstrap";
 
-// Emotion
+// Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
+import { min, max } from '../../../utils/mediaQueries'
 
 const homeFormsStyles = css`
+
+    // 1px〜479px
+    ${min[0] + max[0]}{
+      background-color: #c32626;
+    }
+    // 480px〜767px
+    ${min[1] + max[1]}{
+      background-color: blue;
+    }
+    // 768px〜989px
+    ${min[2] + max[2]}{
+      background-color: green;
+    }
+    // 990px〜
+    ${min[3] + max[3]}{
+      background-color: yellow;
+    }
 
   textarea {
     display: block;
@@ -54,6 +69,7 @@ const homeFormsStyles = css`
     background-color: #c84d4d;
     box-shadow: 0 0 5px #ccc;
     color: white;
+    font-size: 1.8rem;
     cursor: pointer;
     margin-top: 8px;
     display: block;
@@ -71,17 +87,11 @@ const HomeForms = () => {
   const [formData, setFormData] = useState({});
 
   // Mutations (CreatePost は mutation.ts で定義)
-  const [CreatePost, { data, loading, error }] = useMutation(CREATE_POST);
-  console.log(data)
+  const [CreatePost, { loading, error }] = useMutation(CREATE_POST);
+
 
   if (loading) { <h1>Loading...</h1> }
   if (error) { <h1>Error...</h1> }
-
-
-  // Image file mutation
-  const [UploadFile, { data2, loading2, error2 }] = useMutation(UPLOAD_FILE);
-  console.log(data2)
-
 
   //! ======================================================
   //! When forms typed
@@ -101,46 +111,37 @@ const HomeForms = () => {
     console.log(formData);
 
     // DBに保存
-    CreatePost({
-      variables: {
-        postNew: formData // postNew は mutation.ts で定義したもの
-      }
-    });
-
-    // 画像ファイルを保存
-    UploadFile({
-      variables: {
-        file: selectedImage
-        // file: formData.imgUrl
-      }
-    });
+    try {
+      CreatePost({
+        variables: {
+          postNew: formData // postNew は mutation.ts で定義したもの
+        }
+      });
+    } catch (error) {
+      console.log(error)
+    }
   }
 
-  //* ========================================
-  //* (when the Img is chosen)  画像を選択した時に発火する関数 
-  //* ========================================
-  // chose image from local file
-  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // <input type="file">から選択されたファイルのリストを提供するFileListオブジェクトを返し、[0]は選択されたファイルのリストの最初のファイルを指し、あれば返す
+  //* ===================================================
+  //* Choose image from local file 画像を選択した時に発火する関数 
+  //* ===================================================
+  const chooseImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0];
     if (file) {
-      // URL.createObjectURL(file)は、選択されたファイルのURLを生成。このURLは、<img>タグなどのsrc属性でファイルを直接参照するために使用できます。
-      // setSelectedImage(URL.createObjectURL(file));
+      setSelectedImage(URL.createObjectURL(file));
 
-      const imageUrl = URL.createObjectURL(file);
-      setSelectedImage(imageUrl);
-      // setSelectedImage(file); 
-
-      // update formData with the image URL
+      // FormDataを更新
       setFormData({
         ...formData,
-        imgUrl: imageUrl
+        imgFile: file, // これが重要です！
       });
     }
   };
 
-// Paste Image URL
-  const handleImageChange2 = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //* ===================================================
+  //* Paste Image URL 
+  //* ===================================================
+  const pasteImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const imageUrl = e.target.value;
     setSelectedImage(imageUrl);
     setFormData({
@@ -149,9 +150,11 @@ const HomeForms = () => {
     });
   }
 
-  // Selfie Image
-  const handleImageChange3 = (image64: string | null) => {
-    
+  //* ===================================================
+  //*  Selfie Image
+  //* ===================================================
+  const selfieImage = (image64: string | null) => {
+
     // Check if image64 (or selectedImage if you prefer) is not null before reading its length
     if (image64 && image64.length > 10000) {
       setSelectedImage(image64);
@@ -161,18 +164,14 @@ const HomeForms = () => {
         imgUrl: image64
       });
     } else {
-     console.log("Too Big")
-     window.alert("Too Big")
+      console.log("Too Big")
+      window.alert("Too Big")
       // Proceed with saving to the database
       // ...your code to save the image to the database
     }
   };
-  
-  
 
 
-  // console.log(selectedImage)
-  // blob:http://localhost:3000/1d5663c7-b254-4d62-abb6-48150c91a4f8
   return (
     <section css={homeFormsStyles}>
       <h2 className="text-center m-4">Register Your reminder</h2>
@@ -207,7 +206,8 @@ const HomeForms = () => {
               type="file"
               size="lg"
               accept="image/*" // 画像ファイルのみを選択できるようにする
-              onChange={handleImageChange}
+              // onChange={handleImageChange}
+              onChange={chooseImage}
               name="image"
             />
           </Form.Group>
@@ -223,7 +223,8 @@ const HomeForms = () => {
             type="text"
             placeholder="Paste the image URL here"
             style={{ width: "100%", height: "40px", marginBottom: "40px" }}
-            onChange={handleImageChange2 }
+            // onChange={handleImageChange2 }
+            onChange={pasteImage}
           />
 
           {/* DISPLAY IMG  画像があれば表示 */}
@@ -232,7 +233,8 @@ const HomeForms = () => {
             {selectedImage && <img src={selectedImage} alt="chosen Image" />}
 
             {/* SELFIE COMPONENT (Pass the function )*/}
-            <Selfie handleImageChange3={handleImageChange3 }  />
+            {/* <Selfie handleImageChange3={handleImageChange3 }  /> */}
+            <Selfie selfieImage={selfieImage} />
           </div>
         </div>
 

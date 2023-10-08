@@ -12,6 +12,9 @@ import PostsPage from './pages/PostsPage';
 import PostsDays from "./pages/PostsDays";
 import SettingsPage from "./pages/SettingsPage";
 import PostsDetailPage from "./pages/PostDetailPage";
+import EditPostPage from "./pages/EditPostPage";
+import PrivacyPolicy from "./pages/PrivacyPolicy";
+import Contact from "./pages/Contact";
 
 
 // bootstrap
@@ -34,12 +37,14 @@ function App() {
             <Routes>
               <Route path="/" element={<Layout />}>
                 <Route path="/" index element={<HomePage />} />
-                <Route path="*" element={<NotFound />} />
-
-                <Route path="/posts" element={<PostsPage />} />
+                <Route path="/postlist" element={<PostsPage />} />
                 <Route path="/postsDays" element={<PostsDays />} />
                 <Route path="/postdetails/:id" element={<PostsDetailPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
+                <Route path="/editpost/:id" element={<EditPostPage />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/contact" element={<Contact />} />
+                <Route path="*" element={<NotFound />} />
               </Route>
             </Routes>
           </>
@@ -50,7 +55,8 @@ function App() {
               <Route path="/" element={<Layout />}>
                 <Route path="/" index element={<HomePage />} />
                 <Route path="/login" element={<AuthPage setLoggedIn={setLoggedIn} />} />
-                <Route path="*" element={<NotFound />} />
+                <Route path="/privacy" element={<PrivacyPolicy />} />
+                <Route path="/contact" element={<Contact />} />
                 <Route path="*" element={<NotFound />} />
               </Route>
             </Routes>
