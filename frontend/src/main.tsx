@@ -11,9 +11,10 @@ import { setContext } from "@apollo/client/link/context";
 import { createUploadLink } from 'apollo-upload-client'; // <-- 新しく追加されたライン
 
 // 新しくUploadLinkを作成
+// これが front から バックエンドの指定している uri にアクセスする
 const uploadLink = createUploadLink({
   // uri: 'http://localhost:5001'
-  uri: 'http://localhost:10000' // production
+  uri: 'https://remindapp.onrender.com/' // production
   // uri: '/graphql'
 });
 
