@@ -91,7 +91,6 @@ app.use('/uploads', express.static(uploadsDirectory));
 //* ==============================================================
 
 
-const HOST = process.env.HOST || '0.0.0.0';
 const PORT = process.env.PORT || 5001;
 
 const server = new ApolloServer({
@@ -146,7 +145,7 @@ async function startServer() {
         }
       }
     },
-    listen: { port: PORT, host: HOST },
+    listen: { port: PORT },
   });
   console.log(`🚀 Server ready at ${url}`);
 
