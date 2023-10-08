@@ -178,7 +178,7 @@ app.use(
 
 // Modified server startup
 await new Promise((resolve) => httpServer.listen({ port: PORT }, resolve));
-console.log(`🚀 Server ready at http://localhost:${PORT}`);
+console.log(`🚀 Server ready at http://localhost:${PORT}`.cyan.underline);
 //! ==============================================================
 
 

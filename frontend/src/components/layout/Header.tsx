@@ -8,13 +8,14 @@ import { Navbar, Nav, Container } from "react-bootstrap";
 import { css } from "@emotion/react";
 import { min, max } from "../../utils/mediaQueries"
 const headerStyles = css`
-  background-color: #d6d6d6;
-  height: 80vh;
+  background-color: #fdfdfd;
+  height: 100vh;
   width: 16%;
-  position: absolute;
+  position: fixed;
   left: 0;
   top: 0;
   z-index: 1;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 
       // 1px〜479px
     ${min[0] + max[0]}{

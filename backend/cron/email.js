@@ -24,7 +24,10 @@ import nodemailer from 'nodemailer';
 import cron from 'node-cron';
 
 // Send Email 8:00 AM every day
-  const sendEmail = cron.schedule('0 8 * * *', async () => {
+  // const sendEmail = cron.schedule('0 8 * * *', async () => {
+
+// Send Email 11:30 PM every day
+  const sendEmail = cron.schedule('30 23 * * *', async () => {
 
 // send email every 10 seconds
 // const sendEmail = cron.schedule('*/10 * * * * *', async () => {
@@ -139,7 +142,7 @@ import cron from 'node-cron';
 },
 {
   scheduled: true, // 予定されたタスクを実行するかどうか
-  timezone: "Asia/Tokyo" // タイムゾーン
+  timezone: "UTC" // タイムゾーン
 }
 );
 
