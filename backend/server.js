@@ -91,7 +91,7 @@ app.use('/uploads', express.static(uploadsDirectory));
 //* ==============================================================
 
 
-const PORT = process.env.PORT || 5001;
+const PORT = process.env.PORT || '0.0.0.0';
 
 const server = new ApolloServer({
   typeDefs: typeDefs,
