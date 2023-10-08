@@ -24,13 +24,13 @@ import nodemailer from 'nodemailer';
 import cron from 'node-cron';
 
 // Send Email 8:00 AM every day
-  // const sendEmail = cron.schedule('0 8 * * *', async () => {
+// const sendEmail = cron.schedule('0 8 * * *', async () => {
 
-// Send Email 11:30 PM every day
-  const sendEmail = cron.schedule('30 23 * * *', async () => {
+// Send Email 12: 00 AM every day
+const sendEmail = cron.schedule('0 0 * * *', async () => {
 
-// send email every 10 seconds
-// const sendEmail = cron.schedule('*/10 * * * * *', async () => {
+  // send email every 10 seconds
+  // const sendEmail = cron.schedule('*/10 * * * * *', async () => {
   try {
     // email transport configuration
     const transporter = nodemailer.createTransport({
@@ -136,14 +136,18 @@ import cron from 'node-cron';
       console.log(`Email sent to ${user.email}: ${info.response}`.cyan.bold.underline);
     }
 
+    // プロセス終了
+    console.log('All emails sent successfully!');
+    process.exit(0);
+
   } catch (error) {
     console.error("エラー Error sending email with post content:", error);
   }
 },
-{
-  scheduled: true, // 予定されたタスクを実行するかどうか
-  timezone: "UTC" // タイムゾーン
-}
+  {
+    scheduled: true, // 予定されたタスクを実行するかどうか
+    timezone: "UTC" // タイムゾーン
+  }
 );
 
 export default sendEmail;
