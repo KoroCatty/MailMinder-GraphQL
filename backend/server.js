@@ -130,7 +130,6 @@ if (process.env.NODE_ENV === 'production') {
 // enabling our servers to shut down gracefully.
 const httpServer = http.createServer(app);
 
-
 const PORT = process.env.PORT || 5001;
 
 const server = new ApolloServer({
@@ -141,16 +140,14 @@ const server = new ApolloServer({
   //! ver 4 からは context がここで定義できない 
 })
 
-
 // Ensure we wait for our server to start
 await server.start();
-
 
 // Set up our Express middleware to handle CORS, body parsing,
 // and our expressMiddleware function.
 app.use(
   '/',
-  cors(),
+  cors('*'),
   // 50mb is the limit that `startStandaloneServer` uses, but you may configure this to suit your needs
   bodyParser.json({ limit: '50mb' }),
   // expressMiddleware accepts the same arguments:
@@ -177,14 +174,15 @@ app.use(
 
 // Modified server startup
 await new Promise((resolve) => httpServer.listen({ port: PORT }, resolve));
-console.log(`🚀 Server ready at http://localhost:5001/`);
+console.log(`🚀 Server ready at http://localhost:${PORT}`);
 
 //! ==============================================================
 
 
 
-
-//! This is for Development
+//* ==============================================================
+//* This is for Development
+//* ==============================================================
 // Define the startServer function
 // async function startServer() {
 
