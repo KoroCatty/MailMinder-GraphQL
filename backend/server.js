@@ -91,7 +91,8 @@ app.use('/uploads', express.static(uploadsDirectory));
 //* ==============================================================
 
 
-const PORT = process.env.PORT || '0.0.0.0';
+const HOST = process.env.HOST || '0.0.0.0';
+const PORT = process.env.PORT || 5001;
 
 const server = new ApolloServer({
   typeDefs: typeDefs,
@@ -107,6 +108,7 @@ if (process.env.NODE_ENV === 'production') {
   // Express will serve up production assets
   // like our main.js file, or main.css file!
   // Express が production 環境の assets を提供するようにする
+  // ルートの / にアクセスがあった場合、Express は frontend/build/index.html を返す
   app.use(express.static(path.join(__dirname, 'frontend/build')));
 
   // Express will serve up the front-end index.html file
@@ -144,7 +146,7 @@ async function startServer() {
         }
       }
     },
-    listen: { port: PORT },
+    listen: { port: PORT, host: HOST },
   });
   console.log(`🚀 Server ready at ${url}`);
 
