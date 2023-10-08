@@ -5,6 +5,13 @@ import { startStandaloneServer } from '@apollo/server/standalone';
 import express from 'express';
 import path from 'path';
 
+// From Docs 
+import { expressMiddleware } from '@apollo/server/express4';
+import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import http from 'http';
+import cors from 'cors';
+import bodyParser from 'body-parser';
+
 
 // Schema and Resolvers
 import typeDefs from './typeDefs.js';
@@ -91,14 +98,7 @@ app.use('/uploads', express.static(uploadsDirectory));
 //* ==============================================================
 
 
-const PORT = process.env.PORT || 5001;
 
-const server = new ApolloServer({
-  typeDefs: typeDefs,
-  resolvers: resolvers,
-  // introspection: true,
-  //! ver 4 からは context がここで定義できない 
-})
 
 //* ==============================================================
 //* Deploy Settings
@@ -123,12 +123,39 @@ if (process.env.NODE_ENV === 'production') {
 }
 //* ==============================================================
 
+//! ==============================================================
+//! Middleware (swap StandAloneServer for Express deployment)
+// Our httpServer handles incoming requests to our Express app.
+// Below, we tell Apollo Server to "drain" this httpServer,
+// enabling our servers to shut down gracefully.
+const httpServer = http.createServer(app);
 
-// Define the startServer function
-async function startServer() {
 
-  const { url } = await startStandaloneServer(server, {
-    // req は この standaloneServer からのもの
+const PORT = process.env.PORT || 5001;
+
+const server = new ApolloServer({
+  typeDefs: typeDefs,
+  resolvers: resolvers,
+  plugins: [ApolloServerPluginDrainHttpServer({ httpServer })], // Added
+  // introspection: true,
+  //! ver 4 からは context がここで定義できない 
+})
+
+
+// Ensure we wait for our server to start
+await server.start();
+
+
+// Set up our Express middleware to handle CORS, body parsing,
+// and our expressMiddleware function.
+app.use(
+  '/',
+  cors(),
+  // 50mb is the limit that `startStandaloneServer` uses, but you may configure this to suit your needs
+  bodyParser.json({ limit: '50mb' }),
+  // expressMiddleware accepts the same arguments:
+  // an Apollo Server instance and optional configuration options
+  expressMiddleware(server, {
     context: async ({ req }) => {
 
       // destructure from req
@@ -145,11 +172,46 @@ async function startServer() {
         }
       }
     },
-    listen: { port: PORT },
-  });
-  console.log(`🚀 Server ready at ${url}`);
+  }),
+);
 
-}
-startServer();
+// Modified server startup
+await new Promise((resolve) => httpServer.listen({ port: 5001 }, resolve));
+console.log(`🚀 Server ready at http://localhost:5001/`);
+
+//! ==============================================================
+
+
+
+
+
+// Define the startServer function
+// async function startServer() {
+
+//   // second optional argument is an object for configuring your server's options
+//   const { url } = await startStandaloneServer(server, {
+//     // req は この standaloneServer からのもの
+//     context: async ({ req }) => {
+
+//       // destructure from req
+//       const { authorization } = req.headers;
+
+//       // トークンがあれば、トークンを検証し、userId を返す
+//       if (authorization) {
+//         try {
+//           const { userId } = await jwt.verify(authorization, process.env.JWT_SECRET);
+//           return { userId };
+//         } catch (error) {
+//           console.error("トークン Verification Error", error); // JWTの検証中のエラーをログに出力
+//           return {}; 
+//         }
+//       }
+//     },
+//     listen: { port: PORT },
+//   });
+//   console.log(`🚀 Server ready at ${url}`);
+
+// }
+// startServer();
 
 

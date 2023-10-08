@@ -160,6 +160,10 @@ we need to add "type": "module" in package.json
 
       ### node-cron
          - npm install node-cron
+      
+      ### swap to StandAlone to express server (for Deployment)
+      
+         npm install express cors body-parser
          
 
 # PRISMA SETUP
