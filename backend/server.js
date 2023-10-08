@@ -1,11 +1,13 @@
 import colors from 'colors';
 import { ApolloServer } from '@apollo/server';
+
+// For Development
 import { startStandaloneServer } from '@apollo/server/standalone';
 
 import express from 'express';
 import path from 'path';
 
-// From Docs 
+// StandAloneServer -> Express server に変更するために必要なモジュール
 import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
 import http from 'http';
@@ -20,6 +22,7 @@ import resolvers from './resolvers.js';
 import crypto from 'crypto';
 // console.log(crypto.randomUUID());// 30eee7b2-7d88-4388-9424-28257803b92d
 
+// Token
 import jwt from 'jsonwebtoken';
 
 // Sending Email Function
@@ -84,33 +87,32 @@ const app = express();
 
 //* ==============================================================
 //* uploads Folder 公開ディレクトリを指定
+//* Create a uploads folder in the root directory
 //* ==============================================================
 const __dirname = path.resolve(); 
 //  console.log(__dirname); // /Users/Full-Stack/RemindApp (全てのパスを取得)
 
 // 現在のディレクトリからの相対パス./uploadsを絶対パスに変換して格納
 const uploadsDirectory = path.join(__dirname, '/uploads');
-// console.log(uploadsDirectory); // /Users/Full-Stack/RemindApp/uploads
+// console.log(uploadsDirectory); // /Users/.../RemindApp/uploads
 
-// '/' エンドポイントを使用して、そのディレクトリ内の静的ファイルを提供
-// '/uploads'というパスのリクエストがあったときに、次のexpress.static()ミドルウェアが動作
+// '/uploads' エンドポイントを使用して、そのディレクトリ内の静的ファイルを提供
+// '/uploads'というパスのリクエストがあったときに、次の express.static()ミドルウェアが動作
 app.use('/uploads', express.static(uploadsDirectory));
 //* ==============================================================
 
 
 
 
-//* ==============================================================
-//* Deploy Settings
-//* ==============================================================
+//? ==============================================================
+//? Deploy Settings
+//? ==============================================================
 if (process.env.NODE_ENV === 'production') {
   // Express will serve up production assets
-  // like our main.js file, or main.css file!
   // Express が production 環境の assets を提供するようにする
   // ルートの / にアクセスがあった場合、Express は frontend/build/index.html を返す
   app.use(express.static(path.join(__dirname, 'frontend/dist')));
 
-  // Express will serve up the front-end index.html file
   // if it doesn't recognize the route
   // Express が route を認識できない場合は、front-end の index.html ファイルを提供する
   app.get('*', (req, res) => {
@@ -121,7 +123,7 @@ if (process.env.NODE_ENV === 'production') {
     res.send('API is running...');
   });
 }
-//* ==============================================================
+//? ==============================================================
 
 //! ==============================================================
 //! Middleware (swap StandAloneServer for Express deployment)
@@ -153,6 +155,8 @@ app.use(
   // expressMiddleware accepts the same arguments:
   // an Apollo Server instance and optional configuration options
   expressMiddleware(server, {
+
+    // ログイン用 context を使い、resolver.js内の、各リクエストで使用できるようにする
     context: async ({ req }) => {
 
       // destructure from req
@@ -175,13 +179,12 @@ app.use(
 // Modified server startup
 await new Promise((resolve) => httpServer.listen({ port: PORT }, resolve));
 console.log(`🚀 Server ready at http://localhost:${PORT}`);
-
 //! ==============================================================
 
 
 
 //* ==============================================================
-//* This is for Development
+//* This is for Development (StandAloneServer)
 //* ==============================================================
 // Define the startServer function
 // async function startServer() {

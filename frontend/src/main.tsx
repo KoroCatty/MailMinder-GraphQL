@@ -1,5 +1,5 @@
 import React from 'react';
-import ReactDOM from 'react-dom/client';
+import ReactDOM from 'react-dom/client';//（ブラウザ向けのReactレンダラ）
 import App from './App.tsx';
 import './index.css';
 
@@ -8,34 +8,36 @@ import { ApolloClient, InMemoryCache, ApolloProvider } from '@apollo/client';
 
 // Apollo で header に tokenと Authorization を付与できるようにする setContext
 import { setContext } from "@apollo/client/link/context";
-import { createUploadLink } from 'apollo-upload-client'; // <-- 新しく追加されたライン
 
-// 新しくUploadLinkを作成
-// これが front から バックエンドの指定している uri にアクセスする
+// ファイルアップロードをサポートするApolloリンクを作成するための関数をインポート
+import { createUploadLink } from 'apollo-upload-client'; 
+
+// フロントエンドからバックエンドに接続するためのリンクを作成
+// これが front から uri で指定している backend の url にアクセスする
 const uploadLink = createUploadLink({
   // uri: 'http://localhost:5001'
   uri: 'https://remindapp.onrender.com/' // production
-  // uri: '/graphql'
 });
 
-// get the authentication token from local storage if it exists
+// Get the authentication token from local storage if it exists
 const authLink = setContext((_, { headers }) => {
   // return the headers to the context so httpLink can read them
   return {
     headers: {
       ...headers,
-      // token があれば header に追加
+      // token が存在すれば header に追加
       Authorization: localStorage.getItem("token_GraphQL") || ""
     }
   };
 });
 
+// Apollo Clientのインスタンスを作成
 const client = new ApolloClient({
-  // ここでuploadLinkを使用するように変更
-  link: authLink.concat(uploadLink),
-  cache: new InMemoryCache(),
+  link: authLink.concat(uploadLink), // authLinkとuploadLinkを結合
+  cache: new InMemoryCache(), // InMemoryCacheとは、メモリ上にデータをキャッシュする方法
 });
 
+// ReactアプリケーションをDOMにレンダリング
 ReactDOM.createRoot(document.getElementById('root')!).render(
   <React.StrictMode>
     <ApolloProvider client={client}>
