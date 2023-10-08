@@ -69,8 +69,8 @@ const HomeForms = () => {
   const [formData, setFormData] = useState({});
 
   // Mutations (CreatePost は mutation.ts で定義)
-  const [CreatePost, { data, loading, error }] = useMutation(CREATE_POST);
-  console.log(data)
+  const [CreatePost, {  loading, error }] = useMutation(CREATE_POST);
+
 
   if (loading) { <h1>Loading...</h1> }
   if (error) { <h1>Error...</h1> }

@@ -12,7 +12,8 @@ import { createUploadLink } from 'apollo-upload-client'; // <-- 新しく追加�
 
 // 新しくUploadLinkを作成
 const uploadLink = createUploadLink({
-  uri: 'http://localhost:5001'
+  // uri: 'http://localhost:5001'
+  uri: 'http://localhost:10000' // production
   // uri: '/graphql'
 });
 

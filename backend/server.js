@@ -125,6 +125,7 @@ if (process.env.NODE_ENV === 'production') {
 
 //! ==============================================================
 //! Middleware (swap StandAloneServer for Express deployment)
+//! ==============================================================
 // Our httpServer handles incoming requests to our Express app.
 // Below, we tell Apollo Server to "drain" this httpServer,
 // enabling our servers to shut down gracefully.
@@ -136,7 +137,6 @@ const server = new ApolloServer({
   typeDefs: typeDefs,
   resolvers: resolvers,
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })], // Added
-  // introspection: true,
   //! ver 4 からは context がここで定義できない 
 })
 
