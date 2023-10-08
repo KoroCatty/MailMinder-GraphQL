@@ -11,10 +11,28 @@ import Selfie from "../../common/Selfie";
 // bootstrap
 import { Form } from "react-bootstrap";
 
-// Emotion CSS
+// Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
+import { min, max } from '../../../utils/mediaQueries'
 
 const homeFormsStyles = css`
+
+    // 1px〜479px
+    ${min[0] + max[0]}{
+      background-color: #c32626;
+    }
+    // 480px〜767px
+    ${min[1] + max[1]}{
+      background-color: blue;
+    }
+    // 768px〜989px
+    ${min[2] + max[2]}{
+      background-color: green;
+    }
+    // 990px〜
+    ${min[3] + max[3]}{
+      background-color: yellow;
+    }
 
   textarea {
     display: block;
@@ -69,7 +87,7 @@ const HomeForms = () => {
   const [formData, setFormData] = useState({});
 
   // Mutations (CreatePost は mutation.ts で定義)
-  const [CreatePost, {  loading, error }] = useMutation(CREATE_POST);
+  const [CreatePost, { loading, error }] = useMutation(CREATE_POST);
 
 
   if (loading) { <h1>Loading...</h1> }

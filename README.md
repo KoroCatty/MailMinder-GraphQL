@@ -6,6 +6,15 @@
    This application stores your Vocabulary you registered and reminds you to review them by sending Email to you. You can add, edit, delete and review your vocabulary. You can also search your vocabulary by word or meaning.
    Easy to stop sending email by clicking the button on the Home page.
 
+# Before Deployment in main.tsx (frontend)
+   * Change the uploadLink variable
+   
+      uri: 'http://localhost:5001'
+
+      to
+
+      uri: 'https://remindapp.onrender.com/' 
+      
 
 ## Installation
    To install necessary dependencies, run the following command:
