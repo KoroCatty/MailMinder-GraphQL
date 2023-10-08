@@ -108,13 +108,13 @@ if (process.env.NODE_ENV === 'production') {
   // like our main.js file, or main.css file!
   // Express が production 環境の assets を提供するようにする
   // ルートの / にアクセスがあった場合、Express は frontend/build/index.html を返す
-  app.use(express.static(path.join(__dirname, 'frontend/build')));
+  app.use(express.static(path.join(__dirname, 'frontend/dist')));
 
   // Express will serve up the front-end index.html file
   // if it doesn't recognize the route
   // Express が route を認識できない場合は、front-end の index.html ファイルを提供する
   app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'frontend', 'build', 'index.html'));
+    res.sendFile(path.resolve(__dirname, 'frontend', 'dist', 'index.html'));
   });
 } else {
   app.get('/', (req, res) => {
