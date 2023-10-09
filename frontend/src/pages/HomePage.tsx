@@ -1,5 +1,5 @@
 // Home components
-// import HomeHero from "../components/features/home/HomeHero";
+// import Hero from "../components/features/home/Hero";
 import HomeForms from "../components/features/home/HomeForms";
 import RecentPosts from "../components/features/home/RecentPosts";
 // import MonthPosts from '../components/features/home/MonthPosts';
@@ -30,7 +30,7 @@ const HomePageCss = css`
 const HomePage = () => {
   return (
     <main css={HomePageCss}>
-      {/* <HomeHero /> */}
+      {/* <Hero /> */}
 
       <Container className="homeContainer">
         <RecentPosts />

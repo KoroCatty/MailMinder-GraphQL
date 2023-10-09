@@ -20,19 +20,26 @@ const headerCss = css`
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 
   .container {
+    margin-top: -200px;
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: space-between;
-    gap: 2rem;
+    row-gap: 2rem;
+    column-gap: 2rem;
+  }
+
+  .navbar-brand {
+    margin-right: 0;
   }
 
   .navbar-nav {
     display: flex;
     flex-direction: column;
     align-items: center;
-    justify-content: space-between;
+    /* justify-content: space-between; */
     gap: 2rem;
+    margin-right: 0;
   }
 
   .navbar-collapse {
@@ -89,7 +96,7 @@ function Header() {
           <Navbar.Toggle aria-controls="basic-navbar-nav" />
 
           <Navbar.Collapse id="basic-navbar-nav">
-            <Nav className="me-auto">
+            <Nav>
               {loggedIn ? (
                 <>
                   <Nav.Link as={Link} to="/">

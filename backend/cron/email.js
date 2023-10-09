@@ -26,8 +26,8 @@ import cron from 'node-cron';
 //! Send Email 8:00 AM every day
 // const sendEmail = cron.schedule('0 8 * * *', async () => {
 
-//! Send Email every 10 minutes
-const sendEmail = cron.schedule('*/10 * * * *', async () => {
+//! Send Email every 30 minutes
+const sendEmail = cron.schedule('*/30 * * * *', async () => {
 
   //! send email every 10 seconds
   // const sendEmail = cron.schedule('*/10 * * * * *', async () => {
@@ -136,9 +136,9 @@ const sendEmail = cron.schedule('*/10 * * * *', async () => {
       console.log(`Email sent to ${user.email}: ${info.response}`.cyan.bold.underline);
     }
 
-    // プロセス終了
+    // Success message
     console.log('All emails sent successfully!'.red.bold);
-    process.exit(0);
+    // process.exit(0);
 
   } catch (error) {
     console.error("エラー Error sending email with post content:", error);

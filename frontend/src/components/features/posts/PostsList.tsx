@@ -16,6 +16,26 @@ type PostPropType = {
   imgUrl: string;
 };
 
+// Emotion CSS (Responsive Design)
+import { css } from "@emotion/react";
+import { min, max } from "../../../utils/mediaQueries";
+const PostListCss = css`
+
+  // 1px〜479px
+  ${min[0] + max[0]} {
+  }
+  // 480px〜767px
+  ${min[1] + max[1]} {
+  }
+  // 768px〜989px
+  ${min[2] + max[2]} {
+  }
+  // 990px〜
+  ${min[3] + max[3]} {
+  }
+`;
+
+
 
 //! ============================================================
 function PostsList() {
@@ -31,9 +51,8 @@ function PostsList() {
   if (!data || !data.PostsByUser || data.PostsByUser.length === 0) return <p>No posts found.</p>;
 
   return (
-    <>
+    <div css={PostListCss}>
       <BackButton />
-      <h1 className="text-center m-5">All Posts List</h1>
 
       <Row xs={1} md={2} className="g-4">
         {data.PostsByUser.map((item: PostPropType) => (
@@ -53,7 +72,7 @@ function PostsList() {
 
 
 
-    </>
+    </div>
   );
 }
 
