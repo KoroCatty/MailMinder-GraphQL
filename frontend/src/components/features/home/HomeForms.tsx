@@ -19,19 +19,15 @@ const homeFormsStyles = css`
 
     // 1px〜479px
     ${min[0] + max[0]}{
-      background-color: #c32626;
     }
     // 480px〜767px
     ${min[1] + max[1]}{
-      background-color: blue;
     }
     // 768px〜989px
     ${min[2] + max[2]}{
-      background-color: green;
     }
     // 990px〜
     ${min[3] + max[3]}{
-      background-color: yellow;
     }
 
   textarea {

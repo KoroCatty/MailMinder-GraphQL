@@ -9,7 +9,7 @@ import { css } from "@emotion/react";
 import { min, max } from "../../utils/mediaQueries";
 const headerCss = css`
 
-@media screen and (min-width: 991px) {
+@media screen and (min-width: 1201px) {
   background-color: #fdfdfd;
   height: 100vh;
   width: 16%;

@@ -1,5 +1,5 @@
 // Home components
-import HomeHero from "../components/features/home/HomeHero";
+// import HomeHero from "../components/features/home/HomeHero";
 import HomeForms from "../components/features/home/HomeForms";
 import RecentPosts from "../components/features/home/RecentPosts";
 // import MonthPosts from '../components/features/home/MonthPosts';
@@ -11,15 +11,6 @@ import { Container } from "react-bootstrap";
 import { css } from "@emotion/react";
 import { min, max } from "../utils/mediaQueries";
 const HomePageCss = css`
-
-@media screen and (min-width: 991px) {
-  margin-left: 16%; // header の幅分だけ右にずらす
-
-  .homeContainer {
-    padding: 0 100px;
-  }
-
-}
 
   // 1px〜479px
   ${min[0] + max[0]} {
@@ -39,7 +30,7 @@ const HomePageCss = css`
 const HomePage = () => {
   return (
     <main css={HomePageCss}>
-      <HomeHero />
+      {/* <HomeHero /> */}
 
       <Container className="homeContainer">
         <RecentPosts />
