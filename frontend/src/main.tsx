@@ -12,6 +12,7 @@ import { setContext } from "@apollo/client/link/context";
 // ファイルアップロードをサポートするApolloリンクを作成するための関数をインポート
 import { createUploadLink } from 'apollo-upload-client'; 
 
+//! IMPORTANT
 // フロントエンドからバックエンドに接続するためのリンクを作成
 // これが front から uri で指定している backend の url にアクセスする
 const uploadLink = createUploadLink({
