@@ -14,7 +14,6 @@ jobs:
       EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
       EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
       EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
-      EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
       EMAIL_SERVICE: ${{ secrets.EMAIL_SERVICE }}
       EMAIL_TO: ${{ secrets.EMAIL_TO }}
     steps:
