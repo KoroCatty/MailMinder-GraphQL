@@ -17,6 +17,9 @@
       
       so that server can connect to render.com
 
+# start-server.yml 
+   This file wakes up the Render.com server since on free plan, it sleeps after 1 hour of inactivity. So we need to wake it up by sending a request to the server before Render.com send messages to registered users.
+
 ## Installation
    To install necessary dependencies, run the following command:
    ```
