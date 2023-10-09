@@ -26,8 +26,8 @@ import cron from 'node-cron';
 // Send Email 8:00 AM every day
 // const sendEmail = cron.schedule('0 8 * * *', async () => {
 
-// Send Email 12: 00 AM every day
-const sendEmail = cron.schedule('0 0 * * *', async () => {
+// Send Email every 10 minutes
+const sendEmail = cron.schedule('*/10 * * * *', async () => {
 
   // send email every 10 seconds
   // const sendEmail = cron.schedule('*/10 * * * * *', async () => {
