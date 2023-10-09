@@ -7,7 +7,9 @@ import { Navbar, Nav, Container } from "react-bootstrap";
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
 import { min, max } from "../../utils/mediaQueries";
-const headerStyles = css`
+const headerCss = css`
+
+@media screen and (min-width: 991px) {
   background-color: #fdfdfd;
   height: 100vh;
   width: 16%;
@@ -16,26 +18,6 @@ const headerStyles = css`
   top: 0;
   z-index: 1;
   box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
-
-  // 1px〜479px
-  ${min[0] + max[0]} {
-    background-color: #c32626;
-  }
-  // 480px〜767px
-  ${min[1] + max[1]} {
-    background-color: blue;
-  }
-  // 768px〜989px
-  ${min[2] + max[2]} {
-    background-color: green;
-  }
-  // 990px〜
-  ${min[3] + max[3]} {
-    background-color: yellow;
-  }
-  @media screen and (min-width: 1201px) {
-    /* height: 90px !important; */
-  }
 
   .container {
     display: flex;
@@ -60,6 +42,28 @@ const headerStyles = css`
     justify-content: space-between;
     gap: 2rem;
   }
+  }
+
+
+  // 1px〜479px
+  /* ${min[0] + max[0]} {
+    background-color: #c32626;
+  }
+  // 480px〜767px
+  ${min[1] + max[1]} {
+    background-color: blue;
+  }
+  // 768px〜989px
+  ${min[2] + max[2]} {
+    background-color: green;
+  }
+  // 990px〜
+  ${min[3] + max[3]} {
+    background-color: yellow;
+  } */
+
+
+
 `;
 
 import { Link } from "react-router-dom";
@@ -77,7 +81,7 @@ function Header() {
 
   return (
     <>
-      <Navbar css={headerStyles} expand="lg" className="">
+      <Navbar css={headerCss} expand="lg" className="">
         <Container>
           <Navbar.Brand as={Link} to="/">
             MailMinder

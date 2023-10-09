@@ -1,36 +1,53 @@
 // Home components
-import HomeHero from '../components/features/home/HomeHero';
-import HomeForms from '../components/features/home/HomeForms';
-import RecentPosts from '../components/features/home/RecentPosts';
+import HomeHero from "../components/features/home/HomeHero";
+import HomeForms from "../components/features/home/HomeForms";
+import RecentPosts from "../components/features/home/RecentPosts";
 // import MonthPosts from '../components/features/home/MonthPosts';
 
 // bootstrap
-import {Container} from 'react-bootstrap';
-
+import { Container } from "react-bootstrap";
 
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
-// import { min, max } from "../../utils/mediaQueries";
-const aaa = css`
-  margin-left: 16%;
-  /* margin-left: 300px !important; */
+import { min, max } from "../utils/mediaQueries";
+const HomePageCss = css`
 
+@media screen and (min-width: 991px) {
+  margin-left: 16%; // header の幅分だけ右にずらす
 
-  `;
+  .homeContainer {
+    padding: 0 100px;
+  }
 
+}
+
+  // 1px〜479px
+  ${min[0] + max[0]} {
+  }
+  // 480px〜767px
+  ${min[1] + max[1]} {
+  }
+  // 768px〜989px
+  ${min[2] + max[2]} {
+  }
+  // 990px〜
+  ${min[3] + max[3]} {
+  }
+`;
+
+//! ============================================
 const HomePage = () => {
-
   return (
-    <main css={aaa}>
+    <main css={HomePageCss}>
       <HomeHero />
 
-      <Container style={{padding: "0 100px"}}>
+      <Container className="homeContainer">
         <RecentPosts />
         <HomeForms />
         {/* <MonthPosts /> */}
       </Container>
     </main>
-  )
-}
+  );
+};
 
-export default HomePage
+export default HomePage;

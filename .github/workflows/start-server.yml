@@ -8,7 +8,7 @@ on:
 jobs:
   start-server:
     runs-on: ubuntu-latest
-    timeout-minutes: 8  # このジョブのタイムアウト時間
+    timeout-minutes: 10  # このジョブのタイムアウト時間
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
