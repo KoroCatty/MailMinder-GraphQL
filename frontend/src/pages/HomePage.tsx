@@ -8,13 +8,23 @@ import RecentPosts from '../components/features/home/RecentPosts';
 import {Container} from 'react-bootstrap';
 
 
+// Emotion CSS (Responsive Design)
+import { css } from "@emotion/react";
+// import { min, max } from "../../utils/mediaQueries";
+const aaa = css`
+  margin-left: 16%;
+  /* margin-left: 300px !important; */
+
+
+  `;
+
 const HomePage = () => {
 
   return (
-    <main>
+    <main css={aaa}>
       <HomeHero />
 
-      <Container>
+      <Container style={{padding: "0 100px"}}>
         <RecentPosts />
         <HomeForms />
         {/* <MonthPosts /> */}

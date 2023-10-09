@@ -16,7 +16,6 @@ jobs:
       EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
       EMAIL_SERVICE: ${{ secrets.EMAIL_SERVICE }}
       EMAIL_TO: ${{ secrets.EMAIL_TO }}
-      PORT: ${{ secrets.PORT }}
     steps:
     - name: Checkout repository
       uses: actions/checkout@v3
