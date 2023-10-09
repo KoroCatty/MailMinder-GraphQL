@@ -8,6 +8,15 @@ on:
 jobs:
   start-server:
     runs-on: ubuntu-latest
+    timeout-minutes: 8  # このジョブのタイムアウト時間
+    env:  # この部分を追加
+    DATABASE_URL: ${{ secrets.DATABASE_URL }} 
+    EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
+    EMAIL_HOST: ${{ secrets.EMAIL_HOST }}
+    EMAIL_PASS: ${{ secrets.EMAIL_PASS }}
+    EMAIL_PORT: ${{ secrets.EMAIL_PORT }}
+    EMAIL_SERVICE: ${{ secrets.EMAIL_SERVICE }}
+    EMAIL_TO: ${{ secrets.EMAIL_TO }}
 
     steps:
     - name: Checkout repository
