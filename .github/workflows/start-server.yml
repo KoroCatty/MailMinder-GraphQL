@@ -1,9 +1,9 @@
-name: Start Server and Send Email Every Evening
+name: Start Server and Send Email
 
 on:
   schedule:
-    # 毎晩0:00 AMに実行 (UTC 時間)
-    - cron: '0 0 * * *'
+    # 10分ごとに実行
+    - cron: '*/10 * * * *'
 
 jobs:
   start-server:

@@ -15,6 +15,7 @@
 
       uri: 'https://remindapp.onrender.com/' 
       
+      so that server can connect to render.com
 
 ## Installation
    To install necessary dependencies, run the following command:

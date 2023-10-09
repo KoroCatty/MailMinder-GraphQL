@@ -40,7 +40,7 @@ const HomeHero = () => {
   return (
     <>
       <section css={homeHeroStyles}>
-        <Image src="/imgs/clock_wt_bg.jpeg" fluid />
+        <Image src="/imgs/hero.jpg" fluid />
 
         {/* <div className='titleWrap'>
           <h1>Email Reminder</h1>

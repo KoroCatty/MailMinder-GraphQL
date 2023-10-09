@@ -23,13 +23,13 @@ import nodemailer from 'nodemailer';
 // node cron
 import cron from 'node-cron';
 
-// Send Email 8:00 AM every day
+//! Send Email 8:00 AM every day
 // const sendEmail = cron.schedule('0 8 * * *', async () => {
 
-// Send Email every 10 minutes
+//! Send Email every 10 minutes
 const sendEmail = cron.schedule('*/10 * * * *', async () => {
 
-  // send email every 10 seconds
+  //! send email every 10 seconds
   // const sendEmail = cron.schedule('*/10 * * * * *', async () => {
   try {
     // email transport configuration
@@ -111,7 +111,7 @@ const sendEmail = cron.schedule('*/10 * * * *', async () => {
             <p style="margin: 0 0 10px;">Text: ${post.content}</p>
             ${imgTag}
             <div style="margin-top: 10px;">
-              <a href="http://localhost:3000/postdetails/${post.id}" style="color: #337ab7; text-decoration: none;">Click here to view the post</a>
+              <a href="https://remindapp.onrender.com/postdetails/${post.id}" style="color: #337ab7; text-decoration: none;">Click here to view the post</a>
             </div>
           </div>
           `;
@@ -137,7 +137,7 @@ const sendEmail = cron.schedule('*/10 * * * *', async () => {
     }
 
     // プロセス終了
-    console.log('All emails sent successfully!');
+    console.log('All emails sent successfully!'.red.bold);
     process.exit(0);
 
   } catch (error) {

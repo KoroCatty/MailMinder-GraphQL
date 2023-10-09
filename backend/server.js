@@ -14,7 +14,6 @@ import http from 'http';
 import cors from 'cors';
 import bodyParser from 'body-parser';
 
-
 // Schema and Resolvers
 import typeDefs from './typeDefs.js';
 import resolvers from './resolvers.js';
