@@ -5,7 +5,7 @@ import { useLocation } from "react-router-dom";
 // component for layout
 import Header from "./Header"
 import Footer from "./Footer"
-import HomeHero from "../features/home/HomeHero";
+import Hero from "../common/Hero";
 
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
@@ -40,8 +40,9 @@ const Layout = () => {
     <>
       <Header />
 
-      {/* Only Display in Home Page */}
-      {location.pathname === "/" && <HomeHero />}
+      {/* Only Display in Home & Settings Page */}
+      {location.pathname === "/" && <Hero />}
+      {location.pathname === "/postlist" && <Hero />}
 
       <div css={LayoutCss}>
         {/* この Outlet が Layout で囲ってる全てのコンポーネントを監視 Outlet を使い、ネストされたルートをレンダリングする */}
