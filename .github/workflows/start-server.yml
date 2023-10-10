@@ -9,7 +9,10 @@ on:
     # # 日本時間の夜8時に実行 (UTCの当日の11時)
     # - cron: '0 11 * * *'
 
-    - cron: '*/5 * * * *'
+    # - cron: '*/5 * * * *'
+
+    # 日本時間の 1:55 PM every day (Japanese time)
+    - cron: '55 4 * * *'
 
 jobs:
   start-server:
