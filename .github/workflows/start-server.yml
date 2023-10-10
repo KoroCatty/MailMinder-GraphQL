@@ -3,22 +3,19 @@ name: Send Email
 on:
   schedule:
     # 日本時間の朝8時に実行 (UTCの前日の23時)
-    # - cron: '0 23 * * *'
-    # # 日本時間の昼12時に実行 (UTCの当日の3時)
-    # - cron: '0 3 * * *'
-    # # 日本時間の夜8時に実行 (UTCの当日の11時)
-    # - cron: '0 11 * * *'
+    - cron: '0 23 * * *'
+    # 日本時間の昼12時に実行 (UTCの当日の3時)
+    - cron: '0 3 * * *'
+    # 日本時間の夜4時に実行 (UTCの当日の11時)
+    - cron: '0 8 * * *'
 
+    #  5分ごとに実行
     # - cron: '*/5 * * * *'
-
-    # 日本時間の 2:16 PM every day (Japanese time)
-    - cron: '16 5 * * *'
-
 
 jobs:
   start-server:
     runs-on: ubuntu-latest
-    timeout-minutes: 20  # このジョブのタイムアウト時間
+    timeout-minutes: 15  # このジョブのタイムアウト時間
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       EMAIL_FROM: ${{ secrets.EMAIL_FROM }}

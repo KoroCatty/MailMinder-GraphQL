@@ -1,12 +1,9 @@
 import Image from "react-bootstrap/Image";
-
-// Emotion
-import { css } from "@emotion/react";
-import { min, max } from "../../utils/mediaQueries";
-
 import { useLocation } from "react-router-dom";
 
-
+// Emotion CSS (Responsive Design)
+import { css } from "@emotion/react";
+import { min, max } from "../../utils/mediaQueries";
 const HeroStyles = css`
   @media screen and (min-width: 991px) {
     position: relative;

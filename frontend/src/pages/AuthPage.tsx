@@ -1,4 +1,4 @@
-import { useState, useRef } from "react"
+import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 // Apollo
@@ -10,12 +10,50 @@ import { LOGIN_USER } from "../graphql/mutations";
 
 // TYPES
 type AuthPageProps = {
-  setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>
-}
+  setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+};
 
+// Emotion CSS (Responsive Design)
+import { css } from "@emotion/react";
+import { min, max } from "../utils/mediaQueries";
+const authPageCss = css`
+  min-height: 67vh;
+  text-align: center;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
 
+  input {
+    padding: 10px;
+    margin: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    outline: none;
+    width: 50%;
+
+    &:focus {
+      border: 1px solid #323232;
+    }
+  }
+
+  // 1 px 〜 479 px
+  ${min[0] + max[0]} {
+  }
+  // 480 px 〜 767 px
+  ${min[1] + max[1]} {
+  }
+  // 768 px 〜 989 px
+  ${min[2] + max[2]} {
+  }
+  // 990 px 〜
+  ${min[3] + max[3]} {
+  }
+`;
+
+//! ======================================================
 const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
-  const [showLogin, setShowLogin] = useState(true) // true = login, false = signup
+  // HOOKS 
+  const [showLogin, setShowLogin] = useState(true); // true = login, false = signup
   const [formData, setFormData] = useState({});
 
   const authForm = useRef<HTMLFormElement>(null);
@@ -23,23 +61,28 @@ const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
   const navigate = useNavigate();
 
   // Mutations (Sign Up)
-  const [signupUser, { data: signupData, loading, error }] = useMutation(SIGNUP_USER);
+  const [signupUser, { data: signupData, loading, error }] =
+    useMutation(SIGNUP_USER);
 
   // Mutations (Login)
-  const [loginUser, { data: loginData, loading: loginLoading, error: loginError }] = useMutation(LOGIN_USER, {
+  const [
+    loginUser,
+    { data: loginData, loading: loginLoading, error: loginError },
+  ] = useMutation(LOGIN_USER, {
     onCompleted(data) {
-
       // mutaion.ts で定義したものを取得しローカルに保存
       localStorage.setItem("token_GraphQL", data.signinUser.token);
       navigate("/");
       setLoggedIn(true);
-    }
+    },
   });
 
   //! ======================================================
   //! When loading
   //! ======================================================
-  if (loading || loginLoading) { <h1>Loading...</h1> }
+  if (loading || loginLoading) {
+    <h1>Loading...</h1>;
+  }
 
   //! ======================================================
   //! When forms typed
@@ -47,8 +90,8 @@ const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     setFormData({
       ...formData,
-      [e.target.name]: e.target.value // name attribute
-    })
+      [e.target.name]: e.target.value, // name attribute
+    });
   };
 
   //! ======================================================
@@ -58,29 +101,30 @@ const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
     e.preventDefault();
 
     if (showLogin) {
-      // login 
+      // login
       loginUser({
         variables: {
-          userSignin: formData // フォームに入力されたデータを送る (mutation.ts 定義)
-        }
-      })
+          userSignin: formData, // フォームに入力されたデータを送る (mutation.ts 定義)
+        },
+      });
     } else {
       // Signup
-      signupUser({ // mutation.ts で定義したもの
-        variables: { // お決まり 
-          userNew: formData // mutation.ts で定義したもの
-        }
-      })
+      signupUser({
+        // mutation.ts で定義したもの
+        variables: {
+          // お決まり
+          userNew: formData, // mutation.ts で定義したもの
+        },
+      });
     }
-  }
-
+  };
 
   return (
-    <>
-      <div style={{textAlign: "center", marginTop: "100px"}}>
+    <div css={authPageCss}>
+      <div>
         {/* サインアップ時 */}
         {signupData && <h1>{signupData.signupUser.firstName}You Signed Up!</h1>}
-        
+
         {/* ログイン時 */}
         {loginData && <h1>{loginData.signinUser.firstName}You Logged In!</h1>}
 
@@ -131,20 +175,24 @@ const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
           <br />
 
           {/* link */}
-          <div onClick={() => {
-            setShowLogin((preValue) => !preValue) // toggle login/signup
-            setFormData({}) // clear form data
-            authForm?.current?.reset() // clear form inputs
-          }}>
-            {showLogin ? "Don't have an account? Sign up" : "Already have an account? Login"}
+          <div
+            onClick={() => {
+              setShowLogin((preValue) => !preValue); // toggle login/signup
+              setFormData({}); // clear form data
+              authForm?.current?.reset(); // clear form inputs
+            }}
+          >
+            {showLogin
+              ? "Don't have an account? Sign up"
+              : "Already have an account? Login"}
           </div>
 
           {/* BUTTON */}
           <button type="submit">{showLogin ? "Login" : "Sign Up"}</button>
         </form>
       </div>
-    </>
-  )
-}
+    </div>
+  );
+};
 
-export default AuthPage
+export default AuthPage;
