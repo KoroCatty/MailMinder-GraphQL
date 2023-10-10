@@ -2,6 +2,7 @@ import Image from "react-bootstrap/Image";
 
 // Emotion
 import { css } from "@emotion/react";
+import { min, max } from "../../utils/mediaQueries";
 
 import { useLocation } from "react-router-dom";
 
@@ -15,31 +16,36 @@ const HeroStyles = css`
       width: 100vw;
       height: 80vh;
       /* object-fit: cover; */
-      background-size: cover;
-    }
-    .titleWrap {
-      position: absolute;
-      inset: 45% 0 0 40%;
-      transform: translate(-50%, -50%);
-    }
-    h1 {
-      color: brown;
-    }
-    button {
-      background-color: red;
-      color: white;
-      border: none;
-      padding: 10px 20px;
-      border-radius: 5px;
-      cursor: pointer;
-      &:hover {
-        background-color: blue;
-        transition: 0.3s ease-in-out;
-      }
     }
   }
 
-  .postList {
+  .homeHero {
+
+    // 1px〜479px
+    ${min[0] + max[0]} {
+      display: none;
+    }
+    // 480px〜767px
+    ${min[1] + max[1]} {
+      display: none;
+    }
+  }
+
+  .homeHero__sp {
+      display: none;
+
+    // 1px〜479px
+    ${min[0] + max[0]} {
+      display: block;
+    }
+    // 480px〜767px
+    ${min[1] + max[1]} {
+      display: none;
+    }
+    }
+
+  .postsHero {
+
     position: relative;
 
     &__img {
@@ -60,6 +66,7 @@ const HeroStyles = css`
       text-shadow: 1px 1px 6px black;
     }
   }
+
 `;
 
 //! ============================================
@@ -71,14 +78,19 @@ const Hero = () => {
   return (
     <>
       <section css={HeroStyles}>
-        {/* Display in Home Page */}
-        {location.pathname === "/" && <Image src="/imgs/hero.jpg" fluid />}
+        {/* Display in '/' Page */}
+        {location.pathname === "/" && (
+          <>
+            <Image src="/imgs/hero.jpg" fluid className="homeHero" />
+            <Image src="/imgs/hero3.gif" fluid className="homeHero__sp" />
+          </>
+        )}
 
-        {/* Display in settings Page */}
+        {/* Display in '/postlist' Page */}
         {location.pathname === "/postlist" && (
-          <div className="postList">
-            <Image src="/imgs/postHero.jpg" fluid className="postList__img" alt="Post Hero Image" />
-            <h1 className="postList__title">All Posts List</h1>
+          <div className="postsHero">
+            <Image src="/imgs/postHero.jpg" fluid className="postsHero__img" alt="Post Hero Image" />
+            <h1 className="postsHero__title">All Posts List</h1>
           </div>
         )
         }
