@@ -1,4 +1,4 @@
-name: Start Server and Send Email
+name: Send Email
 
 on:
   schedule:
@@ -9,12 +9,12 @@ on:
     # # 日本時間の夜8時に実行 (UTCの当日の11時)
     # - cron: '0 11 * * *'
 
-    - cron: '*/10 * * * *'
+    - cron: '*/5 * * * *'
 
 jobs:
   start-server:
     runs-on: ubuntu-latest
-    timeout-minutes: 10  # このジョブのタイムアウト時間
+    timeout-minutes: 6  # このジョブのタイムアウト時間
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
