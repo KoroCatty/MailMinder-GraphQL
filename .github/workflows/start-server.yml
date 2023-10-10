@@ -11,8 +11,8 @@ on:
 
     # - cron: '*/5 * * * *'
 
-    # 日本時間の 1:55 PM every day (Japanese time)
-    - cron: '55 4 * * *'
+    # 日本時間の 2:12 PM every day (Japanese time)
+    - cron: '12 5 * * *'
 
 jobs:
   start-server:
