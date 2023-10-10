@@ -2,10 +2,12 @@ name: Start Server and Send Email
 
 on:
   schedule:
-    # 毎日朝8時に実行　（UTC時間なので日本時間では17時）
-    - cron: '0 6 * * *'
-    # 毎日夜8時に実行
-    - cron: '0 18 * * *'
+    # 日本時間の朝8時に実行 (UTCの前日の23時)
+    - cron: '0 23 * * *'
+    # 日本時間の昼12時に実行 (UTCの当日の3時)
+    - cron: '0 3 * * *'
+    # 日本時間の夜8時に実行 (UTCの当日の11時)
+    - cron: '0 11 * * *'
 
 jobs:
   start-server:
