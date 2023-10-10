@@ -12,12 +12,10 @@ const HeroStyles = css`
     img {
       width: 100vw;
       height: 80vh;
-      /* object-fit: cover; */
     }
   }
 
   .homeHero {
-
     // 1px〜479px
     ${min[0] + max[0]} {
       display: none;
@@ -29,7 +27,7 @@ const HeroStyles = css`
   }
 
   .homeHero__sp {
-      display: none;
+    display: none;
 
     // 1px〜479px
     ${min[0] + max[0]} {
@@ -39,10 +37,9 @@ const HeroStyles = css`
     ${min[1] + max[1]} {
       display: none;
     }
-    }
+  }
 
   .postsHero {
-
     position: relative;
 
     &__img {
@@ -63,12 +60,10 @@ const HeroStyles = css`
       text-shadow: 1px 1px 6px black;
     }
   }
-
 `;
 
 //! ============================================
 const Hero = () => {
-
   const location = useLocation();
   // console.log(location.pathname); // ex) /about
 
@@ -86,11 +81,15 @@ const Hero = () => {
         {/* Display in '/postlist' Page */}
         {location.pathname === "/postlist" && (
           <div className="postsHero">
-            <Image src="/imgs/postHero.jpg" fluid className="postsHero__img" alt="Post Hero Image" />
+            <Image
+              src="/imgs/postHero.jpg"
+              fluid
+              className="postsHero__img"
+              alt="Post Hero Image"
+            />
             <h1 className="postsHero__title">All Posts List</h1>
           </div>
-        )
-        }
+        )}
       </section>
     </>
   );
