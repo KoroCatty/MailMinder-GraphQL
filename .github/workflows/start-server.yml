@@ -11,13 +11,14 @@ on:
 
     # - cron: '*/5 * * * *'
 
-    # 日本時間の 2:12 PM every day (Japanese time)
-    - cron: '12 5 * * *'
+    # 日本時間の 2:16 PM every day (Japanese time)
+    - cron: '16 5 * * *'
+
 
 jobs:
   start-server:
     runs-on: ubuntu-latest
-    timeout-minutes: 6  # このジョブのタイムアウト時間
+    timeout-minutes: 20  # このジョブのタイムアウト時間
     env:
       DATABASE_URL: ${{ secrets.DATABASE_URL }}
       EMAIL_FROM: ${{ secrets.EMAIL_FROM }}
