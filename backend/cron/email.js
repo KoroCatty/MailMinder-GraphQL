@@ -23,14 +23,20 @@ import nodemailer from 'nodemailer';
 // node cron
 import cron from 'node-cron';
 
-//! Send Email 8:00 AM every day
-// const sendEmail = cron.schedule('0 8 * * *', async () => {
+//! Send Email 10:00 AM every day
+// const sendEmail = cron.schedule('0 10 * * *', async () => {
 
 //! Send Email every 30 minutes
-const sendEmail = cron.schedule('*/30 * * * *', async () => {
+// const sendEmail = cron.schedule('*/30 * * * *', async () => {
 
   //! send email every 10 seconds
   // const sendEmail = cron.schedule('*/10 * * * * *', async () => {
+
+
+
+
+//! Send Email at 8:00 AM and 8:00 PM JST every day (日本時間)
+const sendEmail = cron.schedule('0 23,11 * * *', async () => {
   try {
     // email transport configuration
     const transporter = nodemailer.createTransport({

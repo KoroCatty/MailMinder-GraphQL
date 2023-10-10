@@ -16,7 +16,6 @@ const HeroStyles = css`
       height: 80vh;
       /* object-fit: cover; */
       background-size: cover;
-      aspect-ratio: 16/9;
     }
     .titleWrap {
       position: absolute;
