@@ -2,41 +2,26 @@
 import { css } from "@emotion/react";
 import { min, max } from "../../utils/mediaQueries";
 const formsCss = css`
-  // Helpers
-  /* @mixin clearfix {
-    &:after {
-      content: "";
-      display: table;
-      clear: both;
-    }
-  } */
-
   .align-center {
     text-align: center;
   }
 
-  // Basics
-  /* html {
-    height: 100%;
-  }
-  body {
-    height: 100%;
-    position: relative;
-  } */
   // Grid
   .row {
-    /* @include clearfix; */
     margin: -20px 0;
+
     .col {
       padding: 0 20px;
       float: left;
       box-sizing: border-box;
-      &.x-50 {
+
+      /* &.x-50 {
         width: 50%;
       }
+
       &.x-100 {
         width: 100%;
-      }
+      } */
     }
   }
 
@@ -46,11 +31,11 @@ const formsCss = css`
   }
 
   .get-in-touch {
-    max-width: 650px;
+    /* max-width: 650px; */
     margin: 0 auto;
     position: relative;
     top: 50%;
-    transform: translateY(-50%);
+    /* transform: translateY(-50%); */
 
     .title {
       text-align: center;
@@ -68,6 +53,7 @@ const formsCss = css`
       position: relative;
       margin: 32px 0;
     }
+
     .input-text {
       display: block;
       width: 100%;
@@ -90,9 +76,23 @@ const formsCss = css`
         }
       }
     }
+
+    // TEXTAREA
+    .input-textArea {
+      height: 200px;
+      display: block;
+      width: 100%;
+      border-width: 0 0 2px 0;
+      border-color: #000;
+      font-family: Lusitana, serif;
+      font-size: 18px;
+      line-height: 26px;
+      font-weight: 400;
+    }
+    
     .label {
       position: absolute;
-      left: 20px;
+      left: 12px;
       bottom: 11px;
       font-family: Lusitana, serif;
       font-size: 18px;
@@ -151,6 +151,7 @@ const formsCss = css`
   }
 `;
 
+// FORM TYPE
 interface CommonFormProps {
   onChange: (event: React.ChangeEvent<HTMLInputElement>) => void;
   text: string;
@@ -158,12 +159,27 @@ interface CommonFormProps {
   name: string;
 }
 
-export const CommonForm: React.FC<CommonFormProps> = ({ onChange, text, type, name }) => {
+// TEXTAREA TYPE
+interface CommonTextareaProps {
+  onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
+  text: string;
+  name: string;
+}
+
+//! =======================================================
+//! FORM
+//! =======================================================
+export const CommonForm: React.FC<CommonFormProps> = ({
+  onChange,
+  text,
+  type,
+  name,
+}) => {
   return (
     <div css={formsCss}>
-      <section className="get-in-touch">
-        <div className="contact-form row">
-          <div className="form-field col x-50">
+      <section className="">
+        <div className="contact-form">
+          <div className="form-field">
             <input
               id="name"
               className="input-text js-input"
@@ -173,7 +189,11 @@ export const CommonForm: React.FC<CommonFormProps> = ({ onChange, text, type, na
               name={name}
             />
 
-            <label className="label" htmlFor="name" style={{letterSpacing:"0.4rem"}}>
+            <label
+              className="label"
+              htmlFor="name"
+              style={{ letterSpacing: "0.4rem" }}
+            >
               {text}
             </label>
           </div>
@@ -188,23 +208,44 @@ export const CommonForm: React.FC<CommonFormProps> = ({ onChange, text, type, na
             <label className="label" htmlFor="message">Message</label>
           </div> */}
 
+          {/* BUTTON */}
           {/* <div className="form-field col x-100 align-center">
             <input className="submit-btn" type="submit" value="Submit" />
           </div> */}
+        </div>
+      </section>
+    </div>
+  );
+};
+
+
+
+//! =======================================================
+//! TEXTAREA
+//! =======================================================
+export const CommonTextarea: React.FC<CommonTextareaProps> = ({
+  onChange,
+  text,
+  name,
+}) => {
+  return (
+    <div css={formsCss}>
+      <section className="get-in-touch">
+        <div className="contact-form">
+
+          <div className="form-field ">
+            <textarea 
+            onChange={onChange} 
+            name={name} 
+            className="input-text input-textArea"
+            required 
+            />
+            <label className="label" htmlFor="message" style={{letterSpacing: ".3rem"}}>{text}</label>
+          </div>
 
         </div>
       </section>
-      <p className="note">
-        Based on{" "}
-        <a
-          className="link"
-          href="http://redcollar.digital/contacts/"
-          target="blank"
-        >
-          Red Collar Contact Form
-        </a>
-        .
-      </p>
+    
     </div>
   );
 };

@@ -3,7 +3,10 @@ import { css } from "@emotion/react";
 import { min, max } from "../../utils/mediaQueries";
 
 const footerStyles = css`
-  background-color: #151515;
+  background-color: #3c3c3c;
+  // gradient 
+   background-image: linear-gradient(145deg, #000000 0%, #4f4f4f 50%, #1e1e1e 100%);
+
   color: #ffffff;
   padding: 60px 0;
   text-align: center;
@@ -13,6 +16,13 @@ const footerStyles = css`
 
   @media screen and (min-width: 1201px) {
     margin-left: 16%; // header の幅分だけ右にずらす
+  }
+
+  small {
+    margin-top: 2rem;
+    font-size: 0.9rem;
+    display: block;
+    letter-spacing: 1px;
   }
     // 1px〜479px
     ${min[0] + max[0]} {
@@ -36,7 +46,9 @@ const footerStyles = css`
 function Footer() {
   return (
     <footer css={footerStyles}>
-      <div>&copy; 2023 K-Dev</div>
+      <div>&copy; {new Date().getFullYear()} KAZ-DEV</div>
+
+      <small>ALL RIGHTS RESERVED</small>
     </footer>
   );
 }

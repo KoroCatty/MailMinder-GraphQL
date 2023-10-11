@@ -8,7 +8,7 @@ import { CREATE_POST } from '../../../graphql/mutations';
 import GoogleSearch from "./GoogleSearch";
 import Selfie from "../../common/Selfie";
 import { TitleLarge } from "../../common/Titles";
-import { CommonForm } from "../../common/Forms";
+import { CommonForm, CommonTextarea } from "../../common/Forms";
 
 // bootstrap
 import { Form } from "react-bootstrap";
@@ -229,26 +229,40 @@ const HomeForms = () => {
         <br />
         <br />
         {/* TITLE COMPONENT */}
-        <CommonForm onChange={(e) => handleChange(e)} text="TITLE" type="text" name="title" />
-        {/* <input
-          name="title"
-          type="text"
-          placeholder=" Title here"
-          onChange={(e) => handleChange(e)}
-        /> */}
-
-        <br />
-        <br />
-        <br />
-
-        {/* CONTENT */}
-        <textarea
-          placeholder="Contents here"
-          name="content"
-          onChange={(e) => handleChange(e)}
+        <CommonForm 
+        onChange={(e) => handleChange(e)} 
+        text="TITLE" 
+        type="text" 
+        name="title" 
         />
 
-        {/* IMAGE */}
+
+        <br />
+        <br />
+        <br />
+
+        {/*//! CONTENT */}
+        <CommonTextarea 
+        onChange={(e) => handleChange(e)} 
+        text="MESSAGE" 
+        name="content"
+         />
+
+
+
+          {/* DISPLAY IMG  画像があれば表示 */}
+          <div className="imageWrap d-flex">
+            {!selectedImage && <img src="/imgs/noImg.jpeg" alt="no Image" />}
+            {selectedImage && <img src={selectedImage} alt="chosen Image" />}
+
+            {/* SELFIE COMPONENT (Pass the function )*/}
+            {/* <Selfie handleImageChange3={handleImageChange3 }  /> */}
+            <Selfie selfieImage={selfieImage} />
+          </div>
+
+
+
+        {/* IMAGE SELECT */}
         <div className="imageArea">
           <Form.Group controlId="formFileLg" className="mb-3">
             <Form.Label style={{ fontSize: "2rem" }}>From Your Local File</Form.Label>
@@ -263,9 +277,6 @@ const HomeForms = () => {
             />
           </Form.Group>
 
-          <br />
-          <div style={{ fontSize: "2rem" }}>OR</div>
-          <br />
 
           {/* Paste Image URL */}
           <label style={{ fontSize: "2rem", marginTop: "40px" }}>Paste Image URL</label>
@@ -278,15 +289,11 @@ const HomeForms = () => {
             onChange={pasteImage}
           />
 
-          {/* DISPLAY IMG  画像があれば表示 */}
-          <div className="imageWrap d-flex">
-            {!selectedImage && <img src="/imgs/noImg.jpeg" alt="no Image" />}
-            {selectedImage && <img src={selectedImage} alt="chosen Image" />}
 
-            {/* SELFIE COMPONENT (Pass the function )*/}
-            {/* <Selfie handleImageChange3={handleImageChange3 }  /> */}
-            <Selfie selfieImage={selfieImage} />
-          </div>
+
+
+
+
         </div>
 
 
@@ -294,7 +301,7 @@ const HomeForms = () => {
         <button type="submit" className="RegisterBtn">Register</button>
       </form>
 
-      {/* //! component */}
+      {/*//! COMPONENT */}
       <GoogleSearch />
 
       <hr />
