@@ -1,4 +1,3 @@
-// import { useNavigate } from "react-router-dom";
 import { useState } from "react";
 
 // Bootstrap
@@ -8,49 +7,71 @@ import { Navbar, Nav, Container } from "react-bootstrap";
 import { css } from "@emotion/react";
 import { min, max } from "../../utils/mediaQueries";
 const headerCss = css`
+  @media screen and (min-width: 1201px) {
+    background-color: #fdfdfd;
+    height: 100vh;
+    width: 16%;
+    position: fixed;
+    left: 0;
+    top: 0;
+    z-index: 1;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
 
-@media screen and (min-width: 1201px) {
-  background-color: #fdfdfd;
-  height: 100vh;
-  width: 16%;
-  position: fixed;
-  left: 0;
-  top: 0;
-  z-index: 1;
-  box-shadow: 0 0 10px rgba(0, 0, 0, 0.2);
+    .container {
+      margin-top: -100px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      row-gap: 2rem;
+      column-gap: 2rem;
+    }
 
-  .container {
-    margin-top: -200px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    row-gap: 2rem;
-    column-gap: 2rem;
+    .navbar-brand {
+      margin-right: 0;
+    }
+
+    .navbar-nav {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 2rem;
+      margin-right: 0;
+
+      a {
+        &:hover {
+          transform: scale(1.25);
+          transition: all 0.3s ease-in-out;
+        }
+      }
+    }
+
+    .navbar-collapse {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: space-between;
+      gap: 2rem;
+    }
   }
 
-  .navbar-brand {
-    margin-right: 0;
-  }
+  .logoutBtn {
+    background-color: rgba(39, 39, 39, 0.9);
+    color: #ffffff;
+    font-size: 1.2rem;
+    letter-spacing: 1px;
+    border: 1px solid #4d4d4d;
+    padding: 16px 20px;
+    transition: all 0.3s ease-in-out;
+    border-radius: 4px;
 
-  .navbar-nav {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    /* justify-content: space-between; */
-    gap: 2rem;
-    margin-right: 0;
+    &:hover {
+      background-color: white;
+      color: #4d4d4d;
+      transition: all 0.3s ease-in-out;
+      transform: scale(1.05);
+    }
   }
-
-  .navbar-collapse {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: space-between;
-    gap: 2rem;
-  }
-  }
-
 
   // 1px〜479px
   /* ${min[0] + max[0]} {
@@ -68,9 +89,6 @@ const headerCss = css`
   ${min[3] + max[3]} {
     background-color: yellow;
   } */
-
-
-
 `;
 
 import { Link } from "react-router-dom";
@@ -122,9 +140,9 @@ function Header() {
             <div style={{ color: "black", fontSize: "2rem" }}>
               {loggedIn ? (
                 <button
+                  className="logoutBtn"
                   onClick={() => {
                     localStorage.removeItem("token_GraphQL");
-                    // navigate("/login")
                     setLoggedIn(false);
                   }}
                 >
@@ -138,14 +156,18 @@ function Header() {
             </div>
 
             {/* avatar Icon */}
-            <Nav.Link as={Link} to="/settings">
-              <img
-                src="https://picsum.photos/200"
-                alt="avatar"
-                className="rounded-circle"
-                style={{ width: "40px", height: "40px" }}
-              />
-            </Nav.Link>
+            {loggedIn ? (
+              <Nav.Link as={Link} to="/settings">
+                <img
+                  src="https://picsum.photos/200"
+                  alt="avatar"
+                  className="rounded-circle"
+                  style={{ width: "40px", height: "40px" }}
+                />
+              </Nav.Link>
+            ) : (
+              ""
+            )}
           </Navbar.Collapse>
         </Container>
       </Navbar>

@@ -7,6 +7,7 @@ import { CREATE_POST } from '../../../graphql/mutations';
 // components
 import GoogleSearch from "./GoogleSearch";
 import Selfie from "../../common/Selfie";
+import { TitleLarge } from "../../common/Titles";
 
 // bootstrap
 import { Form } from "react-bootstrap";
@@ -170,7 +171,8 @@ const HomeForms = () => {
 
   return (
     <section css={homeFormsStyles}>
-      <h2 className="text-center m-4">Register Your reminder</h2>
+
+      <TitleLarge title="YOUR REMINDER" />
 
       <form onSubmit={handleSubmit} >
         {/* TITLE */}

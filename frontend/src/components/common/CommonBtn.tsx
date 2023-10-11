@@ -10,16 +10,9 @@ type Props = {
 
 // Emotion CSS (Responsive Design)
 const commonBtnCss = css`
-  div {
-    /* background: linear-gradient(180deg, #040f11 0%, #162b30 100%); */
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    transition: all 0.3s ease-in-out;
 
-  }
 
-  button {
+
     background-color: rgba(39, 39, 39, 0.9);
     color: #ffffff;
     text-shadow: 1px 1px 6px black;
@@ -30,7 +23,7 @@ const commonBtnCss = css`
     width: 40%;
     transition: all 0.3s ease-in-out;
     border-radius: 4px;
-  }
+  
 
   // 1 px 〜 479 px
   ${min[0] + max[0]} {
@@ -85,9 +78,9 @@ const CommonBtn: React.FC<Props> = ({ children }) => {
   }, []);
 
   return (
-    <div css={commonBtnCss}>
-      <button ref={buttonRef}>{children}</button>
-    </div>
+
+      <button ref={buttonRef} css={commonBtnCss}>{children}</button>
+
   );
 };
 

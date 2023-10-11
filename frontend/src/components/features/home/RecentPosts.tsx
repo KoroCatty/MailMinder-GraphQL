@@ -4,6 +4,9 @@ import { Link } from 'react-router-dom';
 import { useQuery } from '@apollo/client';
 import { GET_POSTS_BY_ID_LIMIT } from '../../../graphql/queries';
 
+// components
+import { TitleLarge } from '../../common/Titles';
+
 // TYPES
 type PostType = {
   id: number,
@@ -45,7 +48,7 @@ const RecentPosts = () => {
       
       {data ? (
         <>
-          <h1 style={{fontSize:"3rem", textAlign:"center"}}>Recent Posts</h1>
+          <TitleLarge title="RECENT POSTS" />
 
           <div className="row">
             {PostsByUserLimit.map((item: PostType) => (
