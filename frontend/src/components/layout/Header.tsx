@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
 
 // Bootstrap
 import { Navbar, Nav, Container } from "react-bootstrap";
@@ -27,10 +28,12 @@ const headerCss = css`
       column-gap: 2rem;
     }
 
+    /* LOGO */
     .navbar-brand {
       margin-right: 0;
     }
 
+    // MENU ITEM
     .navbar-nav {
       display: flex;
       flex-direction: column;
@@ -38,7 +41,8 @@ const headerCss = css`
       gap: 2rem;
       margin-right: 0;
 
-      a {
+      // MENU LINK
+      .nav-link {
         &:hover {
           transform: scale(1.25);
           transition: all 0.3s ease-in-out;
@@ -46,6 +50,7 @@ const headerCss = css`
       }
     }
 
+    // MENU ITEMS WRAPPER
     .navbar-collapse {
       display: flex;
       flex-direction: column;
@@ -55,21 +60,77 @@ const headerCss = css`
     }
   }
 
-  .logoutBtn {
-    background-color: rgba(39, 39, 39, 0.9);
-    color: #ffffff;
-    font-size: 1.2rem;
-    letter-spacing: 1px;
-    border: 1px solid #4d4d4d;
-    padding: 16px 20px;
-    transition: all 0.3s ease-in-out;
-    border-radius: 4px;
+  //!
+  //! MENU ITEMS HAMBURGER (1200px以下の操作はこれより下)
+  //!
+  .navbar-collapse.collapse {
+    // 990px〜1200px
+    ${min[3] + max[3]} {
+      justify-content: space-between;
+    }
 
-    &:hover {
-      background-color: white;
-      color: #4d4d4d;
+    .nav-link {
+      // 1px〜479px
+      ${min[0] + max[0]} {
+        margin: 0.6rem 0;
+        width: fit-content;
+      }
+      // 480px〜767px
+      ${min[1] + max[1]} {
+        margin: 0.6rem 0;
+        width: fit-content;
+      }
+      // 768px〜989px
+      ${min[2] + max[2]} {
+        margin: 0.6rem 0;
+        width: fit-content;
+
+        &:hover {
+          color: #c32626;
+          transition: all 0.3s ease-in-out;
+        }
+      }
+
+      // 990px〜1200px
+      ${min[3] + max[3]} {
+        &:hover {
+          transform: scale(1.25);
+          transition: all 0.3s ease-in-out;
+        }
+      }
+    }
+  }
+
+  /* Logout Btn & User Icon */
+  .navRight {
+    @media screen and (min-width: 989px) {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 1rem;
+    }
+
+    @media screen and (min-width: 1201px) {
+      flex-direction: column;
+      gap: 2rem;
+    }
+
+    &__logoutBtn {
+      background-color: rgba(39, 39, 39, 0.9);
+      color: #ffffff;
+      font-size: 1.2rem;
+      letter-spacing: 1px;
+      border: 1px solid #4d4d4d;
+      padding: 12px 16px;
       transition: all 0.3s ease-in-out;
-      transform: scale(1.05);
+      border-radius: 4px;
+
+      &:hover {
+        background-color: white;
+        color: #4d4d4d;
+        transition: all 0.3s ease-in-out;
+        transform: scale(1.05);
+      }
     }
   }
 
@@ -85,14 +146,12 @@ const headerCss = css`
   ${min[2] + max[2]} {
     background-color: green;
   }
-  // 990px〜
+  // 990px〜1200
   ${min[3] + max[3]} {
     background-color: yellow;
   } */
 `;
 
-import { Link } from "react-router-dom";
-// import ToggleBtn from "../common/ToggleBtn";
 
 //! ==============================================
 function Header() {
@@ -137,10 +196,10 @@ function Header() {
             </Nav>
 
             {/* //! LOGOUT / LOGIN */}
-            <div style={{ color: "black", fontSize: "2rem" }}>
+            <div className="navRight">
               {loggedIn ? (
                 <button
-                  className="logoutBtn"
+                  className="navRight__logoutBtn"
                   onClick={() => {
                     localStorage.removeItem("token_GraphQL");
                     setLoggedIn(false);
@@ -153,21 +212,21 @@ function Header() {
                   Login
                 </Nav.Link>
               )}
-            </div>
 
-            {/* avatar Icon */}
-            {loggedIn ? (
-              <Nav.Link as={Link} to="/settings">
-                <img
-                  src="https://picsum.photos/200"
-                  alt="avatar"
-                  className="rounded-circle"
-                  style={{ width: "40px", height: "40px" }}
-                />
-              </Nav.Link>
-            ) : (
-              ""
-            )}
+              {/* avatar Icon */}
+              {loggedIn ? (
+                <Nav.Link as={Link} to="/settings">
+                  <img
+                    src="https://picsum.photos/200"
+                    alt="avatar"
+                    className="rounded-circle"
+                    style={{ width: "40px", height: "40px" }}
+                  />
+                </Nav.Link>
+              ) : (
+                ""
+              )}
+            </div>
           </Navbar.Collapse>
         </Container>
       </Navbar>

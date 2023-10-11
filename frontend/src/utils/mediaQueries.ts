@@ -17,6 +17,6 @@ export const max = breakpoints2.map((bpMax) => ` and (max-width: ${bpMax}px)`);
     // 768px〜989px
     ${min[2] + max[2]}{
     }
-    // 990px〜
+    // 990px〜1200px
     ${min[3] + max[3]}{
     } */

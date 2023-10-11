@@ -8,15 +8,39 @@ import { CREATE_POST } from '../../../graphql/mutations';
 import GoogleSearch from "./GoogleSearch";
 import Selfie from "../../common/Selfie";
 import { TitleLarge } from "../../common/Titles";
+import { CommonForm } from "../../common/Forms";
 
 // bootstrap
 import { Form } from "react-bootstrap";
+
+// $( '.js-input' ).keyup(function() {
+//   if( $(this).val() ) {
+//      $(this).addClass('not-empty');
+//   } else {
+//      $(this).removeClass('not-empty');
+//   }
+// });
+
 
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
 import { min, max } from '../../../utils/mediaQueries'
 
 const homeFormsStyles = css`
+position: relative;
+margin-top: 18rem;
+
+&:before {
+  position: absolute;
+  left: 50%;
+  top: -12%;
+  content: "";
+  display: block;
+  width: 16%;
+  transform: translateX(-50%) rotate(90deg);
+  height: 1px;
+  background-color: #ccc;
+}
 
     // 1px〜479px
     ${min[0] + max[0]}{
@@ -30,6 +54,29 @@ const homeFormsStyles = css`
     // 990px〜
     ${min[3] + max[3]}{
     }
+/* 
+    label {
+      display: block;
+      font-size: 2rem;
+      margin-bottom: 10px;
+    }
+
+    input {
+      display: block;
+      width: 100%;
+      height: 40px;
+      border: 1px solid #ccc;
+      border-radius: 5px;
+      padding: 10px;
+      box-shadow: 0 0 5px #ccc;
+
+      &:focus {
+        outline: none;
+        /* 流れるような線 */
+      /* } */
+    /* }  */
+    /* */
+
 
   textarea {
     display: block;
@@ -99,6 +146,7 @@ const HomeForms = () => {
       [e.target.name]: e.target.value, // name attribute
     })
   };
+  console.log(formData);
 
   //! ======================================================
   //! When form submitted
@@ -172,17 +220,22 @@ const HomeForms = () => {
   return (
     <section css={homeFormsStyles}>
 
+      {/* COMPONENT */}
       <TitleLarge title="YOUR REMINDER" />
 
       <form onSubmit={handleSubmit} >
-        {/* TITLE */}
-        <input
+
+        <br />
+        <br />
+        <br />
+        {/* TITLE COMPONENT */}
+        <CommonForm onChange={(e) => handleChange(e)} text="TITLE" type="text" name="title" />
+        {/* <input
           name="title"
           type="text"
-          style={{ width: "100%", height: "40px" }}
           placeholder=" Title here"
           onChange={(e) => handleChange(e)}
-        />
+        /> */}
 
         <br />
         <br />

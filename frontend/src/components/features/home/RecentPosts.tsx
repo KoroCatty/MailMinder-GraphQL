@@ -24,6 +24,28 @@ type PostType = {
   // }
 }
 
+// Emotion CSS (Responsive Design)
+import { css } from "@emotion/react";
+import { min, max } from '../../../utils/mediaQueries'
+
+const recentPostsCss = css`
+  padding: 3rem 0 10rem 0;
+
+    // 1px〜479px
+    ${min[0] + max[0]}{
+    }
+    // 480px〜767px
+    ${min[1] + max[1]}{
+    }
+    // 768px〜989px
+    ${min[2] + max[2]}{
+    }
+    // 990px〜
+    ${min[3] + max[3]}{
+    }
+`;
+
+//! =========================================================
 const RecentPosts = () => {
 
   const { data, loading, error } = useQuery(GET_POSTS_BY_ID_LIMIT, {
@@ -41,7 +63,7 @@ const RecentPosts = () => {
   
 
   return (
-    <div className="container">
+    <div css={recentPostsCss} className="container">
       {/* // TODO Fix this later */}
       {data && loading ? (<h1>Loading...</h1>) : ("")} 
       {data &&  error ? (<h1>Error...</h1>) : ("")}

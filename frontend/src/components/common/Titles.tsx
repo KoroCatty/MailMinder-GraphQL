@@ -47,33 +47,32 @@ const titleMediumCss = css`
 // Large
 const titleLargeCss = css`
   font-size: 2.5rem;
-  margin: 4rem auto 3rem auto;
-text-align: center;
-width: fit-content;
-letter-spacing: 0.1rem;
+  margin: 4rem auto 4rem auto;
+  text-align: center;
+  width: fit-content;
+  letter-spacing: 0.1rem;
 
   position: relative;
   display: block;
   padding: 0 80px;
 
+  :before,
+  :after {
+    content: "";
+    position: absolute;
+    top: 50%;
+    display: inline-block;
+    width: 45px;
+    height: 1px;
+    background-color: black;
+  }
 
-:before, :after {
-  content: '';
-  position: absolute;
-  top: 50%;
-  display: inline-block;
-  width: 45px;
-  height: 1px;
-  background-color: black;
-}
-
-:before {
-  left:0;
-}
-:after {
-  right: 0;
-}
-
+  :before {
+    left: 0;
+  }
+  :after {
+    right: 0;
+  }
 
   // 1px〜479px
   ${min[0] + max[0]} {
