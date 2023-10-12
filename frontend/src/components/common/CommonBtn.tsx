@@ -6,13 +6,11 @@ import { min, max } from "../../utils/mediaQueries";
 type Props = {
   children: React.ReactNode;
   type: "button" | "submit" | "reset" | undefined;
+  className? : string;
 };
 
 // Emotion CSS (Responsive Design)
 const commonBtnCss = css`
-
-
-
     background-color: rgba(39, 39, 39, 0.9);
     color: #ffffff;
     text-shadow: 1px 1px 6px black;
@@ -38,8 +36,10 @@ const commonBtnCss = css`
   ${min[3] + max[3]} {
   }
 `;
-//! ======================================================
-const CommonBtn: React.FC<Props> = ({ children }) => {
+//! ===============================================================
+//! Regular
+//! ===============================================================
+export const CommonBtn: React.FC<Props> = ({ children, className }) => {
   //HOOKS
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
@@ -79,9 +79,58 @@ const CommonBtn: React.FC<Props> = ({ children }) => {
 
   return (
 
-      <button ref={buttonRef} css={commonBtnCss}>{children}</button>
+      <button className={className} ref={buttonRef} css={commonBtnCss}>{children}</button>
 
   );
 };
 
-export default CommonBtn;
+
+//! ===============================================================
+//! Large
+//! ===============================================================
+// export const CommonBtnLarge: React.FC<Props> = ({ children, className }) => {
+//   //HOOKS
+//   const buttonRef = useRef<HTMLButtonElement | null>(null);
+
+//   useEffect(() => {
+//     const button = buttonRef.current; // DOM にアクセス
+//     // console.log(button) // <button>Sign Up</button>
+
+//     if (!button) return; // Do nothing
+
+//     // Mouse Move Event
+//     const handleMouseMove = (e: MouseEvent) => {
+//       const rect = button.getBoundingClientRect(); // DOM の位置を取得
+
+//       // マウスの位置を取得
+//       const x = ((e.clientX - rect.left) / button.clientWidth) * 100;
+//       const y = ((e.clientY - rect.top) / button.clientHeight) * 100;
+//       button.style.background = `radial-gradient(circle closest-corner 
+//         at ${x}% ${y}%,
+//         #f2f2f2, rgba(18, 18, 18, 0.8))`;
+//     };
+
+//     // Mouse Leave Event
+//     const handleMouseLeave = () => {
+//       button.style.removeProperty("background");
+//     };
+
+//     // Add Event Listener
+//     button.addEventListener("mousemove", handleMouseMove);
+//     button.addEventListener("mouseleave", handleMouseLeave);
+
+//     // Cleanup on unmount (by Returning a Function)
+//     return () => {
+//       button.removeEventListener("mousemove", handleMouseMove);
+//       button.removeEventListener("mouseleave", handleMouseLeave);
+//     };
+//   }, []);
+
+//   return (
+
+//       <button className={className} ref={buttonRef} css={commonBtnCss}>{children}</button>
+
+//   );
+// };
+
+

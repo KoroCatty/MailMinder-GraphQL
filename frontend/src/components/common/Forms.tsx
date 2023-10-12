@@ -1,6 +1,7 @@
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
 import { min, max } from "../../utils/mediaQueries";
+
 const formsCss = css`
   .form-field {
     position: relative;
@@ -23,7 +24,6 @@ const formsCss = css`
     color: #454545;
     word-wrap: break-word;
     line-height: 1.2;
-
 
     &:focus {
       outline: none;
@@ -51,7 +51,6 @@ const formsCss = css`
     letter-spacing: 0.1rem;
     color: #454545;
     line-height: 1.2;
-
   }
 
   .label {
@@ -92,6 +91,7 @@ interface CommonFormProps {
   text: string;
   type: string;
   name: string;
+  required?: boolean;
 }
 
 // TEXTAREA TYPE
@@ -99,6 +99,7 @@ interface CommonTextareaProps {
   onChange: (event: React.ChangeEvent<HTMLTextAreaElement>) => void;
   text: string;
   name: string;
+  required?: boolean;
 }
 
 //! =======================================================

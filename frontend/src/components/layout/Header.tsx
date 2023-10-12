@@ -155,7 +155,6 @@ const headerCss = css`
 
 //! ==============================================
 function Header() {
-  // const navigate = useNavigate();
 
   // ログインチェック (ローカルストレージ)
   const [loggedIn, setLoggedIn] = useState(

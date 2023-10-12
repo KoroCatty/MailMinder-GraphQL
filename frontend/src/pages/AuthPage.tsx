@@ -2,7 +2,7 @@ import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
 // components
-import CommonBtn from "../components/common/CommonBtn";
+import { CommonBtn } from "../components/common/CommonBtn";
 
 // Apollo
 import { useMutation } from "@apollo/client";
