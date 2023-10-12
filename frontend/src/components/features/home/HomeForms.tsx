@@ -1,34 +1,66 @@
 import { useState } from "react";
 
-// Apollo Client 
-import { useMutation } from '@apollo/client';
-import { CREATE_POST } from '../../../graphql/mutations';
+// Apollo Client
+import { useMutation } from "@apollo/client";
+import { CREATE_POST } from "../../../graphql/mutations";
 
 // components
 import GoogleSearch from "./GoogleSearch";
 import Selfie from "../../common/Selfie";
+import { TitleLarge, TitleSmall } from "../../common/Titles";
+import { CommonForm, CommonTextarea } from "../../common/Forms";
+import { CommonBtn } from "../../common/CommonBtn";
 
 // bootstrap
 import { Form } from "react-bootstrap";
 
+// $( '.js-input' ).keyup(function() {
+//   if( $(this).val() ) {
+//      $(this).addClass('not-empty');
+//   } else {
+//      $(this).removeClass('not-empty');
+//   }
+// });
+
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
-import { min, max } from '../../../utils/mediaQueries'
+import { min, max } from "../../../utils/mediaQueries";
 
 const homeFormsStyles = css`
+  position: relative;
+  margin-top: 18rem;
+
+  &:before {
+    position: absolute;
+    left: 50%;
+    top: -12%;
+    content: "";
+    display: block;
+    width: 16%;
+    transform: translateX(-50%) rotate(90deg);
+    height: 1px;
+    background-color: #ccc;
 
     // 1px〜479px
-    ${min[0] + max[0]}{
+    ${min[0] + max[0]} {
+      left: 50%;
+      top: -6%;
     }
-    // 480px〜767px
-    ${min[1] + max[1]}{
-    }
-    // 768px〜989px
-    ${min[2] + max[2]}{
-    }
-    // 990px〜
-    ${min[3] + max[3]}{
-    }
+  }
+
+  // 1px〜479px
+  ${min[0] + max[0]} {
+    margin-top: 6rem;
+  }
+  // 480px〜767px
+  ${min[1] + max[1]} {
+  }
+  // 768px〜989px
+  ${min[2] + max[2]} {
+  }
+  // 990px〜
+  ${min[3] + max[3]} {
+  }
 
   textarea {
     display: block;
@@ -42,34 +74,90 @@ const homeFormsStyles = css`
     box-shadow: 0 0 5px #ccc;
   }
 
+  // UPLOAD IMAGE TITLE
+  .uploadImgTitle {
+    margin: 8rem 0 4rem 0;
+  }
+
+  // label caption
+  h3 {
+    font-size: 1.4rem;
+    margin: 4rem 0 1rem 0;
+    color: #616161;
+  }
+
+  // Select Image Form
   .imgChooseBtn {
-    width: 50%;
+    width: 60%;
+    outline: 1px solid #ccc;
+    color: #616161;
+    margin-bottom: 5rem;
+
+    &:focus {
+      border: 1px solid #323232;
+      box-shadow: 0 0 8px #ccc;
+    }
+
+    &:hover {
+      transition: all 0.3s ease-in-out;
+      transform: translate(0, 4px);
+      box-shadow: 0 0 8px #ccc;
+    }
+
+    // 1px〜479px
+    ${min[0] + max[0]} {
+      width: 100%;
+    }
   }
 
   .imageWrap {
-    width: 40%;
+    margin: 3rem 0;
 
     img {
-    width: 100%;
-    height: 100%;
-    object-fit: cover;
-    border-radius: 5px;
-    box-shadow: 0 0 5px #ccc;
+      width: 50%;
+      height: auto;
+      aspect-ratio: 1/1;
+      border-radius: 5px;
+      box-shadow: 0 0 5px #ccc;
+      margin: 0 auto;
+      display: block;
+    }
   }
-  }
-  .RegisterBtn {
-    width: 400px;
-    padding: 10px 20px;
-    border-radius: 5px;
-    border: 1px solid #ccc;
-    background-color: #c84d4d;
-    box-shadow: 0 0 5px #ccc;
-    color: white;
-    font-size: 1.8rem;
-    cursor: pointer;
-    margin-top: 8px;
+
+  // Props に渡すCSS
+  .submitBtn {
+    width: 80%;
+    font-size: 2rem;
+    margin: 3rem auto;
     display: block;
-    margin: 60px auto;
+    letter-spacing: 0.1rem;
+
+    &:hover {
+      transition: all 0.3s ease-in-out;
+      transform: translate(0, 4px);
+    }
+  }
+
+  //! Paste Image URL Form
+  .pasteImgUrl {
+    padding: 1rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    font-size: 1rem;
+    letter-spacing: 0.1rem;
+    width: 60%;
+    margin-bottom: 4rem;
+
+    &:focus {
+      border: 1px solid #323232;
+      box-shadow: 0 0 8px #ccc;
+    }
+
+    // 1px〜479px
+    ${min[0] + max[0]} {
+      width: 100%;
+    }
   }
 `;
 
@@ -85,19 +173,25 @@ const HomeForms = () => {
   // Mutations (CreatePost は mutation.ts で定義)
   const [CreatePost, { loading, error }] = useMutation(CREATE_POST);
 
-
-  if (loading) { <h1>Loading...</h1> }
-  if (error) { <h1>Error...</h1> }
+  if (loading) {
+    <h1>Loading...</h1>;
+  }
+  if (error) {
+    <h1>Error...</h1>;
+  }
 
   //! ======================================================
   //! When forms typed
   //! ======================================================
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+  const handleChange = (
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+  ) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value, // name attribute
-    })
+    });
   };
+  console.log(formData);
 
   //! ======================================================
   //! When form submitted
@@ -110,16 +204,16 @@ const HomeForms = () => {
     try {
       CreatePost({
         variables: {
-          postNew: formData // postNew は mutation.ts で定義したもの
-        }
+          postNew: formData, // postNew は mutation.ts で定義したもの
+        },
       });
     } catch (error) {
-      console.log(error)
+      console.log(error);
     }
-  }
+  };
 
   //* ===================================================
-  //* Choose image from local file 画像を選択した時に発火する関数 
+  //* Choose image from local file 画像を選択した時に発火する関数
   //* ===================================================
   const chooseImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0];
@@ -135,114 +229,112 @@ const HomeForms = () => {
   };
 
   //* ===================================================
-  //* Paste Image URL 
+  //* Paste Image URL
   //* ===================================================
   const pasteImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const imageUrl = e.target.value;
     setSelectedImage(imageUrl);
     setFormData({
       ...formData,
-      imgUrl: imageUrl
+      imgUrl: imageUrl,
     });
-  }
+  };
 
   //* ===================================================
   //*  Selfie Image
   //* ===================================================
   const selfieImage = (image64: string | null) => {
-
     // Check if image64 (or selectedImage if you prefer) is not null before reading its length
     if (image64 && image64.length > 10000) {
       setSelectedImage(image64);
       // Handle error - maybe return a user-friendly error message
       setFormData({
         ...formData,
-        imgUrl: image64
+        imgUrl: image64,
       });
     } else {
-      console.log("Too Big")
-      window.alert("Too Big")
+      console.log("Too Big");
+      window.alert("Too Big");
       // Proceed with saving to the database
       // ...your code to save the image to the database
     }
   };
 
-
   return (
     <section css={homeFormsStyles}>
-      <h2 className="text-center m-4">Register Your reminder</h2>
+      {/* COMPONENT */}
+      <TitleLarge title="YOUR REMINDER" />
 
-      <form onSubmit={handleSubmit} >
-        {/* TITLE */}
-        <input
-          name="title"
+      <form onSubmit={handleSubmit}>
+        <br />
+        <br />
+        <TitleSmall title="TEXTS" />
+        <br />
+
+        {/* TITLE COMPONENT */}
+        <CommonForm
+          onChange={(e) => handleChange(e)}
+          text="TITLE"
           type="text"
-          style={{ width: "100%", height: "40px" }}
-          placeholder=" Title here"
-          onChange={(e) => handleChange(e)}
+          name="title"
+          required
         />
 
         <br />
         <br />
         <br />
 
-        {/* CONTENT */}
-        <textarea
-          placeholder="Contents here"
+        {/*//! CONTENT */}
+        <CommonTextarea
+          onChange={(e) => handleChange(e)}
+          text="MESSAGE"
           name="content"
-          onChange={(e) => handleChange(e)}
         />
 
-        {/* IMAGE */}
-        <div className="imageArea">
-          <Form.Group controlId="formFileLg" className="mb-3">
-            <Form.Label style={{ fontSize: "2rem" }}>From Your Local File</Form.Label>
-            <Form.Control
-              className="imgChooseBtn"
-              type="file"
-              size="lg"
-              accept="image/*" // 画像ファイルのみを選択できるようにする
-              // onChange={handleImageChange}
-              onChange={chooseImage}
-              name="image"
-            />
-          </Form.Group>
+        {/* COMPONENT */}
+        <TitleSmall title="UPLOAD IMAGE" className="uploadImgTitle" />
 
-          <br />
-          <div style={{ fontSize: "2rem" }}>OR</div>
-          <br />
+        {/* SELFIE COMPONENT (Pass the function )*/}
+        <Selfie selfieImage={selfieImage} />
 
-          {/* Paste Image URL */}
-          <label style={{ fontSize: "2rem", marginTop: "40px" }}>Paste Image URL</label>
-          <input
-            name="imgUrl"
-            type="text"
-            placeholder="Paste the image URL here"
-            style={{ width: "100%", height: "40px", marginBottom: "40px" }}
-            // onChange={handleImageChange2 }
-            onChange={pasteImage}
-          />
-
-          {/* DISPLAY IMG  画像があれば表示 */}
-          <div className="imageWrap d-flex">
-            {!selectedImage && <img src="/imgs/noImg.jpeg" alt="no Image" />}
-            {selectedImage && <img src={selectedImage} alt="chosen Image" />}
-
-            {/* SELFIE COMPONENT (Pass the function )*/}
-            {/* <Selfie handleImageChange3={handleImageChange3 }  /> */}
-            <Selfie selfieImage={selfieImage} />
-          </div>
+        {/*//* DISPLAY IMG  画像があれば表示 */}
+        <div className="imageWrap">
+          {!selectedImage && <img src="/imgs/noImg.jpeg" alt="no Image" />}
+          {selectedImage && <img src={selectedImage} alt="chosen Image" />}
         </div>
 
+        {/*//* IMAGE SELECT */}
+        <Form.Group controlId="formFileLg">
+          <h3>From Your Local File</h3>
+          <Form.Control
+            className="imgChooseBtn"
+            type="file"
+            size="lg"
+            accept="image/*" // 画像ファイルのみを選択できるようにする
+            // onChange={handleImageChange}
+            onChange={chooseImage}
+            name="image"
+          />
+        </Form.Group>
 
-        {/* Button */}
-        <button type="submit" className="RegisterBtn">Register</button>
+        {/*//* Paste Image URL */}
+        <h3>Paste Image URL</h3>
+        <input
+          name="imgUrl"
+          type="text"
+          placeholder="Paste the image URL here"
+          className="pasteImgUrl"
+          onChange={pasteImage}
+        />
+
+        {/* Button COMPONENT*/}
+        <CommonBtn type="submit" className="submitBtn">
+          <span className="w-100">Create Post</span>
+        </CommonBtn>
       </form>
 
-      {/* //! component */}
+      {/*//! COMPONENT */}
       <GoogleSearch />
-
-      <hr />
     </section>
   );
 };

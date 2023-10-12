@@ -27,6 +27,12 @@ import jwt from 'jsonwebtoken';
 // Sending Email Function
 import sendEmail  from './cron/email.js';
 
+// プリズマのクライアントをインポート (DB接続確認のため)
+import PC from '@prisma/client';
+
+// プリズマクライエントのインスタンスを格納 (DB接続確認のため)
+const prisma = new PC.PrismaClient();
+
 // Initialize express
 const app = express();
 
@@ -179,6 +185,22 @@ app.use(
 await new Promise((resolve) => httpServer.listen({ port: PORT }, resolve));
 console.log(`🚀 Server ready at http://localhost:${PORT}`.cyan.underline);
 //! ==============================================================
+
+
+//* ==============================================================
+//* MySQL DB接続確認
+//* ==============================================================
+async function testConnection() {
+  try {
+    await prisma.$connect();
+    console.log("connected to MySQL! - DB接続成功💾".yellow.underline);
+  } catch (error) {
+    console.error("Error connecting to the database - DB接続が失敗しました😢".red.underline, error);
+  } finally {
+    await prisma.$disconnect();
+  }
+}
+testConnection();
 
 
 

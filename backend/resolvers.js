@@ -10,6 +10,7 @@ import fs from 'fs'; // file system module (built-in) これは、ファイル�
 // プリズマクライエントのインスタンスを格納
 const prisma = new PC.PrismaClient();
 
+
 //! ==========================================================
 //! Resolvers (what do you wanna resolve? query? mutation?)
 //! ==========================================================

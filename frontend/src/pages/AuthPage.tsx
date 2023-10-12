@@ -1,6 +1,9 @@
 import { useState, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 
+// components
+import { CommonBtn } from "../components/common/CommonBtn";
+
 // Apollo
 import { useMutation } from "@apollo/client";
 
@@ -17,11 +20,17 @@ type AuthPageProps = {
 import { css } from "@emotion/react";
 import { min, max } from "../utils/mediaQueries";
 const authPageCss = css`
-  min-height: 67vh;
+  min-height: 74vh;
   text-align: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
+
+  h1 {
+    font-size: 2.5rem;
+    margin-bottom: 40px;
+    letter-spacing: 1px;
+  }
 
   input {
     padding: 10px;
@@ -48,11 +57,26 @@ const authPageCss = css`
   // 990 px 〜
   ${min[3] + max[3]} {
   }
+
+  .authLink {
+    color: #4d4d4d;
+    cursor: pointer;
+    text-decoration: underline;
+    margin: 60px auto;
+    font-size: 1.2rem;
+    width: fit-content;
+
+    &:hover {
+      color: #5358d0;
+      transform: scale(1.05);
+      transition: all 0.3s ease-in-out;
+    }
+  }
 `;
 
 //! ======================================================
 const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
-  // HOOKS 
+  // HOOKS
   const [showLogin, setShowLogin] = useState(true); // true = login, false = signup
   const [formData, setFormData] = useState({});
 
@@ -121,6 +145,9 @@ const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
 
   return (
     <div css={authPageCss}>
+      {showLogin && <h1>LOGIN</h1>}
+      {!showLogin && <h1>SIGN UP</h1>}
+
       <div>
         {/* サインアップ時 */}
         {signupData && <h1>{signupData.signupUser.firstName}You Signed Up!</h1>}
@@ -181,6 +208,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
               setFormData({}); // clear form data
               authForm?.current?.reset(); // clear form inputs
             }}
+            className="authLink"
           >
             {showLogin
               ? "Don't have an account? Sign up"
@@ -188,7 +216,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
           </div>
 
           {/* BUTTON */}
-          <button type="submit">{showLogin ? "Login" : "Sign Up"}</button>
+          <CommonBtn type="submit">{showLogin ? "Login" : "Sign Up"}</CommonBtn>
         </form>
       </div>
     </div>
