@@ -1,6 +1,93 @@
 // Reactの関数や型をインポート
 import { useState, useRef } from "react";
 
+
+
+// Emotion CSS (Responsive Design)
+import { css } from "@emotion/react";
+import { min, max } from '../../utils/mediaQueries'
+
+const selfieCss = css`
+
+.videosContainer {
+  display: flex;
+  justify-content: center;
+  gap: 2rem;
+  align-items: center;
+
+     // 1px〜479px
+     ${min[0] + max[0]}{
+      flex-direction: column;
+      align-items: flex-start;
+    }
+    
+    // 480px〜767px
+    ${min[1] + max[1]}{
+      flex-direction: column;
+      align-items: flex-start;
+
+    }
+}
+
+.videoItem {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-around;
+  width: 45%;
+
+
+  video {
+    width: 400px;
+    height: 300px;
+
+   // 1px〜479px
+   ${min[0] + max[0]}{
+    }
+    // 480px〜767px
+    ${min[1] + max[1]}{
+
+    }
+    // 768px〜989px
+    ${min[2] + max[2]}{
+      width: 340px;
+      height: 240px;
+    }
+
+  }
+
+  canvas {
+    width: 400px;
+    height: 300px;
+
+       // 1px〜479px
+   ${min[0] + max[0]}{
+    }
+    // 480px〜767px
+    ${min[1] + max[1]}{
+
+    }
+    // 768px〜989px
+    ${min[2] + max[2]}{
+      width: 340px;
+      height: 240px;
+    }
+  }
+}
+
+    // 1px〜479px
+    ${min[0] + max[0]}{
+    }
+    // 480px〜767px
+    ${min[1] + max[1]}{
+    }
+    // 768px〜989px
+    ${min[2] + max[2]}{
+    }
+    // 990px〜
+    ${min[3] + max[3]}{
+    }
+`;
+
 // selfieImage の型を定義するためのインターフェース
 interface SelfieProps {
   selfieImage: (image64: string | null) => void;
@@ -17,7 +104,7 @@ const Selfie: React.FC<SelfieProps> = ({ selfieImage }) => {
 
   // コンポーネントがマウントされた時に実行されるeffect
   // useEffect(() => {
-    const startSelfie = () => {
+  const startSelfie = () => {
     // playerRefとcanvasRefからDOM要素を取得
     const player = playerRef.current;
     const canvas = canvasRef.current;
@@ -48,10 +135,10 @@ const Selfie: React.FC<SelfieProps> = ({ selfieImage }) => {
 
     // 画像をキャプチャする関数
     const handleCapture = () => {
-      context.drawImage(player, 0, 0, canvas.width, canvas.height); 
+      context.drawImage(player, 0, 0, canvas.width, canvas.height);
       setImage64(canvas.toDataURL()); // canvasからBase64形式の画像データを取得
     };
-   
+
 
     // "capture"ボタンにクリックイベントリスナを追加
     const captureButton = document.getElementById("capture");
@@ -64,33 +151,47 @@ const Selfie: React.FC<SelfieProps> = ({ selfieImage }) => {
     }
   }
 
-  // JSXを返す
+  //! ===================================================
+  //! JSX
+  //! ===================================================
   return (
-    <div className="container">
-      <div onClick={()=> startSelfie()} style={{fontSize: "3rem", cursor: "pointer", border: "1px red dashed"}}>Start Selfie</div>
-      <div>
-        {/* カメラの映像を表示するvideo要素 */}
-        <video ref={playerRef} id="player" autoPlay style={{width:"100%"}} ></video>
+    <div css={selfieCss} className="container">
+
+      <div onClick={() => startSelfie()} style={{ fontSize: "3rem", cursor: "pointer", border: "1px red dashed" }}>
+        Start Selfie
       </div>
 
-      {/* 画像をキャプチャするボタン */}
-      <div id="capture" className="btn btn-primary w-100 my-1">
-        Capture
-      </div>
+      <div className="videosContainer">
 
-      {/* キャプチャされた画像を表示するcanvas要素 */}
-      <canvas
-        ref={canvasRef}
-        id="canvas"
-        className="img-size"
-        width={320}
-        height={240}
-      ></canvas>
+        <div className="videoItem">
+          {/* カメラの映像を表示するvideo要素 */}
+          <video ref={playerRef} id="player" autoPlay ></video>
+
+          {/* 画像をキャプチャするボタン */}
+          <div id="capture" className="btn btn-primary">
+            Capture
+          </div>
+        </div>
+
+
+        <div className="videoItem">
+          {/* キャプチャされた画像を表示するcanvas要素 */}
+          <canvas
+            ref={canvasRef}
+            id="canvas"
+            className="img-size"
       
-      {/* キャプチャされた画像を送信するボタン */}
-      <div onClick={() => selfieImage(image64)} className="btn btn-success w-100 my-2">
-        Submit
+          ></canvas>
+
+          {/* キャプチャされた画像を送信するボタン */}
+          <div onClick={() => selfieImage(image64)} className="btn btn-success">
+            Submit
+          </div>
+
+        </div>
+
       </div>
+
 
     </div>
   );

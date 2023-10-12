@@ -9,11 +9,12 @@ type TitlePropType = {
 
 //? Emotion CSS (Responsive Design)
 const titleSmallCss = css`
-  padding: 1rem 2rem;
-  border-left: 4px solid #434343;
-  font-size: 2.5rem;
+  padding: 0.8rem 1.6rem;
+  border-left: 4px solid #6d6d6d;
+  font-size: 2rem;
   margin: 2rem 0;
   color: #434343;
+  letter-spacing: 0.1rem;
 
   // 1px〜479px
   ${min[0] + max[0]} {

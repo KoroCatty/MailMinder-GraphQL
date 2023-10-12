@@ -7,7 +7,7 @@ import { CREATE_POST } from '../../../graphql/mutations';
 // components
 import GoogleSearch from "./GoogleSearch";
 import Selfie from "../../common/Selfie";
-import { TitleLarge } from "../../common/Titles";
+import { TitleLarge, TitleSmall } from "../../common/Titles";
 import { CommonForm, CommonTextarea } from "../../common/Forms";
 
 // bootstrap
@@ -54,29 +54,6 @@ margin-top: 18rem;
     // 990px〜
     ${min[3] + max[3]}{
     }
-/* 
-    label {
-      display: block;
-      font-size: 2rem;
-      margin-bottom: 10px;
-    }
-
-    input {
-      display: block;
-      width: 100%;
-      height: 40px;
-      border: 1px solid #ccc;
-      border-radius: 5px;
-      padding: 10px;
-      box-shadow: 0 0 5px #ccc;
-
-      &:focus {
-        outline: none;
-        /* 流れるような線 */
-      /* } */
-    /* }  */
-    /* */
-
 
   textarea {
     display: block;
@@ -228,12 +205,13 @@ const HomeForms = () => {
         <br />
         <br />
         <br />
+
         {/* TITLE COMPONENT */}
-        <CommonForm 
-        onChange={(e) => handleChange(e)} 
-        text="TITLE" 
-        type="text" 
-        name="title" 
+        <CommonForm
+          onChange={(e) => handleChange(e)}
+          text="TITLE"
+          type="text"
+          name="title"
         />
 
 
@@ -242,23 +220,24 @@ const HomeForms = () => {
         <br />
 
         {/*//! CONTENT */}
-        <CommonTextarea 
-        onChange={(e) => handleChange(e)} 
-        text="MESSAGE" 
-        name="content"
-         />
+        <CommonTextarea
+          onChange={(e) => handleChange(e)}
+          text="MESSAGE"
+          name="content"
+        />
+
+        {/* COMPONENT */}
+        <TitleSmall title="CAMERA IMAGE" />
+
+        {/* SELFIE COMPONENT (Pass the function )*/}
+        <Selfie selfieImage={selfieImage} />
 
 
-
-          {/* DISPLAY IMG  画像があれば表示 */}
-          <div className="imageWrap d-flex">
-            {!selectedImage && <img src="/imgs/noImg.jpeg" alt="no Image" />}
-            {selectedImage && <img src={selectedImage} alt="chosen Image" />}
-
-            {/* SELFIE COMPONENT (Pass the function )*/}
-            {/* <Selfie handleImageChange3={handleImageChange3 }  /> */}
-            <Selfie selfieImage={selfieImage} />
-          </div>
+        {/* DISPLAY IMG  画像があれば表示 */}
+        <div className="imageWrap">
+          {!selectedImage && <img src="/imgs/noImg.jpeg" alt="no Image" />}
+          {selectedImage && <img src={selectedImage} alt="chosen Image" />}
+        </div>
 
 
 

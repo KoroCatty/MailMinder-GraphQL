@@ -2,139 +2,74 @@
 import { css } from "@emotion/react";
 import { min, max } from "../../utils/mediaQueries";
 const formsCss = css`
-  .align-center {
-    text-align: center;
-  }
-
-  // Grid
-  .row {
-    margin: -20px 0;
-
-    .col {
-      padding: 0 20px;
-      float: left;
-      box-sizing: border-box;
-
-      /* &.x-50 {
-        width: 50%;
-      }
-
-      &.x-100 {
-        width: 100%;
-      } */
-    }
-  }
-
-  .content-wrapper {
-    min-height: 100%;
+  .form-field {
     position: relative;
+    margin: 32px 0;
   }
 
-  .get-in-touch {
-    /* max-width: 650px; */
-    margin: 0 auto;
-    position: relative;
-    top: 50%;
-    /* transform: translateY(-50%); */
-
-    .title {
-      text-align: center;
-      font-family: Raleway, sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 3px;
-      font-size: 36px;
-      line-height: 48px;
-      padding-bottom: 48px;
-    }
-  }
-
-  .contact-form {
-    .form-field {
-      position: relative;
-      margin: 32px 0;
-    }
-
-    .input-text {
-      display: block;
-      width: 100%;
-      height: 36px;
-      border-width: 0 0 2px 0;
-      border-color: #000;
-      font-family: Lusitana, serif;
-      font-size: 18px;
-      line-height: 26px;
-      font-weight: 400;
-
-      &:focus {
-        outline: none;
-      }
-
-      &:focus,
-      &.not-empty {
-        + .label {
-          transform: translateY(-24px);
-        }
-      }
-    }
-
-    // TEXTAREA
-    .input-textArea {
-      height: 200px;
-      display: block;
-      width: 100%;
-      border-width: 0 0 2px 0;
-      border-color: #000;
-      font-family: Lusitana, serif;
-      font-size: 18px;
-      line-height: 26px;
-      font-weight: 400;
-    }
-    
-    .label {
-      position: absolute;
-      left: 12px;
-      bottom: 11px;
-      font-family: Lusitana, serif;
-      font-size: 18px;
-      line-height: 26px;
-      font-weight: 400;
-      color: #888;
-      cursor: text;
-      transition: transform 0.2s ease-in-out;
-    }
-
-    .submit-btn {
-      display: inline-block;
-      background-color: #000;
-      color: #fff;
-      font-family: Raleway, sans-serif;
-      text-transform: uppercase;
-      letter-spacing: 2px;
-      font-size: 16px;
-      line-height: 24px;
-      padding: 8px 16px;
-      border: none;
-      cursor: pointer;
-    }
-  }
-
-  .note {
-    position: absolute;
-    left: 0;
-    bottom: 10px;
+  .input-text {
+    display: block;
     width: 100%;
-    text-align: center;
+    height: 36px;
+    border-width: 0 0 2px 0;
+    border-color: #a3a3a3;
     font-family: Lusitana, serif;
-    font-size: 16px;
-    line-height: 21px;
+    font-size: 18px;
+    line-height: 26px;
+    font-weight: 400;
+    outline: 1px solid transparent;
+    font-size: 2rem;
+    letter-spacing: 0.1rem;
+    color: #454545;
+    word-wrap: break-word;
+    line-height: 1.2;
 
-    .link {
-      color: #888;
-      text-decoration: none;
-      &:hover {
-        text-decoration: underline;
+
+    &:focus {
+      outline: none;
+    }
+
+    &:focus, // 複数セレクタに適用
+    &.aaa {
+      + .label { // 現在の要素の直後の兄弟要素で、.labelクラスを持つ要素をターゲット
+        transform: translateY(-40px);
+      }
+      + .label.textArea {
+        transform: translateY(-80px);
       }
     }
+  }
+
+  // TEXTAREA
+  .input-textArea {
+    min-height: 240px;
+    font-family: Lusitana, serif;
+    font-size: 18px;
+    line-height: 26px;
+    font-weight: 400;
+    font-size: 2rem;
+    letter-spacing: 0.1rem;
+    color: #454545;
+    line-height: 1.2;
+
+  }
+
+  .label {
+    position: absolute;
+    left: 12px;
+    bottom: 11px;
+    font-family: Lusitana, serif;
+    font-size: 18px;
+    line-height: 26px;
+    font-weight: 400;
+    color: #888;
+    cursor: text;
+    transition: transform 0.2s ease-in-out;
+  }
+
+  .label.textArea {
+    bottom: 190px;
+    letter-spacing: 0.3rem;
   }
 
   // 1px〜479px
@@ -169,6 +104,7 @@ interface CommonTextareaProps {
 //! =======================================================
 //! FORM
 //! =======================================================
+// Props を受け取る
 export const CommonForm: React.FC<CommonFormProps> = ({
   onChange,
   text,
@@ -218,11 +154,10 @@ export const CommonForm: React.FC<CommonFormProps> = ({
   );
 };
 
-
-
 //! =======================================================
 //! TEXTAREA
 //! =======================================================
+// Props を受け取る
 export const CommonTextarea: React.FC<CommonTextareaProps> = ({
   onChange,
   text,
@@ -230,22 +165,25 @@ export const CommonTextarea: React.FC<CommonTextareaProps> = ({
 }) => {
   return (
     <div css={formsCss}>
-      <section className="get-in-touch">
-        <div className="contact-form">
-
+      <section>
+        <div >
           <div className="form-field ">
-            <textarea 
-            onChange={onChange} 
-            name={name} 
-            className="input-text input-textArea"
-            required 
+            <textarea
+              onChange={onChange}
+              name={name}
+              className="input-text input-textArea"
+              required
             />
-            <label className="label" htmlFor="message" style={{letterSpacing: ".3rem"}}>{text}</label>
-          </div>
 
+            <label
+              className="label textArea"
+              htmlFor="message"
+            >
+              {text}
+            </label>
+          </div>
         </div>
       </section>
-    
     </div>
   );
 };

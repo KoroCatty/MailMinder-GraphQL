@@ -188,12 +188,12 @@ console.log(`🚀 Server ready at http://localhost:${PORT}`.cyan.underline);
 
 
 //* ==============================================================
-//* DB接続確認
+//* MySQL DB接続確認
 //* ==============================================================
 async function testConnection() {
   try {
     await prisma.$connect();
-    console.log("connected to the MySQL! - DB接続成功💾".yellow.underline);
+    console.log("connected to MySQL! - DB接続成功💾".yellow.underline);
   } catch (error) {
     console.error("Error connecting to the database - DB接続が失敗しました😢".red.underline, error);
   } finally {
