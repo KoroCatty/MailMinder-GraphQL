@@ -35,7 +35,7 @@ const HeroStyles = css`
     }
     // 480px〜767px
     ${min[1] + max[1]} {
-      display: none;
+      display: block;
     }
   }
 
@@ -74,7 +74,7 @@ const Hero = () => {
         {location.pathname === "/" && (
           <>
             <Image src="/imgs/hero.jpg" fluid className="homeHero" />
-            <Image src="/imgs/hero3.gif" fluid className="homeHero__sp" />
+            <Image src="/imgs/hero_sub2.jpg" fluid className="homeHero__sp" />
           </>
         )}
 

@@ -5,10 +5,12 @@ import { min, max } from "../../utils/mediaQueries";
 // TYPE
 type TitlePropType = {
   title: string;
+  className?: string;
 };
 
 //? Emotion CSS (Responsive Design)
 const titleSmallCss = css`
+// SMALL
   padding: 0.8rem 1.6rem;
   border-left: 4px solid #6d6d6d;
   font-size: 2rem;
@@ -29,6 +31,7 @@ const titleSmallCss = css`
   ${min[3] + max[3]} {
   }
 `;
+
 // Medium
 const titleMediumCss = css`
   // 1px〜479px
@@ -77,6 +80,9 @@ const titleLargeCss = css`
 
   // 1px〜479px
   ${min[0] + max[0]} {
+    margin: 0 auto 2rem auto;
+    font-size: 1.4rem;
+    padding: 0 4rem;
   }
   // 480px〜767px
   ${min[1] + max[1]} {
@@ -89,8 +95,8 @@ const titleLargeCss = css`
   }
 `;
 
-export const TitleSmall = ({ title }: TitlePropType) => {
-  return <h2 css={titleSmallCss}>{title}</h2>;
+export const TitleSmall = ({ title, className }: TitlePropType) => {
+  return <h2 className={className}  css={titleSmallCss}>{title}</h2>;
 };
 
 export const TitleMedium = ({ title }: TitlePropType) => {

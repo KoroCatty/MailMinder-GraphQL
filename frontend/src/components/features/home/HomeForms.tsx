@@ -40,10 +40,17 @@ const homeFormsStyles = css`
     transform: translateX(-50%) rotate(90deg);
     height: 1px;
     background-color: #ccc;
+
+    // 1px〜479px
+    ${min[0] + max[0]} {
+      left: 50%;
+      top: -6%;
+    }
   }
 
   // 1px〜479px
   ${min[0] + max[0]} {
+    margin-top: 6rem;
   }
   // 480px〜767px
   ${min[1] + max[1]} {
@@ -55,11 +62,6 @@ const homeFormsStyles = css`
   ${min[3] + max[3]} {
   }
 
-  h3 {
-    font-size: 1.4rem;
-    margin: 4rem 0 1rem 0;
-  }
-  
   textarea {
     display: block;
     width: 100%;
@@ -72,11 +74,24 @@ const homeFormsStyles = css`
     box-shadow: 0 0 5px #ccc;
   }
 
+  // UPLOAD IMAGE TITLE
+  .uploadImgTitle {
+    margin: 8rem 0 4rem 0;
+  }
+
+  // label caption
+  h3 {
+    font-size: 1.4rem;
+    margin: 4rem 0 1rem 0;
+    color: #616161;
+  }
+
   // Select Image Form
   .imgChooseBtn {
     width: 60%;
-    outline: 1px solid  #ccc;
-    color: #4c4c4c;
+    outline: 1px solid #ccc;
+    color: #616161;
+    margin-bottom: 5rem;
 
     &:focus {
       border: 1px solid #323232;
@@ -87,6 +102,11 @@ const homeFormsStyles = css`
       transition: all 0.3s ease-in-out;
       transform: translate(0, 4px);
       box-shadow: 0 0 8px #ccc;
+    }
+
+    // 1px〜479px
+    ${min[0] + max[0]} {
+      width: 100%;
     }
   }
 
@@ -127,10 +147,16 @@ const homeFormsStyles = css`
     font-size: 1rem;
     letter-spacing: 0.1rem;
     width: 60%;
+    margin-bottom: 4rem;
 
     &:focus {
       border: 1px solid #323232;
       box-shadow: 0 0 8px #ccc;
+    }
+
+    // 1px〜479px
+    ${min[0] + max[0]} {
+      width: 100%;
     }
   }
 `;
@@ -266,7 +292,7 @@ const HomeForms = () => {
         />
 
         {/* COMPONENT */}
-        <TitleSmall title="UPLOAD IMAGE" />
+        <TitleSmall title="UPLOAD IMAGE" className="uploadImgTitle" />
 
         {/* SELFIE COMPONENT (Pass the function )*/}
         <Selfie selfieImage={selfieImage} />
@@ -277,12 +303,9 @@ const HomeForms = () => {
           {selectedImage && <img src={selectedImage} alt="chosen Image" />}
         </div>
 
-
         {/*//* IMAGE SELECT */}
         <Form.Group controlId="formFileLg">
-          <h3>
-            From Your Local File
-          </h3>
+          <h3>From Your Local File</h3>
           <Form.Control
             className="imgChooseBtn"
             type="file"
@@ -294,11 +317,8 @@ const HomeForms = () => {
           />
         </Form.Group>
 
-
         {/*//* Paste Image URL */}
-        <h3>
-          Paste Image URL
-        </h3>
+        <h3>Paste Image URL</h3>
         <input
           name="imgUrl"
           type="text"
@@ -311,13 +331,10 @@ const HomeForms = () => {
         <CommonBtn type="submit" className="submitBtn">
           <span className="w-100">Create Post</span>
         </CommonBtn>
-
       </form>
 
       {/*//! COMPONENT */}
       <GoogleSearch />
-
-      <hr />
     </section>
   );
 };

@@ -6,6 +6,8 @@ import { css } from "@emotion/react";
 import { min, max } from "../../utils/mediaQueries";
 
 const selfieCss = css`
+  margin-bottom: 4rem;
+
   //! No display Camera section in default
   .videosContainer.displayNone {
     display: none;
@@ -26,7 +28,7 @@ const selfieCss = css`
     border-radius: 4px;
     color: #4c4c4c;
     border: 3px solid #4c4c4c;
-    box-shadow: 5px 5px #4c4c4c;
+    box-shadow: 3px 3px #4c4c4c;
     transition: 0.3s ease-in-out;
 
     &:hover {
@@ -51,7 +53,7 @@ const selfieCss = css`
     border-radius: 4px;
     color: #4c4c4c;
     border: 3px solid #4c4c4c;
-    box-shadow: 5px 5px #4c4c4c;
+    box-shadow: 3px 3px #4c4c4c;
     transition: 0.3s ease-in-out;
 
     &:hover {
@@ -80,7 +82,7 @@ const selfieCss = css`
     // 480px〜767px
     ${min[1] + max[1]} {
       flex-direction: column;
-      align-items: flex-start;
+      align-items: center;
     }
   }
 
@@ -89,6 +91,11 @@ const selfieCss = css`
     flex-direction: column;
     justify-content: space-around;
     width: 45%;
+    
+    // 768px〜989px
+    ${min[1] + max[1]} {
+      transform: translate(-30%, 0) !important;
+    }
 
     video {
       width: 400px;
@@ -96,9 +103,13 @@ const selfieCss = css`
 
       // 1px〜479px
       ${min[0] + max[0]} {
+        width: 340px;
+        height: 240px;
       }
       // 480px〜767px
       ${min[1] + max[1]} {
+        width: 340px;
+        height: 240px;
       }
       // 768px〜989px
       ${min[2] + max[2]} {
@@ -113,9 +124,13 @@ const selfieCss = css`
 
       // 1px〜479px
       ${min[0] + max[0]} {
+        width: 340px;
+        height: 240px;
       }
       // 480px〜767px
       ${min[1] + max[1]} {
+        width: 340px;
+        height: 240px;
       }
       // 768px〜989px
       ${min[2] + max[2]} {
@@ -126,7 +141,7 @@ const selfieCss = css`
   }
 
   // 1px〜479px
-  ${min[0] + max[0]} {
+  /* ${min[0] + max[0]} {
   }
   // 480px〜767px
   ${min[1] + max[1]} {
@@ -136,7 +151,7 @@ const selfieCss = css`
   }
   // 990px〜
   ${min[3] + max[3]} {
-  }
+  } */
 `;
 
 // selfieImage の型を定義するためのインターフェース

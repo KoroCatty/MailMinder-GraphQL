@@ -2,6 +2,7 @@ import { useState } from "react";
 
 // Emotion
 import { css } from "@emotion/react";
+import { min, max } from "../../../utils/mediaQueries";
 const googleSearchStyles = css`
   margin: 4rem 0;
 
@@ -9,14 +10,6 @@ const googleSearchStyles = css`
     display: flex;
     align-items: flex-end;
     gap: 0 10px;
-  }
-
-  small {
-    display: block;
-    margin-bottom: 10px;
-    font-size: 1.4rem;
-    font-weight: 400;
-    color: #515151;
   }
 
   input {
@@ -64,6 +57,31 @@ const googleSearchStyles = css`
       background-image: url("data:image/svg+xml;charset=utf8,%3Csvg%20xmlns%3D%22http%3A%2F%2Fwww.w3.org%2F2000%2Fsvg%22%20viewBox%3D%220%200%2024%2024%22%3E%20%3Cpath%20d%3D%22M23.7%2020.8%2019%2016.1c-.2-.2-.5-.3-.8-.3h-.8c1.3-1.7%202-3.7%202-6C19.5%204.4%2015.1%200%209.7%200S0%204.4%200%209.7s4.4%209.7%209.7%209.7c2.3%200%204.3-.8%206-2v.8c0%20.3.1.6.3.8l4.7%204.7c.4.4%201.2.4%201.6%200l1.3-1.3c.5-.5.5-1.2.1-1.6zm-14-5.1c-3.3%200-6-2.7-6-6s2.7-6%206-6%206%202.7%206%206-2.6%206-6%206z%22%20fill%3D%22%23fff%22%3E%3C%2Fpath%3E%20%3C%2Fsvg%3E");
       background-repeat: no-repeat;
       content: "";
+
+      // 1px〜479px
+      ${min[0] + max[0]} {
+        margin-right: 2px;
+        width: 16px;
+      }
+    }
+
+    // 1px〜479px
+    ${min[0] + max[0]} {
+      font-size: 1rem;
+      width: 100%;
+    }
+  }
+
+  small {
+    display: block;
+    margin-bottom: 10px;
+    font-size: 1.4rem;
+    font-weight: 400;
+    color: #515151;
+
+    // 1px〜479px
+    ${min[0] + max[0]} {
+      font-size: 1rem;
     }
   }
 `;
