@@ -1,5 +1,8 @@
 import { useState } from "react";
 
+// Color Schema
+import colorSchema from "../../../utils/colorSchema";
+
 // Emotion
 import { css } from "@emotion/react";
 import { min, max } from "../../../utils/mediaQueries";
@@ -39,11 +42,10 @@ const googleSearchStyles = css`
       &::placeholder {
         transform: scale(1.2) translateX(20px);
 
-              // 1px〜479px
-      ${min[0] + max[0]} {
-        transform: scale(1.1) translateX(10px);
-
-      }
+        // 1px〜479px
+        ${min[0] + max[0]} {
+          transform: scale(1.1) translateX(10px);
+        }
       }
     }
   }
@@ -56,7 +58,7 @@ const googleSearchStyles = css`
     max-width: 140px;
     height: 48px;
     border: none;
-    background-color: #404040;
+    background-color: ${colorSchema.success};
     color: #fff;
     cursor: pointer;
     border-radius: 4px;
