@@ -50,7 +50,7 @@ const homeFormsStyles = css`
 
   // 1px〜479px
   ${min[0] + max[0]} {
-    margin-top: 6rem;
+    margin-top: 8rem;
   }
   // 480px〜767px
   ${min[1] + max[1]} {
@@ -124,18 +124,48 @@ const homeFormsStyles = css`
     }
   }
 
-  // Props に渡すCSS
+  //! Create Button (Props に渡すCSS)
   .submitBtn {
     width: 80%;
     font-size: 2rem;
     margin: 3rem auto;
     display: block;
     letter-spacing: 0.1rem;
+    position: relative;
+    overflow: hidden;
+
+    // For Animation
+    &:before {
+    position: absolute;
+    top: -50%;
+    left: -30%;
+    transform: rotate(30deg);
+    width: 50px;
+    height: 100px;
+    content: '';
+    background-image: linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 50%, rgba(255, 255, 255, 0) 100%);
+    background-image: -webkit-gradient(linear, left bottom, right bottom, color-stop(0%, rgba(255, 255, 255, 0)), color-stop(50%, rgba(255, 255, 255, 1)), color-stop(100%, rgba(255, 255, 255, 0)));
+    animation: submitBtn 5s infinite linear;
+    }
 
     &:hover {
       transition: all 0.3s ease-in-out;
       transform: translate(0, 4px);
     }
+
+    @keyframes submitBtn {
+    10% {
+        left: 120%;
+    }
+    100% {
+        left: 120%;
+    }
+}
+
+
+
+
+
   }
 
   //! Paste Image URL Form

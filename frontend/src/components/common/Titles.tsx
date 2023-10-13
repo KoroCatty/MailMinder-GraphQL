@@ -10,7 +10,9 @@ type TitlePropType = {
 
 //? Emotion CSS (Responsive Design)
 const titleSmallCss = css`
-// SMALL
+//! =================================================
+//! SMALL
+//! =================================================
   padding: 0.8rem 1.6rem;
   border-left: 4px solid #6d6d6d;
   font-size: 2rem;
@@ -32,7 +34,9 @@ const titleSmallCss = css`
   }
 `;
 
-// Medium
+//! =================================================
+//! Medium
+//! =================================================
 const titleMediumCss = css`
   // 1px〜479px
   ${min[0] + max[0]} {
@@ -47,8 +51,9 @@ const titleMediumCss = css`
   ${min[3] + max[3]} {
   }
 `;
-
-// Large
+//! =================================================
+//! Large
+//! =================================================
 const titleLargeCss = css`
   font-size: 2.5rem;
   margin: 4rem auto 4rem auto;
@@ -68,7 +73,16 @@ const titleLargeCss = css`
     display: inline-block;
     width: 45px;
     height: 1px;
-    background-color: black;
+    background-color: #9e9e9e;
+
+      // 1px〜479px
+  ${min[0] + max[0]} {
+    width: 24px;
+  }
+  // 480px〜767px
+  ${min[1] + max[1]} {
+    width: 32px;
+  }
   }
 
   :before {
@@ -80,12 +94,15 @@ const titleLargeCss = css`
 
   // 1px〜479px
   ${min[0] + max[0]} {
-    margin: 0 auto 2rem auto;
+    margin: 40px auto 2rem auto;
     font-size: 1.4rem;
     padding: 0 4rem;
   }
   // 480px〜767px
   ${min[1] + max[1]} {
+    margin: 0 auto 2rem auto;
+    font-size: 2rem;
+    padding: 0 4rem;
   }
   // 768px〜989px
   ${min[2] + max[2]} {

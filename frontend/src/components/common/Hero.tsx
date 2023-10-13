@@ -4,6 +4,7 @@ import { useLocation } from "react-router-dom";
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
 import { min, max } from "../../utils/mediaQueries";
+
 const HeroStyles = css`
   @media screen and (min-width: 991px) {
     position: relative;
@@ -58,6 +59,15 @@ const HeroStyles = css`
       font-size: 4rem;
       font-weight: 700;
       text-shadow: 1px 1px 6px black;
+
+          // 1px〜479px
+    ${min[0] + max[0]} {
+      font-size: 2.1rem;
+    }
+    // 480px〜767px
+    ${min[1] + max[1]} {
+      font-size: 3rem;
+    }
     }
   }
 `;

@@ -162,6 +162,14 @@ function Header() {
   );
   // console.log(loggedIn)
 
+  const toTop = () => {
+    window.scrollTo({
+      top: 0,
+      left: 0,
+      behavior: 'smooth'
+    });
+  };
+
   return (
     <>
       <Navbar css={headerCss} expand="lg" className="">
@@ -175,16 +183,16 @@ function Header() {
             <Nav>
               {loggedIn ? (
                 <>
-                  <Nav.Link as={Link} to="/">
+                  <Nav.Link as={Link} to="/" onClick={()=>toTop() }>
                     Home
                   </Nav.Link>
-                  <Nav.Link as={Link} to="/postlist">
+                  <Nav.Link as={Link} to="/postlist" onClick={()=>toTop()} >
                     Posts
                   </Nav.Link>
-                  <Nav.Link as={Link} to="/settings">
+                  <Nav.Link as={Link} to="/settings" onClick={()=>toTop()} >
                     Settings
                   </Nav.Link>
-                  <Nav.Link as={Link} to="/contact">
+                  <Nav.Link as={Link} to="/contact" onClick={()=>toTop()} >
                     Contact
                   </Nav.Link>
                 </>
