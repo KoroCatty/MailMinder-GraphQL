@@ -8,7 +8,12 @@ import { min, max } from "../../utils/mediaQueries";
 const selfieCss = css`
   margin-bottom: 4rem;
 
-  //! No display Camera section in default
+  //! No available whole section in SP & Tablet
+  @media screen and (max-width: 989px) {
+    display: none;
+  }
+
+  //! No display Open Camera section in default
   .videosContainer.displayNone {
     display: none;
   }
@@ -91,7 +96,7 @@ const selfieCss = css`
     flex-direction: column;
     justify-content: space-around;
     width: 45%;
-    
+
     // 768px〜989px
     ${min[1] + max[1]} {
       transform: translate(-30%, 0) !important;

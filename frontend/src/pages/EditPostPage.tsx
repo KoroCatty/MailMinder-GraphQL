@@ -5,6 +5,9 @@ import { useState, useEffect } from 'react';
 import BackButton from '../components/common/BackButton';
 import Selfie from '../components/common/Selfie';
 import GoogleSearch from '../components/features/home/GoogleSearch';
+import { TitleLarge, TitleSmall } from '../components/common/Titles';
+import { CommonForm, CommonTextarea } from '../components/common/Forms';
+import { CommonBtn } from '../components/common/CommonBtn';
 
 // Apollo client
 import { useQuery } from '@apollo/client';
@@ -18,27 +21,191 @@ import { Form } from "react-bootstrap";
 
 // Emotion CSS
 import { css } from '@emotion/react';
-const editPageStyle = css`
+import { min, max } from '../utils/mediaQueries';
+// const editPageStyle = css`
 
-  .titleInput {
-    width: 80%;
-    margin: 0 auto;
+//   .titleInput {
+//     width: 80%;
+//     margin: 0 auto;
+//     display: block;
+//     }
+
+//   img {
+//     width: 40%;
+//     height: 50vh;
+//     object-fit: cover;
+
+//     @media screen and (max-width: 990px) {
+//       width: 70%;
+//     }
+//   }
+
+//   textarea {
+//     width: 100%;
+//     height: 200px;
+//   }
+// `;
+
+
+
+const homeFormsStyles = css`
+  &:before {
+    position: absolute;
+    left: 50%;
+    top: -12%;
+    content: "";
     display: block;
-    }
-  
-  img {
-    width: 40%;
-    height: 50vh;
-    object-fit: cover;
+    width: 16%;
+    transform: translateX(-50%) rotate(90deg);
+    height: 1px;
+    background-color: #ccc;
 
-    @media screen and (max-width: 990px) {
-      width: 70%;
+    // 1px〜479px
+    ${min[0] + max[0]} {
+      left: 50%;
+      top: -6%;
     }
   }
-  
+
+  // 1px〜479px
+  ${min[0] + max[0]} {
+  }
+  // 480px〜767px
+  ${min[1] + max[1]} {
+  }
+  // 768px〜989px
+  ${min[2] + max[2]} {
+  }
+  // 990px〜
+  ${min[3] + max[3]} {
+  }
+
   textarea {
+    display: block;
     width: 100%;
     height: 200px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    padding: 10px;
+    margin: 40px 0;
+    resize: none; // resizeとは、textareaの右下にある、ドラッグでサイズ変更できる機能
+    box-shadow: 0 0 5px #ccc;
+  }
+
+  // UPLOAD IMAGE TITLE
+  .uploadImgTitle {
+    margin: 8rem 0 4rem 0;
+  }
+
+  // label caption
+  h3 {
+    font-size: 1.4rem;
+    margin: 4rem 0 1rem 0;
+    color: #616161;
+  }
+
+  // Select Image Form
+  .imgChooseBtn {
+    width: 60%;
+    outline: 1px solid #ccc;
+    color: #616161;
+    margin-bottom: 5rem;
+
+    &:focus {
+      border: 1px solid #323232;
+      box-shadow: 0 0 8px #ccc;
+    }
+
+    &:hover {
+      transition: all 0.3s ease-in-out;
+      transform: translate(0, 4px);
+      box-shadow: 0 0 8px #ccc;
+    }
+
+    // 1px〜479px
+    ${min[0] + max[0]} {
+      width: 100%;
+    }
+  }
+
+  .imageWrap {
+    margin: 3rem 0;
+
+    img {
+      width: 50%;
+      height: auto;
+      aspect-ratio: 1/1;
+      border-radius: 5px;
+      box-shadow: 0 0 5px #ccc;
+      margin: 0 auto;
+      display: block;
+    }
+  }
+
+  //! Create Button (Props に渡すCSS)
+  .submitBtn {
+    width: 80%;
+    font-size: 2rem;
+    margin: 3rem auto;
+    display: block;
+    letter-spacing: 0.1rem;
+    position: relative;
+    overflow: hidden;
+
+    // For Animation
+    &:before {
+    position: absolute;
+    top: -50%;
+    left: -30%;
+    transform: rotate(30deg);
+    width: 50px;
+    height: 100px;
+    content: '';
+    background-image: linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 50%, rgba(255, 255, 255, 0) 100%);
+    background-image: -webkit-gradient(linear, left bottom, right bottom, color-stop(0%, rgba(255, 255, 255, 0)), color-stop(50%, rgba(255, 255, 255, 1)), color-stop(100%, rgba(255, 255, 255, 0)));
+    animation: submitBtn 5s infinite linear;
+    }
+
+    &:hover {
+      transition: all 0.3s ease-in-out;
+      transform: translate(0, 4px);
+    }
+
+    @keyframes submitBtn {
+    10% {
+        left: 120%;
+    }
+    100% {
+        left: 120%;
+    }
+}
+
+
+
+
+
+  }
+
+  //! Paste Image URL Form
+  .pasteImgUrl {
+    padding: 1rem 1rem;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    outline: none;
+    font-size: 1rem;
+    letter-spacing: 0.1rem;
+    width: 60%;
+    margin-bottom: 4rem;
+
+    &:focus {
+      border: 1px solid #323232;
+      box-shadow: 0 0 8px #ccc;
+    }
+
+    // 1px〜479px
+    ${min[0] + max[0]} {
+      width: 100%;
+    }
   }
 `;
 
@@ -172,7 +339,7 @@ const EditPostPage = () => {
   //? ================================================
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault(); // prevent default form submission
-  
+
     try {
       const response = await updatePostById({
         variables: {
@@ -183,10 +350,10 @@ const EditPostPage = () => {
             imgUrl: selectedImage || currentData.imgUrl, // Use selectedImage if it's available, else use currentData.imgUrl
             updatedAt: new Date().toISOString(),
           }
-          
+
         }
       });
-  
+
       if (response.data) {
         // Handle success. Maybe redirect user or show success message.
         console.log("Post updated successfully", response.data);
@@ -196,14 +363,13 @@ const EditPostPage = () => {
       console.error("Error updating post - アップデートエラー:", error);
     }
   };
-  
+
 
   //! ======================================================
   //! JSX
   //! ======================================================
   return (
-    <main css={editPageStyle}>
-      <h2 className="text-center m-4">Edit Your Post</h2>
+    <main css={homeFormsStyles}>
       <small>Created At: {currentData.createdAt.substring(0, 16).replace("T", " ")}</small>
       <h2>{currentData?.updatedAt.substring(0, 16).replace("T", " ")}</h2>
 
@@ -217,73 +383,87 @@ const EditPostPage = () => {
           )}
 
           {currentData && (
-            <form  onSubmit={handleSubmit} className='detailItem'>
+            <form onSubmit={handleSubmit} className='detailItem'>
 
               <h1>USER ID: {currentData.id}</h1>
 
+              {/* COMPONENT */}
+              <TitleLarge title="EDIT POST" />
+
+              <br />
+              <br />
+              <TitleSmall title="TEXTS" />
+              <br />
+
               {/* Title */}
-              <input
+              <CommonForm
                 name="title"
                 type="text"
-                className="titleInput"
-                style={{ width: "60%", height: "40px" }}
+                text="TITLE"
                 value={currentData.title}
                 onChange={handleTitleChange}
               />
 
               {/* content */}
-              <textarea
+              <CommonTextarea
                 value={currentData.content}
                 onChange={handleContentChange}
+                text="MESSAGE"
+                name="content"
               />
 
-              {/* IMAGE */}
-              <div className="imageArea">
-                <Form.Group controlId="formFileLg" className="mb-3">
-                  <Form.Label style={{ fontSize: "2rem" }}>From Your Local File</Form.Label>
-                  <Form.Control
-                    className="imgChooseBtn"
-                    type="file"
-                    size="lg"
-                    accept="image/*" // 画像ファイルのみを選択できるようにする
-                    onChange={chooseImage}
-                    name="image"
-                  />
-                </Form.Group>
+              {/* COMPONENT */}
+              <TitleSmall title="UPLOAD IMAGE" className="uploadImgTitle" />
 
-                <br />
-                <div style={{ fontSize: "2rem" }}>OR</div>
-                <br />
+              {/* SELFIE COMPONENT (Pass the function )*/}
+              <Selfie selfieImage={selfieImage} />
 
-                {/* Paste Image URL */}
-                <label style={{ fontSize: "2rem", marginTop: "40px" }}>Paste Image URL</label>
-                <input
-                  name="imgUrl"
-                  type="text"
-                  placeholder="Paste the image URL here"
-                  style={{ width: "100%", height: "40px", marginBottom: "40px" }}
-                  onChange={pasteImage}
-                />
-
-                {/* DISPLAY IMG  画像があれば表示 */}
-                <div className="imageWrap d-flex">
-                  {!selectedImage && <img src={currentData.imgUrl} alt="no Image" />}
-                  {selectedImage && <img src={selectedImage} alt="chosen Image" />}
-
-                  {/* COMPONENT (Pass the function )*/}
-                  <Selfie selfieImage={selfieImage} />
-                </div>
+              {/*//* DISPLAY IMG  画像があれば表示 */}
+              <div className="imageWrap">
+                {!selectedImage && <img src={currentData.imgUrl} alt="no Image" />}
+                {selectedImage && <img src={selectedImage} alt="chosen Image" />}
               </div>
 
-              {/* Button */}
-              <button type="submit" className="RegisterBtn">UPDATE</button>
+
+              {/*//* IMAGE SELECT */}
+              <Form.Group controlId="formFileLg">
+                <h3>From Your Local File</h3>
+                <Form.Control
+                  className="imgChooseBtn"
+                  type="file"
+                  size="lg"
+                  accept="image/*" // 画像ファイルのみを選択できるようにする
+                  // onChange={handleImageChange}
+                  onChange={chooseImage}
+                  name="image"
+                />
+              </Form.Group>
+
+
+              {/*//* Paste Image URL */}
+              <h3>Paste Image URL</h3>
+              <input
+                name="imgUrl"
+                type="text"
+                placeholder="Paste the image URL here"
+                className="pasteImgUrl"
+                onChange={pasteImage}
+              />
+
+              {/* Button COMPONENT*/}
+              <CommonBtn type="submit" className="submitBtn">
+                <span className="w-100">UPDATE</span>
+              </CommonBtn>
+
             </form>
           )}
           {/* //! COMPONENT */}
           <GoogleSearch />
-
         </div>
       </div>
+      {/* COMPONENT */}
+      <BackButton />
+
     </main>
   );
 }

@@ -42,6 +42,13 @@ const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
     }
   });
 
+  const scrollTop = () => {
+    window.scrollTo({
+      top: 0,
+      behavior: 'smooth'
+    });
+  }
+
   return (
     <Card>
       <Link to={`/postdetails/${postProp.id}`}>
@@ -56,7 +63,7 @@ const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
       {error && <p>Error! {error.message}</p>}
 
       {/* EDIT BUTTON */}
-      <Link to={`/editpost/${postProp.id}`}>
+      <Link to={`/editpost/${postProp.id}`} onClick={()=>{scrollTop()}}>
         <button className="btn btn-primary mb-4" style={{width:"100%"}} >Edit</button>
       </Link>
 

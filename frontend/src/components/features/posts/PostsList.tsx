@@ -65,13 +65,6 @@ function PostsList() {
         ))}
       </Row>
 
-
-
-
-
-
-
-
     </div>
   );
 }

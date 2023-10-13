@@ -22,18 +22,29 @@ const googleSearchStyles = css`
     box-shadow: 0 0 5px #ccc;
 
     width: 100%;
-    /* height: 34px; */
     height: 48px;
     padding: 1px 5px 1px 8px;
     border: 1px solid #999999;
     box-sizing: border-box;
     color: #000;
     outline: none;
+    font-size: 1.2rem;
+    letter-spacing: 0.1rem;
 
     &:focus {
       outline: none;
       border: 1px solid #2e2e2e;
       box-shadow: 0 0 8px #ccc;
+
+      &::placeholder {
+        transform: scale(1.2) translateX(20px);
+
+              // 1px〜479px
+      ${min[0] + max[0]} {
+        transform: scale(1.1) translateX(10px);
+
+      }
+      }
     }
   }
 
@@ -116,7 +127,7 @@ const GoogleSearch = () => {
     <div css={googleSearchStyles}>
       <form onSubmit={handleSubmit}>
         <label>
-          <small>Google Image Search</small>
+          <small>Get Image URL</small>
           <input
             type="text"
             value={searchTerm}
