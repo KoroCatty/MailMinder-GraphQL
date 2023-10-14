@@ -133,6 +133,9 @@ we need to add "type": "module" in package.json
 
       * npm i @emailjs/browser
 
+      * npm i dotenv (To access to .env file which is above the frontend directory) 
+
+
 
 
    ### Back-end
