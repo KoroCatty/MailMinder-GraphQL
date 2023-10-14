@@ -6,7 +6,7 @@ import path from 'path';
 // 一つ上の階層の.envファイルのパスを指定して、dotenvで読み込む
 const parentEnvConfig = dotenv.config({
   path: path.resolve(__dirname, '../.env')
-}).parsed;
+}).parsed || {}; // deploy エラー対策 on a server
 
 // https://vitejs.dev/config/
 export default defineConfig({
