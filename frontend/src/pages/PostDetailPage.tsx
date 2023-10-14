@@ -1,6 +1,9 @@
 import { useParams, Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
+// Color Schema
+import colorSchema from "../utils/colorSchema";
+
 // bootstrap
 import { Container } from "react-bootstrap";
 
@@ -36,41 +39,65 @@ const PostDetailPageStyle = css`
   max-width: 800px;
   margin: 0 auto;
 
-  // CREATED DATE
-  .created {
+  // CREATED & UPDATED DATE TAG
+  .timeContainer {
     display: flex;
     align-items: center;
-    grid-gap: 0 0.7em;
-    padding: 0.4rem 0.4rem;
-    border-radius: 5px;
-    background-color: #464646;
-    color: #ffffff;
-    width: 25%;
+    gap: 2rem;
 
     // 1px〜479px
     ${min[0] + max[0]} {
-      width: 50%;
-      font-size: 0.8rem;
+      gap: 0.4rem;
+    }
+    // 480px〜767px
+    ${min[1] + max[1]} {
+      gap: 0.8rem;
     }
 
-    svg {
-      width: 1rem;
-      height: 1rem;
+    .created,
+    .updated {
+      display: flex;
+      align-items: center;
+      grid-gap: 0 0.7em;
+      padding: 0.6rem 0.6rem;
+      border-radius: 5px;
+      background-color: ${colorSchema.primary};
+      color: #ffffff;
+      font-size: 1.1rem;
+      letter-spacing: 0.1rem;
 
-    // 1px〜479px
-    ${min[0] + max[0]} {
-      width: 0.8rem;
-      height: 0.8rem;
+      // 1px〜479px
+      ${min[0] + max[0]} {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.4rem;
+      }
+      // 480px〜767px
+      ${min[1] + max[1]} {
+        font-size: 1rem;
+      }
+
+      svg {
+        width: 1rem;
+        height: 1rem;
+
+        // 1px〜479px
+        ${min[0] + max[0]} {
+          width: 0.6rem;
+          height: 0.6rem;
+        }
+      }
     }
+    .updated {
+      background-color: ${colorSchema.success};
     }
   }
 
-  time {
+  /* time {
     margin: 0;
     padding: 0 0 0 0.7em;
     border-left: 1px solid #ffffff;
     
-  }
+  } */
 
   // TITLE
   h1 {
@@ -220,18 +247,44 @@ const PostsDetailPage = () => {
             (item: postProp) => Number(item.id) === Number(id)
           ).map((filteredItem: postProp) => (
             <div key={filteredItem.id} className="detailItem">
-              {/* <p>{cat.createdAt.substring(0, 10)}</p> */}
+ 
 
-              {/*  CREATED DATE */}
-              <div className="created">
-                <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
-                  <path
-                    fill="#ffffff"
-                    d="M13.6,4.4l6,6l-13,13L1.2,24c-0.7,0.1-1.3-0.5-1.2-1.2l0.6-5.4C0.6,17.4,13.6,4.4,13.6,4.4z M23.3,3.5l-2.8-2.8  c-0.9-0.9-2.3-0.9-3.2,0l-2.7,2.7l6,6l2.7-2.7C24.2,5.8,24.2,4.4,23.3,3.5z"
-                  />
-                </svg>
-                <time>{new Date(filteredItem.createdAt).toLocaleString()}</time>
+                {/*  CREATED & UPDATED DATE */}
+              <div className="timeContainer">
+                <div className="created">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path
+                      fill="#ffffff"
+                      d="M13.6,4.4l6,6l-13,13L1.2,24c-0.7,0.1-1.3-0.5-1.2-1.2l0.6-5.4C0.6,17.4,13.6,4.4,13.6,4.4z M23.3,3.5l-2.8-2.8  c-0.9-0.9-2.3-0.9-3.2,0l-2.7,2.7l6,6l2.7-2.7C24.2,5.8,24.2,4.4,23.3,3.5z"
+                    />
+                  </svg>
+                  <time>
+                    Created:{" "}
+                    {filteredItem.createdAt.toLocaleString()
+                      .substring(0, 10)
+                      .replace("T", " ")
+                      .replace(/-/g, "/")}
+                  </time>
+                </div>
+
+                {/*  UPDATE DATE */}
+                <div className="updated">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path
+                      fill="#ffffff"
+                      d="M13.6,4.4l6,6l-13,13L1.2,24c-0.7,0.1-1.3-0.5-1.2-1.2l0.6-5.4C0.6,17.4,13.6,4.4,13.6,4.4z M23.3,3.5l-2.8-2.8  c-0.9-0.9-2.3-0.9-3.2,0l-2.7,2.7l6,6l2.7-2.7C24.2,5.8,24.2,4.4,23.3,3.5z"
+                    />
+                  </svg>
+                  <time>
+                    Updated:{" "}
+                    {filteredItem?.updatedAt
+                      .substring(0, 10)
+                      .replace("T", " ")
+                      .replace(/-/g, "/")}
+                  </time>
+                </div>
               </div>
+
 
               {/* TITLE */}
               <h1>{filteredItem.title}</h1>
@@ -265,7 +318,7 @@ const PostsDetailPage = () => {
         )}
 
         {/* EDIT BUTTON */}
-        <Link to={`/editpost/${id}`}>
+        <Link onClick={()=>{window.scrollTo({top:0, behavior:"smooth"})}} to={`/editpost/${id}`}>
           <button className="btn btn-primary mb-4" style={{ width: "100%" }}>
             Edit
           </button>
@@ -279,6 +332,8 @@ const PostsDetailPage = () => {
             window.confirm("Are you sure you want to delete this post?") &&
               deletePostById();
             navigate("/postlist");
+            window.scrollTo({top:0, behavior:"smooth"});
+            // window.location.reload();//! 強制リロード
           }}
         >
           {deleteErr ? "Deleting..." : "Delete"}

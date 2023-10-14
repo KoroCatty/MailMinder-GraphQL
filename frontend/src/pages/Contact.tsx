@@ -1,12 +1,22 @@
+// import { Helmet } from "react-helmet";
+
 // Components
-import PrivacyPolicy from "./PrivacyPolicy"
+import ContactForms from "../components/features/contact/ContactForms";
+
+
 
 const Contact = () => {
   return (
     <>
-    <div>Contact Page</div>
-    
-    <PrivacyPolicy />
+      {/* < Helmet>
+          <meta charSet="utf-8" />
+          <title>Contact page</title>
+           <link rel="canonical" href="http://http://localhost:5173/about" />
+       </Helmet> */}
+
+      <main className='fadeIn1' >
+        <ContactForms />
+      </main>
     </>
   )
 }

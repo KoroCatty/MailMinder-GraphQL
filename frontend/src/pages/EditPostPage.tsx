@@ -1,72 +1,32 @@
-import { useParams } from 'react-router-dom';
-import { useState, useEffect } from 'react';
+import { useParams } from "react-router-dom";
+import { useState, useEffect } from "react";
 
 // COMPONENTS
-import BackButton from '../components/common/BackButton';
-import Selfie from '../components/common/Selfie';
-import GoogleSearch from '../components/features/home/GoogleSearch';
-import { TitleLarge, TitleSmall } from '../components/common/Titles';
-import { CommonForm, CommonTextarea } from '../components/common/Forms';
-import { CommonBtn } from '../components/common/CommonBtn';
+import BackButton from "../components/common/BackButton";
+import Selfie from "../components/common/Selfie";
+import GoogleSearch from "../components/features/home/GoogleSearch";
+import { TitleLarge, TitleSmall } from "../components/common/Titles";
+import { CommonForm, CommonTextarea } from "../components/common/Forms";
+import { CommonBtn } from "../components/common/CommonBtn";
+
+// Color Schema
+import colorSchema from "../utils/colorSchema";
 
 // Apollo client
-import { useQuery } from '@apollo/client';
-import { useMutation } from '@apollo/client';
+import { useQuery } from "@apollo/client";
+import { useMutation } from "@apollo/client";
 
-import { GET_POSTS_BY_ID } from '../graphql/queries';
-import { UPDATE_POST_BY_ID } from '../graphql/mutations';
+import { GET_POSTS_BY_ID } from "../graphql/queries";
+import { UPDATE_POST_BY_ID } from "../graphql/mutations";
 
 // bootstrap
 import { Form } from "react-bootstrap";
 
 // Emotion CSS
-import { css } from '@emotion/react';
-import { min, max } from '../utils/mediaQueries';
-// const editPageStyle = css`
+import { css } from "@emotion/react";
+import { min, max } from "../utils/mediaQueries";
 
-//   .titleInput {
-//     width: 80%;
-//     margin: 0 auto;
-//     display: block;
-//     }
-
-//   img {
-//     width: 40%;
-//     height: 50vh;
-//     object-fit: cover;
-
-//     @media screen and (max-width: 990px) {
-//       width: 70%;
-//     }
-//   }
-
-//   textarea {
-//     width: 100%;
-//     height: 200px;
-//   }
-// `;
-
-
-
-const homeFormsStyles = css`
-  &:before {
-    position: absolute;
-    left: 50%;
-    top: -12%;
-    content: "";
-    display: block;
-    width: 16%;
-    transform: translateX(-50%) rotate(90deg);
-    height: 1px;
-    background-color: #ccc;
-
-    // 1px〜479px
-    ${min[0] + max[0]} {
-      left: 50%;
-      top: -6%;
-    }
-  }
-
+const EditPostCss = css`
   // 1px〜479px
   ${min[0] + max[0]} {
   }
@@ -80,16 +40,72 @@ const homeFormsStyles = css`
   ${min[3] + max[3]} {
   }
 
+  // CREATED & UPDATED DATE TAG
+  .timeContainer {
+    display: flex;
+    align-items: center;
+    gap: 2rem;
+
+    // 1px〜479px
+    ${min[0] + max[0]} {
+      gap: 0.4rem;
+    }
+    // 480px〜767px
+    ${min[1] + max[1]} {
+      gap: 0.8rem;
+    }
+
+    .created,
+    .updated {
+      display: flex;
+      align-items: center;
+      grid-gap: 0 0.7em;
+      padding: 0.6rem 0.6rem;
+      border-radius: 5px;
+      background-color: ${colorSchema.primary};
+      color: #ffffff;
+      font-size: 1.1rem;
+      letter-spacing: 0.1rem;
+
+      // 1px〜479px
+      ${min[0] + max[0]} {
+        font-size: 0.8rem;
+        padding: 0.4rem 0.4rem;
+      }
+      // 480px〜767px
+      ${min[1] + max[1]} {
+        font-size: 1rem;
+      }
+
+      svg {
+        width: 1rem;
+        height: 1rem;
+
+        // 1px〜479px
+        ${min[0] + max[0]} {
+          width: 0.6rem;
+          height: 0.6rem;
+        }
+      }
+    }
+    .updated {
+      background-color: ${colorSchema.success};
+    }
+  }
+
+  // COMPONENT className Prop
+  .formTitleProp {
+    // 1px〜479px
+    ${min[0] + max[0]} {
+      margin-bottom: 8rem;
+    }
+  }
+
   textarea {
-    display: block;
-    width: 100%;
-    height: 200px;
-    border: 1px solid #ccc;
     border-radius: 5px;
     padding: 10px;
-    margin: 40px 0;
     resize: none; // resizeとは、textareaの右下にある、ドラッグでサイズ変更できる機能
-    box-shadow: 0 0 5px #ccc;
+    box-shadow: 0 0 5px ${colorSchema.border};
   }
 
   // UPLOAD IMAGE TITLE
@@ -104,30 +120,6 @@ const homeFormsStyles = css`
     color: #616161;
   }
 
-  // Select Image Form
-  .imgChooseBtn {
-    width: 60%;
-    outline: 1px solid #ccc;
-    color: #616161;
-    margin-bottom: 5rem;
-
-    &:focus {
-      border: 1px solid #323232;
-      box-shadow: 0 0 8px #ccc;
-    }
-
-    &:hover {
-      transition: all 0.3s ease-in-out;
-      transform: translate(0, 4px);
-      box-shadow: 0 0 8px #ccc;
-    }
-
-    // 1px〜479px
-    ${min[0] + max[0]} {
-      width: 100%;
-    }
-  }
-
   .imageWrap {
     margin: 3rem 0;
 
@@ -139,10 +131,41 @@ const homeFormsStyles = css`
       box-shadow: 0 0 5px #ccc;
       margin: 0 auto;
       display: block;
+
+          // 1px〜479px
+    ${min[0] + max[0]} {
+      width: 80%;
+    }
     }
   }
 
-  //! Create Button (Props に渡すCSS)
+
+  // Select Image Form
+  .imgChooseBtn {
+    width: 60%;
+    outline: 1px solid #ccc;
+    color: #616161;
+    margin-bottom: 5rem;
+
+    // 1px〜479px
+    ${min[0] + max[0]} {
+      width: 100%;
+    }
+
+    &:focus {
+      border: 1px solid #323232;
+      box-shadow: 0 0 8px #ccc;
+    }
+
+    &:hover {
+      transition: all 0.3s ease-in-out;
+      transform: translate(0, 4px);
+      box-shadow: 0 0 8px #ccc;
+    }
+  }
+
+
+  //! UPDATE Button (Props に渡すCSS)
   .submitBtn {
     width: 80%;
     font-size: 2rem;
@@ -154,16 +177,28 @@ const homeFormsStyles = css`
 
     // For Animation
     &:before {
-    position: absolute;
-    top: -50%;
-    left: -30%;
-    transform: rotate(30deg);
-    width: 50px;
-    height: 100px;
-    content: '';
-    background-image: linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 50%, rgba(255, 255, 255, 0) 100%);
-    background-image: -webkit-gradient(linear, left bottom, right bottom, color-stop(0%, rgba(255, 255, 255, 0)), color-stop(50%, rgba(255, 255, 255, 1)), color-stop(100%, rgba(255, 255, 255, 0)));
-    animation: submitBtn 5s infinite linear;
+      position: absolute;
+      top: -50%;
+      left: -30%;
+      transform: rotate(30deg);
+      width: 50px;
+      height: 100px;
+      content: "";
+      background-image: linear-gradient(
+        left,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 1) 50%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        right bottom,
+        color-stop(0%, rgba(255, 255, 255, 0)),
+        color-stop(50%, rgba(255, 255, 255, 1)),
+        color-stop(100%, rgba(255, 255, 255, 0))
+      );
+      animation: submitBtn 5s infinite linear;
     }
 
     &:hover {
@@ -172,18 +207,13 @@ const homeFormsStyles = css`
     }
 
     @keyframes submitBtn {
-    10% {
+      10% {
         left: 120%;
-    }
-    100% {
+      }
+      100% {
         left: 120%;
+      }
     }
-}
-
-
-
-
-
   }
 
   //! Paste Image URL Form
@@ -213,14 +243,14 @@ const homeFormsStyles = css`
 //! Main
 //! ======================================================
 const EditPostPage = () => {
-  // useParam 
+  // useParam
   const { id: idUrl } = useParams<{ id: string }>();
 
   //* GET POSTS BY ID (Apollo Client)
-  const { data, } = useQuery(GET_POSTS_BY_ID, {
+  const { data } = useQuery(GET_POSTS_BY_ID, {
     variables: {
       uid: Number(idUrl), // queries.ts で uid を定義している
-    }
+    },
   });
 
   //* UPDATE POST BY ID (Apollo Client)
@@ -252,7 +282,7 @@ const EditPostPage = () => {
     imgUrl: string;
     createAt: string;
     updateAt: string;
-  }
+  };
 
   //* useState
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
@@ -262,32 +292,34 @@ const EditPostPage = () => {
   useEffect(() => {
     if (data && data.PostsByUser) {
       const idToFind = Number(idUrl); // 特定のID
-      const filteredData = data?.PostsByUser.filter((item: FormDataType) => Number(item.id) === idToFind);
+      const filteredData = data?.PostsByUser.filter(
+        (item: FormDataType) => Number(item.id) === idToFind
+      );
 
       setCurrentData(filteredData[0]);
     }
-  }, [data, idUrl]);// ここで指定した変数が変更されたら実行される
+  }, [data, idUrl]); // ここで指定した変数が変更されたら実行される
 
   // console.log(data)
   // console.log(currentData)
 
   //? ======================================================
-  //? Title 
+  //? Title
   //? ======================================================
   const handleTitleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = e.target.value;
-    setCurrentData(prevData => ({ ...prevData, title: newTitle }));
+    setCurrentData((prevData) => ({ ...prevData, title: newTitle }));
   };
   //? ======================================================
-  //? Content 
+  //? Content
   //? ======================================================
   const handleContentChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newContent = e.target.value;
-    setCurrentData(prevData => ({ ...prevData, content: newContent }));
+    setCurrentData((prevData) => ({ ...prevData, content: newContent }));
   };
 
   //* ===================================================
-  //* Choose Image from local file 画像を選択した時に発火する関数 
+  //* Choose Image from local file 画像を選択した時に発火する関数
   //* ===================================================
   const chooseImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0];
@@ -303,33 +335,32 @@ const EditPostPage = () => {
   };
 
   //* ===================================================
-  //* Paste Image URL 
+  //* Paste Image URL
   //* ===================================================
   const pasteImage = (e: React.ChangeEvent<HTMLInputElement>) => {
     const imageUrl = e.target.value;
     setSelectedImage(imageUrl);
     setFormData({
       ...formData,
-      imgUrl: imageUrl
+      imgUrl: imageUrl,
     });
-  }
+  };
 
   //* ===================================================
   //*  Selfie Image
   //* ===================================================
   const selfieImage = (image64: string | null) => {
-
     // Check if image64 (or selectedImage if you prefer) is not null before reading its length
     if (image64 && image64.length > 10000) {
       setSelectedImage(image64);
       // Handle error - maybe return a user-friendly error message
       setFormData({
         ...formData,
-        imgUrl: image64
+        imgUrl: image64,
       });
     } else {
-      console.log("Too Big")
-      window.alert("Too Big")
+      console.log("Too Big");
+      window.alert("Too Big");
       // Proceed with saving to the database
       // ...your code to save the image to the database
     }
@@ -349,9 +380,8 @@ const EditPostPage = () => {
             content: currentData.content,
             imgUrl: selectedImage || currentData.imgUrl, // Use selectedImage if it's available, else use currentData.imgUrl
             updatedAt: new Date().toISOString(),
-          }
-
-        }
+          },
+        },
       });
 
       if (response.data) {
@@ -364,15 +394,11 @@ const EditPostPage = () => {
     }
   };
 
-
   //! ======================================================
   //! JSX
   //! ======================================================
   return (
-    <main css={homeFormsStyles}>
-      <small>Created At: {currentData.createdAt.substring(0, 16).replace("T", " ")}</small>
-      <h2>{currentData?.updatedAt.substring(0, 16).replace("T", " ")}</h2>
-
+    <main css={EditPostCss}>
       {/* COMPONENT */}
       <BackButton />
 
@@ -383,12 +409,49 @@ const EditPostPage = () => {
           )}
 
           {currentData && (
-            <form onSubmit={handleSubmit} className='detailItem'>
-
+            <form onSubmit={handleSubmit} className="detailItem">
               <h1>USER ID: {currentData.id}</h1>
 
               {/* COMPONENT */}
               <TitleLarge title="EDIT POST" />
+
+              <div className="timeContainer">
+                {/*  CREATED DATE */}
+                <div className="created">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path
+                      fill="#ffffff"
+                      d="M13.6,4.4l6,6l-13,13L1.2,24c-0.7,0.1-1.3-0.5-1.2-1.2l0.6-5.4C0.6,17.4,13.6,4.4,13.6,4.4z M23.3,3.5l-2.8-2.8  c-0.9-0.9-2.3-0.9-3.2,0l-2.7,2.7l6,6l2.7-2.7C24.2,5.8,24.2,4.4,23.3,3.5z"
+                    />
+                  </svg>
+                  <time>
+                    Created:{" "}
+                    {currentData.createdAt
+                      .substring(0, 10)
+                      .replace("T", " ")
+                      .replace(/-/g, "/")}
+                  </time>
+                </div>
+
+                {/*  UPDATE DATE */}
+                <div className="updated">
+                  <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
+                    <path
+                      fill="#ffffff"
+                      d="M13.6,4.4l6,6l-13,13L1.2,24c-0.7,0.1-1.3-0.5-1.2-1.2l0.6-5.4C0.6,17.4,13.6,4.4,13.6,4.4z M23.3,3.5l-2.8-2.8  c-0.9-0.9-2.3-0.9-3.2,0l-2.7,2.7l6,6l2.7-2.7C24.2,5.8,24.2,4.4,23.3,3.5z"
+                    />
+                  </svg>
+                  <time>
+                    Updated:{" "}
+                    {currentData.updatedAt
+                      ? currentData.updatedAt
+                          .substring(0, 10)
+                          .replace("T", " ")
+                          .replace(/-/g, "/")
+                      : "Not Updated"}
+                  </time>
+                </div>
+              </div>
 
               <br />
               <br />
@@ -402,6 +465,7 @@ const EditPostPage = () => {
                 text="TITLE"
                 value={currentData.title}
                 onChange={handleTitleChange}
+                classNameProp="formTitleProp"
               />
 
               {/* content */}
@@ -420,10 +484,13 @@ const EditPostPage = () => {
 
               {/*//* DISPLAY IMG  画像があれば表示 */}
               <div className="imageWrap">
-                {!selectedImage && <img src={currentData.imgUrl} alt="no Image" />}
-                {selectedImage && <img src={selectedImage} alt="chosen Image" />}
+                {!selectedImage && (
+                  <img src={currentData.imgUrl} alt="no Image" />
+                )}
+                {selectedImage && (
+                  <img src={selectedImage} alt="chosen Image" />
+                )}
               </div>
-
 
               {/*//* IMAGE SELECT */}
               <Form.Group controlId="formFileLg">
@@ -439,7 +506,6 @@ const EditPostPage = () => {
                 />
               </Form.Group>
 
-
               {/*//* Paste Image URL */}
               <h3>Paste Image URL</h3>
               <input
@@ -454,18 +520,14 @@ const EditPostPage = () => {
               <CommonBtn type="submit" className="submitBtn">
                 <span className="w-100">UPDATE</span>
               </CommonBtn>
-
             </form>
           )}
           {/* //! COMPONENT */}
           <GoogleSearch />
         </div>
       </div>
-      {/* COMPONENT */}
-      <BackButton />
-
     </main>
   );
-}
+};
 
 export default EditPostPage;

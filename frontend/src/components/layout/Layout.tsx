@@ -6,6 +6,7 @@ import { useLocation } from "react-router-dom";
 import Header from "./Header";
 import Footer from "./Footer";
 import Hero from "../common/Hero";
+import ContactHero from "../features/contact/ContactHero";
 
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
@@ -25,7 +26,7 @@ const Layout = () => {
       `}
 
     // 1201px 以上の場合
-@media screen and (min-width: 1201px) {
+    @media screen and (min-width: 1201px) {
       margin-left: 16%; // header の幅分だけ右にずらす
       padding: 40px 100px;
     }
@@ -50,6 +51,7 @@ const Layout = () => {
       {/* Only Display in Home & Settings Page */}
       {location.pathname === "/" && <Hero />}
       {location.pathname === "/postlist" && <Hero />}
+      {location.pathname === "/contact" && <ContactHero />}
 
       <div css={LayoutCss}>
         {/* この Outlet が Layout で囲ってる全てのコンポーネントを監視 Outlet を使い、ネストされたルートをレンダリングする */}
