@@ -100,6 +100,7 @@ interface CommonFormProps {
   name: string;
   value?: string;
   required?: boolean;
+  classNameProp?: string;
 }
 
 // TEXTAREA TYPE
@@ -109,6 +110,7 @@ interface CommonTextareaProps {
   name: string;
   value?: string;
   required?: boolean;
+  classNameProp?: string;
 }
 
 //! =======================================================
@@ -121,6 +123,7 @@ export const CommonForm: React.FC<CommonFormProps> = ({
   type,
   name,
   value,
+  classNameProp,
 }) => {
   return (
     <div css={formsCss}>
@@ -129,7 +132,7 @@ export const CommonForm: React.FC<CommonFormProps> = ({
           <div className="form-field">
             <input
               id="name"
-              className="input-text js-input"
+              className={`input-text js-input ${classNameProp}`}
               type={type}
               required
               onChange={onChange}
@@ -175,12 +178,13 @@ export const CommonTextarea: React.FC<CommonTextareaProps> = ({
   text,
   name,
   value,
+  classNameProp,
 }) => {
   return (
     <div css={formsCss}>
       <section>
         <div>
-          <div className="form-field ">
+          <div className={`form-field ${classNameProp}`}>
             <textarea
               onChange={onChange}
               name={name}

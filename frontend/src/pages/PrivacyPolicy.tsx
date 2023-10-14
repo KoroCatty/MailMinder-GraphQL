@@ -15,8 +15,8 @@ function PrivacyPolicy() {
 
     // 1px〜480px
     ${min[0] + max[0]} {
-      padding: 28px 12px;
-      margin: 0 auto 160px auto;
+      padding: 28px 18px;
+      margin: 0 auto 60px auto;
     }
 
     .privacy {
@@ -54,6 +54,9 @@ function PrivacyPolicy() {
       &__ul {
         list-style: underline;
         font-size: 1.2rem;
+        padding-left: 32px;
+        margin-top: 8px;
+        line-height: 1.2;
 
         // 1px〜480px
         ${min[0] + max[0]} {

@@ -113,13 +113,25 @@ we need to add "type": "module" in package.json
          }
 
       ## Proxy setting (REST API)
-         ### "proxy": "http://localhost:5000" in package.json (frontend)
+         ### "proxy": "http://localhost:5001" in package.json (frontend)
          ### This is for development only, therefore, good for production deployment.
 
          ###  proxy: {'/api': 'http://localhost:5001', // プロキシの設定(バックエンドのポート番号) }, in vite.config.ts
          
 
-      ## npm install apollo-upload-client
+      * npm i apollo-upload-client
+
+      * npm i --save react-helmet
+
+      * npm i --save @types/react-helmet (if you use typescript)
+
+      * npm i zod
+
+      * npm i react-hook-form
+
+      * npm i @hookform/resolvers
+
+      * npm i @emailjs/browser
 
 
 

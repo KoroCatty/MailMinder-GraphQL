@@ -16,8 +16,8 @@ import { createUploadLink } from 'apollo-upload-client';
 // フロントエンドからバックエンドに接続するためのリンクを作成
 // これが front から uri で指定している backend の url にアクセスする
 const uploadLink = createUploadLink({
-  uri: 'http://localhost:5001'              //!DEVELOPMENT
-  // uri: 'https://remindapp.onrender.com/' //! PRODUCTION
+  // uri: 'http://localhost:5001'              //!DEVELOPMENT
+  uri: 'https://remindapp.onrender.com/' //! PRODUCTION
 });
 
 // Get the authentication token from local storage if it exists

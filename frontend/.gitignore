@@ -29,3 +29,4 @@ dist-ssr
 .env.production.local
 
 remindYou.sql
+node_modules

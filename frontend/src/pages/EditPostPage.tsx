@@ -10,7 +10,7 @@ import { CommonForm, CommonTextarea } from "../components/common/Forms";
 import { CommonBtn } from "../components/common/CommonBtn";
 
 // Color Schema
-import colorSchema  from "../utils/colorSchema";
+import colorSchema from "../utils/colorSchema";
 
 // Apollo client
 import { useQuery } from "@apollo/client";
@@ -49,7 +49,6 @@ const EditPostCss = css`
     // 1px〜479px
     ${min[0] + max[0]} {
       gap: 0.4rem;
-
     }
     // 480px〜767px
     ${min[1] + max[1]} {
@@ -94,6 +93,14 @@ const EditPostCss = css`
     }
   }
 
+  // COMPONENT className Prop
+  .formTitleProp {
+    // 1px〜479px
+    ${min[0] + max[0]} {
+      margin-bottom: 8rem;
+    }
+  }
+
   textarea {
     border-radius: 5px;
     padding: 10px;
@@ -112,6 +119,26 @@ const EditPostCss = css`
     margin: 4rem 0 1rem 0;
     color: #616161;
   }
+
+  .imageWrap {
+    margin: 3rem 0;
+
+    img {
+      width: 50%;
+      height: auto;
+      aspect-ratio: 1/1;
+      border-radius: 5px;
+      box-shadow: 0 0 5px #ccc;
+      margin: 0 auto;
+      display: block;
+
+          // 1px〜479px
+    ${min[0] + max[0]} {
+      width: 80%;
+    }
+    }
+  }
+
 
   // Select Image Form
   .imgChooseBtn {
@@ -137,19 +164,6 @@ const EditPostCss = css`
     }
   }
 
-  .imageWrap {
-    margin: 3rem 0;
-
-    img {
-      width: 50%;
-      height: auto;
-      aspect-ratio: 1/1;
-      border-radius: 5px;
-      box-shadow: 0 0 5px #ccc;
-      margin: 0 auto;
-      display: block;
-    }
-  }
 
   //! UPDATE Button (Props に渡すCSS)
   .submitBtn {
@@ -429,7 +443,12 @@ const EditPostPage = () => {
                   </svg>
                   <time>
                     Updated:{" "}
-                    {currentData.updatedAt ? (currentData.updatedAt).substring(0, 10).replace("T", " ").replace(/-/g, "/") : ("Not Updated") }
+                    {currentData.updatedAt
+                      ? currentData.updatedAt
+                          .substring(0, 10)
+                          .replace("T", " ")
+                          .replace(/-/g, "/")
+                      : "Not Updated"}
                   </time>
                 </div>
               </div>
@@ -446,6 +465,7 @@ const EditPostPage = () => {
                 text="TITLE"
                 value={currentData.title}
                 onChange={handleTitleChange}
+                classNameProp="formTitleProp"
               />
 
               {/* content */}
