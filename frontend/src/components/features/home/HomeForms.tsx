@@ -1,5 +1,5 @@
 import { useState } from "react";
-
+import axios from "axios";
 // Apollo Client
 import { useMutation } from "@apollo/client";
 import { CREATE_POST } from "../../../graphql/mutations";
@@ -136,16 +136,28 @@ const homeFormsStyles = css`
 
     // For Animation
     &:before {
-    position: absolute;
-    top: -50%;
-    left: -30%;
-    transform: rotate(30deg);
-    width: 50px;
-    height: 100px;
-    content: '';
-    background-image: linear-gradient(left, rgba(255, 255, 255, 0) 0%, rgba(255, 255, 255, 1) 50%, rgba(255, 255, 255, 0) 100%);
-    background-image: -webkit-gradient(linear, left bottom, right bottom, color-stop(0%, rgba(255, 255, 255, 0)), color-stop(50%, rgba(255, 255, 255, 1)), color-stop(100%, rgba(255, 255, 255, 0)));
-    animation: submitBtn 5s infinite linear;
+      position: absolute;
+      top: -50%;
+      left: -30%;
+      transform: rotate(30deg);
+      width: 50px;
+      height: 100px;
+      content: "";
+      background-image: linear-gradient(
+        left,
+        rgba(255, 255, 255, 0) 0%,
+        rgba(255, 255, 255, 1) 50%,
+        rgba(255, 255, 255, 0) 100%
+      );
+      background-image: -webkit-gradient(
+        linear,
+        left bottom,
+        right bottom,
+        color-stop(0%, rgba(255, 255, 255, 0)),
+        color-stop(50%, rgba(255, 255, 255, 1)),
+        color-stop(100%, rgba(255, 255, 255, 0))
+      );
+      animation: submitBtn 5s infinite linear;
     }
 
     &:hover {
@@ -154,18 +166,13 @@ const homeFormsStyles = css`
     }
 
     @keyframes submitBtn {
-    10% {
+      10% {
         left: 120%;
-    }
-    100% {
+      }
+      100% {
         left: 120%;
+      }
     }
-}
-
-
-
-
-
   }
 
   //! Paste Image URL Form
@@ -198,6 +205,8 @@ const HomeForms = () => {
   // HOOKS
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
+  const [localImage, setLocalImage] = useState<string | null>(null);
+
   const [formData, setFormData] = useState({});
 
   // Mutations (CreatePost は mutation.ts で定義)
@@ -211,7 +220,7 @@ const HomeForms = () => {
   }
 
   //! ======================================================
-  //! When forms typed
+  //! When forms typed (input & textarea)
   //! ======================================================
   const handleChange = (
     e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
@@ -224,7 +233,7 @@ const HomeForms = () => {
   console.log(formData);
 
   //! ======================================================
-  //! When form submitted
+  //! When form SUBMITTED!!
   //! ======================================================
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -234,7 +243,12 @@ const HomeForms = () => {
     try {
       CreatePost({
         variables: {
-          postNew: formData, // postNew は mutation.ts で定義したもの
+          postNew: {
+            title: formData.title,
+            content: formData.content,
+            imgUrl: formData.imgUrl,
+          }
+          // postNew は mutation.ts で定義したもの
         },
       });
     } catch (error) {
@@ -242,21 +256,49 @@ const HomeForms = () => {
     }
   };
 
+
   //* ===================================================
   //* Choose image from local file 画像を選択した時に発火する関数
   //* ===================================================
-  const chooseImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files && e.target.files[0];
-    if (file) {
-      setSelectedImage(URL.createObjectURL(file));
+  // const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = e.target.files && e.target.files[0];
+  //   if (file) {
+  //     // createObjectURL は、画像を表示するためのURLを生成し、それを選択された画像として設定
+  //     setSelectedImage(URL.createObjectURL(file)); 
+
+  //     // FormDataを更新
+  //     setFormData({
+  //       ...formData,
+  //       imgFile: file, // 選択された画像ファイルをformDataに追加
+  //     });
+  //   }
+  // };
+
+  //! Save to uploads file by Axios
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files[0];
+    const formData = new FormData();
+    formData.append('img', file); // ファイル名をimgとして追加
+
+    try {
+      const response = await axios.post('http://localhost:5001/uploads', formData, {
+        headers: { 'Content-Type': 'multipart/form-data' },
+      });
+
+      // Set the URL returned from the server to your component's state.
+      setLocalImage(response.data.url);
 
       // FormDataを更新
       setFormData({
         ...formData,
-        imgFile: file, // これが重要です！
+        imgFile: file, // 選択された画像ファイルをformDataに追加
       });
+
+    } catch (error) {
+      console.error("Error uploading the file 🥲", error);
     }
-  };
+  }
+
 
   //* ===================================================
   //* Paste Image URL
@@ -274,7 +316,7 @@ const HomeForms = () => {
   //*  Selfie Image
   //* ===================================================
   const selfieImage = (image64: string | null) => {
-    // Check if image64 (or selectedImage if you prefer) is not null before reading its length
+    // Check if image64 is not null before reading its length
     if (image64 && image64.length > 10000) {
       setSelectedImage(image64);
       // Handle error - maybe return a user-friendly error message
@@ -332,8 +374,24 @@ const HomeForms = () => {
 
         {/*//* DISPLAY IMG  画像があれば表示 */}
         <div className="imageWrap">
-          {!selectedImage && <img src="/imgs/noImg.jpeg" alt="no Image" />}
-          {selectedImage && <img src={selectedImage} alt="chosen Image" />}
+          {/* {!selectedImage && <img src="/imgs/noImg.jpeg" alt="no Image" />}
+          {
+            localImage ? <img src={`http://localhost:5001${localImage}`} alt="local Image" /> : <img src="/imgs/noImg.jpeg" alt="no Image" />
+          } */}
+
+          {/* {chosenImage && <img src={`http://localhost:5001${chosenImage}`} alt="chosen Image" />} */}
+
+          {/* {selectedImage || chosenImage && <img src={`http://localhost:5001${chosenImage}`} alt="chosen Image" />} */}
+
+
+          {
+    selectedImage 
+        ? <img src={`${selectedImage}`} alt="selected Image" />
+        : localImage 
+            ? <img src={`http://localhost:5001${localImage}`} alt="chosen Image" />
+            : <img src="/imgs/noImg.jpeg" alt="no Image" />
+}
+
         </div>
 
         {/*//* IMAGE SELECT */}
@@ -345,8 +403,8 @@ const HomeForms = () => {
             size="lg"
             accept="image/*" // 画像ファイルのみを選択できるようにする
             // onChange={handleImageChange}
-            onChange={chooseImage}
-            name="image"
+            onChange={handleImageUpload}
+            name="imgUrl"
           />
         </Form.Group>
 
@@ -368,6 +426,8 @@ const HomeForms = () => {
 
       {/*//! COMPONENT */}
       <GoogleSearch />
+
+
     </section>
   );
 };

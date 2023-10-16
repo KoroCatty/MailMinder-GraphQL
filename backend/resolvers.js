@@ -7,6 +7,12 @@ import jwt from 'jsonwebtoken';
 
 import fs from 'fs'; // file system module (built-in) これは、ファイルを読み書きするためのモジュール
 
+
+// import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs";
+// import { ApolloServer } from "apollo-server";
+// import { GraphQLUpload } from 'graphql-upload';
+
+
 // プリズマクライエントのインスタンスを格納
 const prisma = new PC.PrismaClient();
 
@@ -15,6 +21,11 @@ const prisma = new PC.PrismaClient();
 //! Resolvers (what do you wanna resolve? query? mutation?)
 //! ==========================================================
 const resolvers = {
+  // This maps the `Upload` scalar to the implementation provided
+  // by the `graphql-upload` package.
+  // Upload: graphqlUploadExpress,
+  // Upload: GraphQLUpload,
+
   Query: {
     //* -----------------------------------------------
     //* GET ALL USERS
@@ -32,9 +43,9 @@ const resolvers = {
         orderBy: { createdAt: "desc" }, // 新しい順に並べる
         where: {
           id: {
-            not: context.userId
+            not: context.userId // 自分以外のユーザーを取得
           }
-        },  // 自分以外のユーザーを取得
+        },
       });
       return users;
     },
@@ -144,29 +155,34 @@ const resolvers = {
     //* ===============================================
     //* CREATE A POST
     //* ===============================================
-    createPost: async (_, args, context) => {
-      console.log(args.postNew.title + "😈")
-      console.log(args.postNew.content + "🤫")
-      console.log(args.postNew.imgUrl + "👹")
-      console.log(context.userId + "👹")
+    createPost: async (_, args, context, { file }) => {
+      // console.log(file);
+      console.log(args)
 
-      console.log(args.postNew.imgFile + "💀👻");
+      console.log(args.postNew.imgUrl + " - 💀👻 Image URL💀👻")
+
+      console.log(args.postNew.imgFile + "- 😢imgFile 😢 -");
 
       // ログインしてなかったらエラー(contextで先に確認できる)
       if (!context.userId) {
         throw new Error("You must be logged in (Contextにトークンがありません)😱");
       }
 
-      // ファイルをサーバーに保存
-      // const { createReadStream, filename } = await args.postNew.imgFile;
-      // const pathToSave = join(process.cwd(), 'uploads', filename);
-      // const stream = createReadStream();
+      // If a file is provided in the mutation, handle its upload
+      if (args.postNew.imgFile) {
+        const { createReadStream, filename } = await args.postNew.imgFile;
+        const pathToSave = join(process.cwd(), 'uploads', filename);
+        const stream = createReadStream();
 
-      // await new Promise((resolve, reject) => {
-      //   stream.pipe(createWriteStream(pathToSave))
-      //     .on('finish', resolve)
-      //     .on('error', reject);
-      // });
+        await new Promise((resolve, reject) => {
+          stream.pipe(createWriteStream(pathToSave))
+            .on('finish', resolve)
+            .on('error', reject);
+        });
+
+        args.postNew.imgUrl = `/uploads/${filename}`; // Set the URL to the uploaded file
+      }
+
 
       //! save to DB
       // post は prisma.schema で定義済みのモデル
@@ -175,7 +191,7 @@ const resolvers = {
           title: args.postNew.title,
           content: args.postNew.content,
           // imgUrl: args.postNew.imgUrl,
-          imgUrl: args.postNew.imgUrl ? args.postNew.imgUrl : "/imgs/noImg.jpeg",  // <-- default image added
+          imgUrl: args.postNew.imgUrl ? args.postNew.imgUrl : "/imgs/noImg.jpeg", // use the uploaded file URL or default
           userId: context.userId
         }
       })

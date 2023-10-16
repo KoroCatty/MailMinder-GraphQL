@@ -1,8 +1,20 @@
 import colors from 'colors';
 import { ApolloServer } from '@apollo/server';
 
+// import {
+//   GraphQLUpload,
+//   graphqlUploadExpress, // A Koa implementation is also exported.
+// } from 'graphql-upload';
+
+
+// import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs";
+
+const { default: graphqlUploadExpress } = await import("graphql-upload/graphqlUploadExpress.mjs");
+
+// import { GraphQLUpload, processRequest } from 'graphql-upload';
+
 // For Development
-import { startStandaloneServer } from '@apollo/server/standalone';
+// import { startStandaloneServer } from '@apollo/server/standalone';
 
 import express from 'express';
 import path from 'path';
@@ -35,65 +47,63 @@ const prisma = new PC.PrismaClient();
 
 // Initialize express
 const app = express();
+app.use(cors('*'));
 
 //* ==============================================================
-//* 画像アップロード用 multer & express
-
-// import multer from "multer";
-// import path from "path"; // path module はファイルパスを操作するため(buit-in)
-
-// import express from "express";
-// const app = express();
-
-// // which storage/server  we want to use  (cb = callback)
-// const storage = multer.diskStorage({
-//   destination(req, file, cb) {
-//     // null is for error | 画像は root の uploads からサーバーに保存される
-//     cb(null, "uploads/");
-//   },
-//   //! Create a file name
-//   // fieldname = image なので image-163123123.jpg というファイル名になる
-//   filename(req, file, cb) {
-//     cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`); 
-//   },
-// });
-
-// // check file type
-// // 関数 fileFilter はアップロードされるファイルのタイプを検証
-// function fileFilter(req, file, cb) {
-
-//   // 受け入れられるファイルの拡張子を正規表現で定義
-//   const filetypes = /jpe?g|png|webp/;
-//     // 受け入れられるMIMEタイプ（ファイルの種類）を正規表現で定義
-//   const mimetypes = /image\/jpe?g|image\/png|image\/webp/;
-
-//    // アップロードされたファイルの拡張子が受け入れられるものかテスト
-//   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
-
-//    // アップロードされたファイルのMIMEタイプが受け入れられるものかテスト
-//   const mimetype = mimetypes.test(file.mimetype);
-
-//   // 拡張子とMIMEタイプの両方が受け入れられる場合、ファイルを受け入れる
-//   if (extname && mimetype) {
-//     cb(null, true);
-//   } else {
-//     cb(new Error('Images only!'), false);
-//   }
-// }
-// // multerの設定を適用して、アップロード機能を初期化
-// const upload = multer({ storage, fileFilter });
-
-// // 'image' という名前の単一の画像をアップロードするためのミドルウェアを設定
-// const uploadSingleImage = upload.single('image');
-
-// app.post('/upload', uploadSingleImage, (req, res) => {
-//   res.json({ file: req.file });
-// });
-
+//* UPLOAD IMAGE multer & express
 //* ==============================================================
+import multer from "multer";
+
+// which storage/server  we want to use  (cb = callback)
+const storage = multer.diskStorage({
+  destination(req, file, cb) {
+    // null is for error | 画像は root の uploads からサーバーに保存される
+    cb(null, "uploads/");
+  },
+  //! Create a file name
+  // fieldname = image なので image-163123123.jpg というファイル名になる
+  filename(req, file, cb) {
+    cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`); 
+  },
+});
+
+// check file type
+// 関数 fileFilter はアップロードされるファイルのタイプを検証
+function fileFilter(req, file, cb) {
+
+  // 受け入れられるファイルの拡張子を正規表現で定義
+  const filetypes = /jpe?g|png|webp/;
+    // 受け入れられるMIMEタイプ（ファイルの種類）を正規表現で定義
+  const mimetypes = /image\/jpe?g|image\/png|image\/webp/;
+
+   // アップロードされたファイルの拡張子が受け入れられるものかテスト
+  const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
+
+   // アップロードされたファイルのMIMEタイプが受け入れられるものかテスト
+  const mimetype = mimetypes.test(file.mimetype);
+
+  // 拡張子とMIMEタイプの両方が受け入れられる場合、ファイルを受け入れる
+  if (extname && mimetype) {
+    cb(null, true);
+  } else {
+    cb(new Error('Images only!'), false);
+  }
+}
+// multerの設定を適用して、アップロード機能を初期化
+const upload = multer({ storage, fileFilter });
+
+// 'img' という名前の単一の画像をアップロードするためのミドルウェアを設定
+const uploadSingleImage = upload.single('img');
+
+// 画像をアップロードするためのエンドポイントを追加
+app.post('/uploads', uploadSingleImage, (req, res) => {
+  // res.json({ file: req.file }); // Return file path after upload
+    res.json({ url: `/uploads/${req.file.filename}` });
+});
+
+
 //* uploads Folder 公開ディレクトリを指定
 //* Create a uploads folder in the root directory
-//* ==============================================================
 const __dirname = path.resolve(); 
 //  console.log(__dirname); // /Users/Full-Stack/RemindApp (全てのパスを取得)
 
@@ -101,11 +111,20 @@ const __dirname = path.resolve();
 const uploadsDirectory = path.join(__dirname, '/uploads');
 // console.log(uploadsDirectory); // /Users/.../RemindApp/uploads
 
+// この設定により、uploadsディレクトリ内のすべてのファイルは、/uploads/<filename> のURLでアクセス可能
 // '/uploads' エンドポイントを使用して、そのディレクトリ内の静的ファイルを提供
 // '/uploads'というパスのリクエストがあったときに、次の express.static()ミドルウェアが動作
 app.use('/uploads', express.static(uploadsDirectory));
+
 //* ==============================================================
 
+
+app.use(cors('*'));
+app.use(graphqlUploadExpress() );
+app.use(cors('*'));
+//* ==============================================================
+
+app.use(cors('*'));
 
 
 
@@ -145,10 +164,29 @@ const server = new ApolloServer({
   resolvers: resolvers,
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })], // Added
   //! ver 4 からは context がここで定義できない 
+
+  cors: {
+    origin: '*',  // or true to allow any origin
+    credentials: true
+}
 })
 
 // Ensure we wait for our server to start
 await server.start();
+
+  // This middleware should be added before calling `applyMiddleware`.
+  app.use(graphqlUploadExpress());
+
+  // server.applyMiddleware({ app });
+
+
+// Before your server.applyMiddleware({ app }) line
+app.use(
+  '/', // Or your endpoint
+  graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }) // 10MB max file size
+);
+
+// server.applyMiddleware({ app });
 
 // Set up our Express middleware to handle CORS, body parsing,
 // and our expressMiddleware function.
@@ -166,6 +204,7 @@ app.use(
 
       // destructure from req
       const { authorization } = req.headers;
+      
 
       // トークンがあれば、トークンを検証し、userId を返す
       if (authorization) {
@@ -177,6 +216,10 @@ app.use(
           return {}; 
         }
       }
+    },
+    options: {
+      //Maximum upload file size set at 10 MB
+      maxFileSize: 10 * 1024 * 1024,
     },
   }),
 );

@@ -54,14 +54,9 @@ we need to add "type": "module" in package.json
    * Node.js
    * React-bootstrap
    * Express
-   * MongoDB
-   * Mongoose
-   * Passport
+   * GraphQL
    * JWT
    * Nodemailer
-   * Material-UI
-   * Heroku
-   * Git
    * GitHub
 
 
@@ -152,9 +147,6 @@ we need to add "type": "module" in package.json
       - npm install -D dotenv
       - import dotenv from 'dotenv';
       - dotenv.config();
-
-      ### mongoose
-      - npm install mongoose
 
       ### colors.js (This is for console.log color)
       - npm install colors --save-dev
