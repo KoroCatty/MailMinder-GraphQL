@@ -1,11 +1,12 @@
 import { gql } from 'graphql-tag';
 
+
 //! ==========================================================
 //! Schema
 //! ==========================================================
 const typeDefs = gql`
-  scalar Date # 
-  scalar Upload # Uploadはスカラー型
+  scalar Date 
+  scalar Upload 
 
   type Token {
     token: String!
@@ -58,7 +59,10 @@ const typeDefs = gql`
   input PostInput {
     title: String!
     content: String!
-    imgUrl: String
+    # imgUrl: String
+    # imgUrl: File
+    imgUrl: Upload
+    imgFile: Upload
   }
 
   # //! UPDATE A POST INPUT
@@ -75,7 +79,8 @@ const typeDefs = gql`
   type File {
   filename: String!
   mimetype: String!
-  encoding: String
+  encoding: String!
+  type: String!
 }
 
 
