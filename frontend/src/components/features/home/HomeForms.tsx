@@ -266,7 +266,7 @@ console.log(selectedImage)
     
     // SERVER URL 
     const SERVER_URL = import.meta.env.VITE_PUBLIC_SERVER_URL || 'http://localhost:5001/uploads';
-    console.log(SERVER_URL + "SERVER_URL")
+    console.log(SERVER_URL + "🫡")
 
 
     // Define a variable for asyncronous data to save DB
@@ -297,7 +297,7 @@ console.log(selectedImage)
 
     //! 1. Save post to the database using Apollo Client's mutation.
     try {
-      if (!imageUrlForDB) return;
+      // if (!imageUrlForDB) return;
 
       await CreatePost({
         variables: {
