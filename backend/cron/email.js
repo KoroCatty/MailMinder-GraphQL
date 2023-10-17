@@ -27,7 +27,7 @@ import cron from 'node-cron';
 // const sendEmail = cron.schedule('*/5 * * * *', async () => {
 
 //! send email every 10 seconds
-const sendEmail = cron.schedule('*/55 * * * * *', async () => {
+// const sendEmail = cron.schedule('*/55 * * * * *', async () => {
 
 //! Render.com にデプロイした時間
 // //! Send Email at 8:00 AM, 12:00 PM, and 8:00 PM JST every day (日本時間)
@@ -35,7 +35,7 @@ const sendEmail = cron.schedule('*/55 * * * * *', async () => {
 
 
 //! Send Email at 8:00 AM, 12:00 PM, and 5:00 PM JST every day (日本時間)
-// const sendEmail = cron.schedule('0 23,3,8 * * *', async () => { 
+const sendEmail = cron.schedule('0 23,3,8 * * *', async () => { 
   try {
     // email transport configuration
     const transporter = nodemailer.createTransport({
