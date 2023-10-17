@@ -263,6 +263,10 @@ console.log(selectedImage)
   //! ======================================================
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    
+    // SERVER URL 
+    const SERVER_URL = import.meta.env.SERVER_URL || 'http://localhost:5001/uploads';
+
 
     // Define a variable for asyncronous data to save DB
     let imageUrlForDB: string | undefined = formData.imgUrl;
@@ -273,12 +277,12 @@ console.log(selectedImage)
       formData.append('img', selectedLocalFile);
 
       try {
-        const response = await axios.post('http://localhost:5001/uploads', formData, {
+        const response = await axios.post( SERVER_URL, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
         console.log(response.data.url);
 
-        imageUrlForDB = `http://localhost:5001${response.data.url}`;
+        imageUrlForDB = `SERVER_URL${response.data.url}`;
         setFormData((prevFormData) => ({
           ...prevFormData,
           imgUrl: imageUrlForDB
