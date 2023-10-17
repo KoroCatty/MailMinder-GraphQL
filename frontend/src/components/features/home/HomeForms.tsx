@@ -228,7 +228,6 @@ console.log(selectedImage)
   // local selected image
   const [selectedLocalFile, setSelectedLocalFile] = useState<File | null>(null);
 
-
   // Reset the local selected image input value
   const resetLocalFileSelectValue = () => {
     if (fileInputRef.current) {
