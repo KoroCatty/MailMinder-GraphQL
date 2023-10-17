@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useState, useRef } from "react";
 import axios from "axios";
 // Apollo Client
 import { useMutation } from "@apollo/client";
@@ -201,13 +201,39 @@ const homeFormsStyles = css`
 //! ========================================
 //! MAIN
 //! ========================================
+
+//? TYPES (For Form Data)
+interface FormDataProps {
+  title?: string;
+  content?: string;
+  imgUrl?: string;
+  imgFile?: string;
+  [key: string]: string | undefined; // This makes it indexable for dynamic keys
+}
+
 const HomeForms = () => {
   // HOOKS
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
+console.log(selectedImage)
 
-  const [localImage, setLocalImage] = useState<string | null>(null);
+  const [formData, setFormData] = useState<FormDataProps>({});
 
-  const [formData, setFormData] = useState({});
+  // which image to preview
+  const [displayImg, setDisplayImg] = useState<string>("/imgs/noImg.jpeg");
+
+  // Get local selected image value
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  // local selected image
+  const [selectedLocalFile, setSelectedLocalFile] = useState<File | null>(null);
+
+
+  // Reset the local selected image input value
+  const resetLocalFileSelectValue = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
 
   // Mutations (CreatePost は mutation.ts で定義)
   const [CreatePost, { loading, error }] = useMutation(CREATE_POST);
@@ -233,26 +259,53 @@ const HomeForms = () => {
   console.log(formData);
 
   //! ======================================================
-  //! When form SUBMITTED!!
+  //! When FORM SUBMITTED!!
   //! ======================================================
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    console.log(formData);
 
-    // DBに保存
+    // Define a variable for asyncronous data to save DB
+    let imageUrlForDB: string | undefined = formData.imgUrl;
+
+    //! 1. Upload the image to the server using AXIOS
+    if (selectedLocalFile) {
+      const formData = new FormData();
+      formData.append('img', selectedLocalFile);
+
+      try {
+        const response = await axios.post('http://localhost:5001/uploads', formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        console.log(response.data.url);
+
+        imageUrlForDB = `http://localhost:5001${response.data.url}`;
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          imgUrl: imageUrlForDB
+        }));
+
+      } catch (error) {
+        console.error("Error uploading the file:", error);
+        return;
+      }
+    }
+
+    //! 1. Save post to the database using Apollo Client's mutation.
     try {
-      CreatePost({
+      if (!imageUrlForDB) return;
+
+      await CreatePost({
         variables: {
           postNew: {
             title: formData.title,
             content: formData.content,
-            imgUrl: formData.imgUrl,
-          }
-          // postNew は mutation.ts で定義したもの
+            imgUrl: imageUrlForDB,
+          },
         },
       });
     } catch (error) {
-      console.log(error);
+      console.error("Error saving post to database:", error);
+      return;
     }
   };
 
@@ -260,43 +313,20 @@ const HomeForms = () => {
   //* ===================================================
   //* Choose image from local file 画像を選択した時に発火する関数
   //* ===================================================
-  // const handleImageUpload = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const file = e.target.files && e.target.files[0];
-  //   if (file) {
-  //     // createObjectURL は、画像を表示するためのURLを生成し、それを選択された画像として設定
-  //     setSelectedImage(URL.createObjectURL(file)); 
-
-  //     // FormDataを更新
-  //     setFormData({
-  //       ...formData,
-  //       imgFile: file, // 選択された画像ファイルをformDataに追加
-  //     });
-  //   }
-  // };
-
-  //! Save to uploads file by Axios
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files[0];
-    const formData = new FormData();
-    formData.append('img', file); // ファイル名をimgとして追加
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
 
-    try {
-      const response = await axios.post('http://localhost:5001/uploads', formData, {
-        headers: { 'Content-Type': 'multipart/form-data' },
-      });
+    // Set the selected file to state for later use in handleSubmit
+    setSelectedLocalFile(file);
 
-      // Set the URL returned from the server to your component's state.
-      setLocalImage(response.data.url);
+    // Create a local URL for the file to display it in an img tag
+    const localImageUrl = URL.createObjectURL(file);
 
-      // FormDataを更新
-      setFormData({
-        ...formData,
-        imgFile: file, // 選択された画像ファイルをformDataに追加
-      });
+    // Update the display image
+    setDisplayImg(localImageUrl);
 
-    } catch (error) {
-      console.error("Error uploading the file 🥲", error);
-    }
+    // e.target.value = '';
   }
 
 
@@ -310,6 +340,15 @@ const HomeForms = () => {
       ...formData,
       imgUrl: imageUrl,
     });
+
+    // reset local selected file in useState
+    setSelectedLocalFile(null);
+
+    // reset selected image input value
+    resetLocalFileSelectValue();
+
+    // display image
+    setDisplayImg(imageUrl);
   };
 
   //* ===================================================
@@ -324,11 +363,16 @@ const HomeForms = () => {
         ...formData,
         imgUrl: image64,
       });
+      // reset selected image value
+      resetLocalFileSelectValue();
+
+      // reset local selected file in useState
+      setSelectedLocalFile(null);
+
+      setDisplayImg(image64);
     } else {
       console.log("Too Big");
       window.alert("Too Big");
-      // Proceed with saving to the database
-      // ...your code to save the image to the database
     }
   };
 
@@ -341,6 +385,7 @@ const HomeForms = () => {
       <TitleLarge title="YOUR REMINDER" />
 
       <form onSubmit={handleSubmit}>
+        {/* <form onSubmit={handleFormSubmit}> */}
         <br />
         <br />
         <TitleSmall title="TEXTS" />
@@ -374,37 +419,21 @@ const HomeForms = () => {
 
         {/*//* DISPLAY IMG  画像があれば表示 */}
         <div className="imageWrap">
-          {/* {!selectedImage && <img src="/imgs/noImg.jpeg" alt="no Image" />}
-          {
-            localImage ? <img src={`http://localhost:5001${localImage}`} alt="local Image" /> : <img src="/imgs/noImg.jpeg" alt="no Image" />
-          } */}
-
-          {/* {chosenImage && <img src={`http://localhost:5001${chosenImage}`} alt="chosen Image" />} */}
-
-          {/* {selectedImage || chosenImage && <img src={`http://localhost:5001${chosenImage}`} alt="chosen Image" />} */}
-
-
-          {
-    selectedImage 
-        ? <img src={`${selectedImage}`} alt="selected Image" />
-        : localImage 
-            ? <img src={`http://localhost:5001${localImage}`} alt="chosen Image" />
-            : <img src="/imgs/noImg.jpeg" alt="no Image" />
-}
-
+          <img src={displayImg} alt="Displayed Image" />
         </div>
 
         {/*//* IMAGE SELECT */}
         <Form.Group controlId="formFileLg">
           <h3>From Your Local File</h3>
           <Form.Control
+            ref={fileInputRef}
             className="imgChooseBtn"
             type="file"
             size="lg"
             accept="image/*" // 画像ファイルのみを選択できるようにする
             // onChange={handleImageChange}
             onChange={handleImageUpload}
-            name="imgUrl"
+            name="img"
           />
         </Form.Group>
 
