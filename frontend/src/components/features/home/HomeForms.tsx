@@ -283,7 +283,7 @@ console.log(selectedImage)
         });
         console.log(response.data.url);
 
-        imageUrlForDB = `SERVER_URL${response.data.url}`;
+        imageUrlForDB = `${response.data.url}`;
         setFormData((prevFormData) => ({
           ...prevFormData,
           imgUrl: imageUrlForDB
