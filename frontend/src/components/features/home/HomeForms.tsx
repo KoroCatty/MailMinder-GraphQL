@@ -213,6 +213,7 @@ interface FormDataProps {
 
 const HomeForms = () => {
   // HOOKS
+  // For Selfie & Paste Image URL
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 console.log(selectedImage)
 
@@ -256,7 +257,7 @@ console.log(selectedImage)
       [e.target.name]: e.target.value, // name attribute
     });
   };
-  console.log(formData);
+  // console.log(formData);
 
   //! ======================================================
   //! When FORM SUBMITTED!!
@@ -266,7 +267,7 @@ console.log(selectedImage)
     
     // SERVER URL 
     const SERVER_URL = import.meta.env.VITE_PUBLIC_SERVER_URL || 'http://localhost:5001/uploads';
-    console.log(SERVER_URL + "🫡")
+    // console.log(SERVER_URL + "🫡")
 
 
     // Define a variable for asyncronous data to save DB
@@ -281,7 +282,7 @@ console.log(selectedImage)
         const response = await axios.post( SERVER_URL, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
-        console.log(response.data.url);
+        // console.log(response.data.url);
 
         imageUrlForDB = `${response.data.url}`;
         setFormData((prevFormData) => ({
