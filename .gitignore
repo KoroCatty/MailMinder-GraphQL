@@ -38,3 +38,4 @@ dist-ssr
 remindYou.sql
 
 prisma/generated
+prisma/migrations

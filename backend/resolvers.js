@@ -1,8 +1,8 @@
 // プリズマのクライアントをインポート
-import PC from '@prisma/client';
+
 
 import bcrypt from 'bcryptjs';
-
+import Joi from 'joi'; // Validation
 import jwt from 'jsonwebtoken';
 
 import fs from 'fs'; // file system module (built-in) これは、ファイルを読み書きするためのモジュール
@@ -14,7 +14,8 @@ import fs from 'fs'; // file system module (built-in) これは、ファイル�
 
 
 // プリズマクライエントのインスタンスを格納
-const prisma = new PC.PrismaClient();
+import { PrismaClient } from '../prisma/generated/client/index.js'
+const prisma = new PrismaClient()
 
 
 //! ==========================================================
@@ -103,6 +104,21 @@ const resolvers = {
     //* ===============================================
     signupUser: async (_, args) => {
       await console.log(args.userNew);// typeDefsで定義済み
+
+
+      // Joi Validation
+      const schema = Joi.object({
+        firstName: Joi.string().required().min(2).max(30) ,
+        lastName: Joi.string().required(),
+        email: Joi.string().email().required(),
+        password: Joi.string().required(),
+      })
+
+      // Joi Error Handling
+      const { validationError } = schema.validate(args.userNew);
+      if (validationError) {
+        throw new Error(validationError.details[0].message);
+      }
 
       // email が重複してないかチェック (args~は front から送られてきたデータ)
       // user は prisma.schema で定義済みのモデル

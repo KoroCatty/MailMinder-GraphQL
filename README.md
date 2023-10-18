@@ -1,3 +1,13 @@
+# When you Clone 
+   * npm install (root directory) 
+     - prisma/schema.prisma automatically creates generated folder
+   * npm run dev
+
+   * cd frontend (move to frontend directory)
+   * npm install
+   * npm run dev
+
+
 # MailMinder
 
 # SPA Full Stack application (MERN)
@@ -184,6 +194,11 @@ we need to add "type": "module" in package.json
       ### swap to StandAlone to express server (for Deployment)
       
          npm install express cors body-parser
+
+      ### joi validation
+         npm install joi
+
+      
          
 
 # PRISMA SETUP
