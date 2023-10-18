@@ -105,20 +105,25 @@ const resolvers = {
     signupUser: async (_, args) => {
       await console.log(args.userNew);// typeDefsで定義済み
 
-
       // Joi Validation
       const schema = Joi.object({
-        firstName: Joi.string().required().min(2).max(30) ,
-        lastName: Joi.string().required(),
+        firstName: Joi.string().required().min(5).max(30).alphanum(),// alphanum() は英数字のみ
+        lastName: Joi.string().required().min(5).max(30),
         email: Joi.string().email().required(),
-        password: Joi.string().required(),
+        password: Joi.string()
+        .required()
+        .pattern(new RegExp('^[a-zA-Z0-9]{4,30}$')) // 英数字のみ Only Number and Alphabet
+        .messages({
+          'string.pattern.base': 'パスワードは英数字のみで、4文字以上30文字以下である必要があります。'
+        }),
       })
 
       // Joi Error Handling
-      const { validationError } = schema.validate(args.userNew);
-      if (validationError) {
-        throw new Error(validationError.details[0].message);
+      const { error } = schema.validate(args.userNew);
+      if (error) {
+        throw new Error(error.details[0].message);
       }
+
 
       // email が重複してないかチェック (args~は front から送られてきたデータ)
       // user は prisma.schema で定義済みのモデル
