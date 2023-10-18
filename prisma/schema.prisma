@@ -6,6 +6,7 @@ generator client {
   provider = "prisma-client-js" //JavaScript および TypeScript で動作する
   output   = "./generated/client"
   log     = ["query", "info", "warn", "error"]
+  binaryTargets = ["native", "debian-openssl-1.1.x"]// Deploy to Render.com
 }
 
 datasource db {
