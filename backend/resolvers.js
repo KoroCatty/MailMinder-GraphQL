@@ -286,6 +286,8 @@ const resolvers = {
             'string.max': '3000文字以下で入力してください。'
           }),
         imgUrl: Joi.string(),
+        createdAt: Joi.date(),
+        updatedAt: Joi.date(),
         // imgFile: Joi.string(),
       })
       // Joi Error Handling

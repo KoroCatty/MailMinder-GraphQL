@@ -37,6 +37,6 @@ dist-ssr
 
 remindYou.sql
 
-# deploy時に必要 GitHubからのクローン時には一度削除してから npm i
+# deploy時に必要 なので igonre しないこと ↓↓
 # prisma/generated 
 # prisma/migrations

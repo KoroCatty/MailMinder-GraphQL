@@ -98,6 +98,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
       localStorage.setItem("token_GraphQL", data.signinUser.token);
       navigate("/");
       setLoggedIn(true);
+      window.location.reload();
     },
   });
 

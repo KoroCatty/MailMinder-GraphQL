@@ -1,14 +1,27 @@
-# When you Clone 
+# When you Cloned from Repo 
+   ## Backend
+
    * npm install (root directory) 
+
      - prisma/schema.prisma automatically creates generated folder
-     - npx prisma generate もしておく
+
+     - npx prisma generate (generate neccecery folders for deployment)
+
    * npm run dev
+
+   ## Frontend
 
    * cd frontend (move to frontend directory)
    * npm install
    * npm run dev
 
+# Deploy
 
+   必要によっては、 prisma folder 内の schema.prisma 以外のファイルを削除し、
+
+   npx prisma generate 
+
+   を実行する必要がある場合がある
 
 
 # MailMinder
