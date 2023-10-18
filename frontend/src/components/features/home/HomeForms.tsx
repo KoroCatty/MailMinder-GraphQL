@@ -309,7 +309,7 @@ console.log(selectedImage)
         },
       });
     } catch (error) {
-      console.error("Error saving post to database:", error);
+      console.error("Error saving post to database🫡:", error);
       return;
     }
   };

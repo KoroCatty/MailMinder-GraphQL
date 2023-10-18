@@ -24,7 +24,7 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'react-bootstrap/dist/react-bootstrap.min.js'
 
 function App() {
-  // ログインチェック (ローカルストレージ)
+  // Login Check By Token in LocalStorage
   const [loggedIn, setLoggedIn] = useState(localStorage.getItem("token_GraphQL") ? true : false);
 
   return (
@@ -32,7 +32,7 @@ function App() {
       <BrowserRouter>
 
         {loggedIn ? (
-          // ログイン時
+          // LOGGED IN
           <>
             <Routes>
               <Route path="/" element={<Layout />}>
@@ -49,7 +49,7 @@ function App() {
             </Routes>
           </>
         ) : (
-          // ログインしていない時
+          // NOT LOGIN
           <>
             <Routes>
               <Route path="/" element={<Layout />}>
