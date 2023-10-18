@@ -1,11 +1,14 @@
 # When you Clone 
    * npm install (root directory) 
      - prisma/schema.prisma automatically creates generated folder
+     - npx prisma generate もしておく
    * npm run dev
 
    * cd frontend (move to frontend directory)
    * npm install
    * npm run dev
+
+
 
 
 # MailMinder
