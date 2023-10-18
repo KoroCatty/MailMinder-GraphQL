@@ -143,6 +143,10 @@ const config = {
         "fromEnvVar": null,
         "value": "darwin",
         "native": true
+      },
+      {
+        "fromEnvVar": null,
+        "value": "debian-openssl-1.1.x"
       }
     ],
     "previewFeatures": [],
@@ -159,18 +163,16 @@ const config = {
     "db"
   ],
   "activeProvider": "mysql",
-  "postinstall": true,
   "inlineDatasources": {
     "db": {
       "url": {
-        "fromEnvVar": null,
-        "value": "mysql://mamp:root@localhost:8889/remindYou"
+        "fromEnvVar": "DATABASE_URL",
+        "value": null
       }
     }
   },
-  "inlineSchema": "Ly8gRXZlcnkgdGltZSB5b3UgY2hhbmdlIHRoaXMgZmlsZSwgdXBkYXRlIE15U1FMIERCIGJ5CgovLyBucHggcHJpc21hIGRiIHB1c2gKCmdlbmVyYXRvciBjbGllbnQgewogIHByb3ZpZGVyID0gInByaXNtYS1jbGllbnQtanMiIC8vSmF2YVNjcmlwdCDjgYrjgojjgbMgVHlwZVNjcmlwdCDjgafli5XkvZzjgZnjgosKICBvdXRwdXQgICA9ICIuL2dlbmVyYXRlZC9jbGllbnQiCiAgbG9nICAgICA9IFsicXVlcnkiLCAiaW5mbyIsICJ3YXJuIiwgImVycm9yIl0KfQoKZGF0YXNvdXJjZSBkYiB7CiAgcHJvdmlkZXIgPSAibXlzcWwiCiAgdXJsICAgICAgPSAibXlzcWw6Ly9tYW1wOnJvb3RAbG9jYWxob3N0Ojg4ODkvcmVtaW5kWW91Igp9Cgptb2RlbCBVc2VyIHsKICBpZCAgICAgICAgSW50ICAgICAgQGlkIEBkZWZhdWx0KGF1dG9pbmNyZW1lbnQoKSkKICBmaXJzdE5hbWUgU3RyaW5nCiAgbGFzdE5hbWUgIFN0cmluZwogIGVtYWlsICAgICBTdHJpbmcgICBAdW5pcXVlCiAgcGFzc3dvcmQgIFN0cmluZwogIGNyZWF0ZWRBdCBEYXRlVGltZSBAZGVmYXVsdChub3coKSkKCiAgLy8gUG9zdCBUYWJsZSDjgajjga7plqLkv4LmgKcKICBwb3N0cyBQb3N0W10gLy8gMeWvvuWkmuOBrumWouS/guOBquOBruOBp+mFjeWIlyAoYSB1c2VyIGNhbiBoYXZlIG1hbnkgcG9zdHMpCn0KCgovLyAx5a++5aSa44Gu44Oq44Os44O844K344On44Oz44K344OD44OX44Gu5YW45Z6L55qE44Gq5pa55rOV44Gv44CBIuWkmiIg44Gu5YG077yI44GT44Gu5aC05ZCI44GvIFBvc3TvvInjgasgIFVzZXLjgbjjga7lj4LnhafvvIjlpJbpg6jjgq3jg7zvvInjgpLmjIHjgZ/jgZvjgovjgILjgarjga7jgacgVXNlciB0YWJsZSDjgavjga/jgIBwb3N0SWQg44Go44Os44Kz44O844OJ44Gv5L2c44KJ44Gq44GECm1vZGVsIFBvc3QgewogIGlkICAgICAgICBJbnQgICAgICBAaWQgQGRlZmF1bHQoYXV0b2luY3JlbWVudCgpKQogIHRpdGxlICAgICBTdHJpbmcKICBjb250ZW50ICAgU3RyaW5nCiAgaW1nVXJsICAgIFN0cmluZyAgIEBkYi5WYXJDaGFyKDE1MDAwKSAvLyAxNTAwMOaWh+Wtl+OBvuOBp+WPr+iDvQogIGNyZWF0ZWRBdCBEYXRlVGltZSBAZGVmYXVsdChub3coKSkKICB1cGRhdGVkQXQgRGF0ZVRpbWUgQHVwZGF0ZWRBdAoKLy8gMeWvvuWkmuOBrumWouS/guOBquOBruOBp+OAgVBvc3QgdGFibGUg44GrIHVzZXJJZCDjgpLov73liqDjgZnjgosKICB1c2VySWQgSW50CiAgdXNlciAgIFVzZXIgQHJlbGF0aW9uKGZpZWxkczogW3VzZXJJZF0sIHJlZmVyZW5jZXM6IFtpZF0pCn0KCg==",
-  "inlineSchemaHash": "fa4ac9df01d04257051a14911308ee05d5f53778447c590cd7a63242215a78f6",
-  "noEngine": false
+  "inlineSchema": "Ly8gRXZlcnkgdGltZSB5b3UgY2hhbmdlIHRoaXMgZmlsZSwgdXBkYXRlIE15U1FMIERCIGJ5CgovLyBucHggcHJpc21hIGRiIHB1c2gKCmdlbmVyYXRvciBjbGllbnQgewogIHByb3ZpZGVyID0gInByaXNtYS1jbGllbnQtanMiIC8vSmF2YVNjcmlwdCDjgYrjgojjgbMgVHlwZVNjcmlwdCDjgafli5XkvZzjgZnjgosKICBvdXRwdXQgICA9ICIuL2dlbmVyYXRlZC9jbGllbnQiCiAgbG9nICAgICA9IFsicXVlcnkiLCAiaW5mbyIsICJ3YXJuIiwgImVycm9yIl0KICBiaW5hcnlUYXJnZXRzID0gWyJuYXRpdmUiLCAiZGViaWFuLW9wZW5zc2wtMS4xLngiXS8vIERlcGxveSB0byBSZW5kZXIuY29tCn0KCmRhdGFzb3VyY2UgZGIgewogIHByb3ZpZGVyID0gIm15c3FsIgogIHVybCAgICAgID0gZW52KCJEQVRBQkFTRV9VUkwiKQp9Cgptb2RlbCBVc2VyIHsKICBpZCAgICAgICAgSW50ICAgICAgQGlkIEBkZWZhdWx0KGF1dG9pbmNyZW1lbnQoKSkKICBmaXJzdE5hbWUgU3RyaW5nCiAgbGFzdE5hbWUgIFN0cmluZwogIGVtYWlsICAgICBTdHJpbmcgICBAdW5pcXVlCiAgcGFzc3dvcmQgIFN0cmluZwogIGNyZWF0ZWRBdCBEYXRlVGltZSBAZGVmYXVsdChub3coKSkKCiAgLy8gUG9zdCBUYWJsZSDjgajjga7plqLkv4LmgKcKICBwb3N0cyBQb3N0W10gLy8gMeWvvuWkmuOBrumWouS/guOBquOBruOBp+mFjeWIlyAoYSB1c2VyIGNhbiBoYXZlIG1hbnkgcG9zdHMpCn0KCgovLyAx5a++5aSa44Gu44Oq44Os44O844K344On44Oz44K344OD44OX44Gu5YW45Z6L55qE44Gq5pa55rOV44Gv44CBIuWkmiIg44Gu5YG077yI44GT44Gu5aC05ZCI44GvIFBvc3TvvInjgasgIFVzZXLjgbjjga7lj4LnhafvvIjlpJbpg6jjgq3jg7zvvInjgpLmjIHjgZ/jgZvjgovjgILjgarjga7jgacgVXNlciB0YWJsZSDjgavjga/jgIBwb3N0SWQg44Go44Os44Kz44O844OJ44Gv5L2c44KJ44Gq44GECm1vZGVsIFBvc3QgewogIGlkICAgICAgICBJbnQgICAgICBAaWQgQGRlZmF1bHQoYXV0b2luY3JlbWVudCgpKQogIHRpdGxlICAgICBTdHJpbmcKICBjb250ZW50ICAgU3RyaW5nCiAgaW1nVXJsICAgIFN0cmluZyAgIEBkYi5WYXJDaGFyKDE1MDAwKSAvLyAxNTAwMOaWh+Wtl+OBvuOBp+WPr+iDvQogIGNyZWF0ZWRBdCBEYXRlVGltZSBAZGVmYXVsdChub3coKSkKICB1cGRhdGVkQXQgRGF0ZVRpbWUgQHVwZGF0ZWRBdAoKLy8gMeWvvuWkmuOBrumWouS/guOBquOBruOBp+OAgVBvc3QgdGFibGUg44GrIHVzZXJJZCDjgpLov73liqDjgZnjgosKICB1c2VySWQgSW50CiAgdXNlciAgIFVzZXIgQHJlbGF0aW9uKGZpZWxkczogW3VzZXJJZF0sIHJlZmVyZW5jZXM6IFtpZF0pCn0KCg==",
+  "inlineSchemaHash": "7bea816a6645cece800a22a56224c2a25012a9a8daa4bd6830169155a5b0029c"
 }
 config.dirname = '/'
 
@@ -179,7 +181,9 @@ defineDmmfProperty(exports.Prisma, config.runtimeDataModel)
 
 
 config.injectableEdgeEnv = () => ({
-  parsed: {}
+  parsed: {
+    DATABASE_URL: typeof globalThis !== 'undefined' && globalThis['DATABASE_URL'] || typeof process !== 'undefined' && process.env && process.env.DATABASE_URL || undefined
+  }
 })
 
 if (typeof globalThis !== 'undefined' && globalThis['DEBUG'] || typeof process !== 'undefined' && process.env && process.env.DEBUG || undefined) {
