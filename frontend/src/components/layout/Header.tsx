@@ -186,16 +186,16 @@ function Header() {
             <Nav>
               {loggedIn ? (
                 <>
-                  <Nav.Link as={Link} to="/" onClick={()=>toTop() }>
+                  <Nav.Link as={Link} to="/" onClick={() => toTop()}>
                     Home
                   </Nav.Link>
-                  <Nav.Link as={Link} to="/postlist" onClick={()=>toTop()} >
+                  <Nav.Link as={Link} to="/postlist" onClick={() => toTop()} >
                     Posts
                   </Nav.Link>
-                  <Nav.Link as={Link} to="/settings" onClick={()=>toTop()} >
+                  <Nav.Link as={Link} to="/settings" onClick={() => toTop()} >
                     Settings
                   </Nav.Link>
-                  <Nav.Link as={Link} to="/contact" onClick={()=>toTop()} >
+                  <Nav.Link as={Link} to="/contact" onClick={() => toTop()} >
                     Contact
                   </Nav.Link>
                 </>
@@ -220,9 +220,14 @@ function Header() {
                   LOGOUT
                 </button>
               ) : (
-                <Nav.Link as={Link} to="/Login">
-                  Login
-                </Nav.Link>
+                <>
+                  <Nav.Link as={Link} to="/Login">
+                    Login
+                  </Nav.Link>
+                  <Nav.Link as={Link} to="/contact" onClick={() => toTop()} >
+                    Contact
+                  </Nav.Link>
+                </>
               )}
 
               {/* avatar Icon */}

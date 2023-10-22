@@ -1,6 +1,9 @@
 // Reactの関数や型をインポート
 import { useState, useRef } from "react";
 
+// react-icons
+import { FaCamera } from "react-icons/fa";
+
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
 import { min, max } from "../../utils/mediaQueries";
@@ -254,7 +257,7 @@ const Selfie: React.FC<SelfieProps> = ({ selfieImage }) => {
         onClick={() => startSelfie()}
         className={isDisplay ? "openBtn displayNone" : "openBtn"}
       >
-        Open Camera
+        <FaCamera style={{margin: "-4px 8px 0 0"}} />Open Camera
       </div>
 
       {/*//! CLOSE BUTTON */}
@@ -267,7 +270,7 @@ const Selfie: React.FC<SelfieProps> = ({ selfieImage }) => {
           isDisplay ? "videosContainer stopBtn" : "videosContainer displayNone"
         }
       >
-        CLOSE CAMERA
+         <FaCamera style={{margin: "-4px 8px 0 0"}} />CLOSE CAMERA
       </div>
 
       <div

@@ -7,12 +7,6 @@ import jwt from 'jsonwebtoken';
 
 import fs from 'fs'; // file system module (built-in) これは、ファイルを読み書きするためのモジュール
 
-
-// import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs";
-// import { ApolloServer } from "apollo-server";
-// import { GraphQLUpload } from 'graphql-upload';
-
-
 // プリズマクライエントのインスタンスを格納
 import { PrismaClient } from '../prisma/generated/client/index.js'
 const prisma = new PrismaClient()
@@ -22,11 +16,6 @@ const prisma = new PrismaClient()
 //! Resolvers (what do you wanna resolve? query? mutation?)
 //! ==========================================================
 const resolvers = {
-  // This maps the `Upload` scalar to the implementation provided
-  // by the `graphql-upload` package.
-  // Upload: graphqlUploadExpress,
-  // Upload: GraphQLUpload,
-
   Query: {
     //* -----------------------------------------------
     //* GET ALL USERS
@@ -77,7 +66,6 @@ const resolvers = {
     //* -----------------------------------------------
     PostsByUserLimit: async (_, args, context) => {
       // console.log(context.userId + "👤 user ID") // ログイン者のID
-      // console.log(context)
       // console.log(args.limit + " - Limit 4 Posts -")
 
       // Error means you are not allowed to do this
@@ -249,12 +237,13 @@ const resolvers = {
     //* DELETE A POST
     //* ===============================================
     deletePost: async (_, args, context) => {
-      console.log(args.id + " - PostID 📨")
+      console.log(args.id + " - PostID Deleted📨")
 
       // ログインしてなかったらエラー(contextで先に確認できる)
       if (!context.userId) {
         throw new Error("You must be logged in (Contextにトークンがありません)😱");
       }
+
 
       // post は prisma.schema で定義済みのモデル
       const deletedPost = await prisma.post.delete({

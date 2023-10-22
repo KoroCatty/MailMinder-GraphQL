@@ -1,11 +1,6 @@
 import colors from 'colors';
 import { ApolloServer } from '@apollo/server';
 
-
-// const { default: graphqlUploadExpress } = await import("graphql-upload/graphqlUploadExpress.mjs");
-
-
-
 import express from 'express';
 import path from 'path';
 
@@ -26,7 +21,7 @@ import crypto from 'crypto';
 // Token
 import jwt from 'jsonwebtoken';
 
-// Sending Email Function
+//! Sending Email Function (DO NOT DELETE)
 import sendEmail from './cron/email.js';
 
 // プリズマのクライアントをインポート (DB接続確認のため)
@@ -101,17 +96,11 @@ const uploadsDirectory = path.join(__dirname, '/uploads');
 
 // この設定により、uploadsディレクトリ内のすべてのファイルは、/uploads/<filename> のURLでアクセス可能
 // '/uploads' エンドポイントを使用して、そのディレクトリ内の静的ファイルを提供
-// '/uploads'というパスのリクエストがあったときに、次の express.static()ミドルウェアが動作
+// '/uploads'というパスのリクエストがあったときに次の express.static()ミドルウェアが動作
 app.use('/uploads', express.static(uploadsDirectory));
-
 //* ==============================================================
 
-
 app.use(cors('*'));
-// app.use(graphqlUploadExpress());
-
-
-
 
 //? ==============================================================
 //? Deploy Settings
@@ -148,37 +137,21 @@ const server = new ApolloServer({
   typeDefs: typeDefs,
   resolvers: resolvers,
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })], // Added
-  //! ver 4 からは context がここで定義できない 
-
   cors: {
     origin: '*',  // or true to allow any origin
-    credentials: true
+    credentials: true 
   }
 })
 
 // Ensure we wait for our server to start
 await server.start();
 
-// This middleware should be added before calling `applyMiddleware`.
-// app.use(graphqlUploadExpress());
 
-// server.applyMiddleware({ app });
-
-
-// Before your server.applyMiddleware({ app }) line
-// app.use(
-//   '/', // Or your endpoint
-//   graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }) // 10MB max file size
-// );
-
-// server.applyMiddleware({ app });
-
-// Set up our Express middleware to handle CORS, body parsing,
-// and our expressMiddleware function.
 app.use(
   '/',
   cors('*'),
-  // 50mb is the limit that `startStandaloneServer` uses, but you may configure this to suit your needs
+
+  // 50mb is the limit that `startStandaloneServer` 
   bodyParser.json({ limit: '50mb' }),
   // expressMiddleware accepts the same arguments:
   // an Apollo Server instance and optional configuration options
@@ -189,7 +162,6 @@ app.use(
 
       // destructure from req
       const { authorization } = req.headers;
-
 
       // トークンがあれば、トークンを検証し、userId を返す
       if (authorization) {
@@ -216,7 +188,7 @@ console.log(`🚀 Server ready at http://localhost:${PORT}`.cyan.underline);
 
 
 //* ==============================================================
-//* MySQL DB接続確認
+//* MySQL DB CONNECTION CHECK (接続確認)
 //* ==============================================================
 async function testConnection() {
   try {
@@ -232,7 +204,6 @@ testConnection();
 
 
 
-//* ==============================================================
 //* This is for Development (StandAloneServer)
 //* ==============================================================
 // Define the startServer function

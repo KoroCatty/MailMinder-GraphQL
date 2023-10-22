@@ -124,6 +124,9 @@ we need to add "type": "module" in package.json
      * npm i react-router-dom
      * npm i @emotion/styled
 
+     <!-- * npm install jsonwebtoken  
+     * npm i --save-dev @types/jsonwebtoken -->
+
      * npm i @emotion/react
      
       In tsconfig.json ↓↓↓

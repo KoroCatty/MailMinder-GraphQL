@@ -184,7 +184,7 @@ const homeFormsStyles = css`
     font-size: 1rem;
     letter-spacing: 0.1rem;
     width: 60%;
-    margin-bottom: 4rem;
+    margin-bottom: 1rem;
 
     &:focus {
       border: 1px solid #323232;
@@ -215,7 +215,7 @@ const HomeForms = () => {
   // HOOKS
   // For Selfie & Paste Image URL
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-console.log(selectedImage)
+  console.log(selectedImage)
 
   const [formData, setFormData] = useState<FormDataProps>({});
 
@@ -263,7 +263,7 @@ console.log(selectedImage)
   //! ======================================================
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    
+
     // SERVER URL 
     const SERVER_URL = import.meta.env.VITE_PUBLIC_SERVER_URL || 'http://localhost:5001/uploads';
     // console.log(SERVER_URL + "🫡") // http://localhost:5001/uploads
@@ -278,12 +278,11 @@ console.log(selectedImage)
       formData.append('img', selectedLocalFile);
 
       try {
-        const response = await axios.post( SERVER_URL, formData, {
+        const response = await axios.post(SERVER_URL, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
         // console.log(response.data.url); // /uploads/img-1697934272148.jpg
 
-        // imageUrlForDB = `${response.data.url}`;
         // make tis absolute path and get rid of double 'uploads/'
         imageUrlForDB = `${SERVER_URL}${response.data.url.replace('uploads/', '')}`;
         // get rid of double '//' in a server (Local is fine)
@@ -455,14 +454,15 @@ console.log(selectedImage)
           onChange={pasteImage}
         />
 
+        {/*//! COMPONENT */}
+        <GoogleSearch />
+
         {/* Button COMPONENT*/}
         <CommonBtn type="submit" className="submitBtn">
           <span className="w-100">Create Post</span>
         </CommonBtn>
       </form>
 
-      {/*//! COMPONENT */}
-      <GoogleSearch />
 
 
     </section>

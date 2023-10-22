@@ -26,7 +26,7 @@ import 'react-bootstrap/dist/react-bootstrap.min.js'
 function App() {
   // Login Check By Token in LocalStorage
   const [loggedIn, setLoggedIn] = useState(localStorage.getItem("token_GraphQL") ? true : false);
-
+  
   return (
     <>
       <BrowserRouter>
@@ -36,7 +36,7 @@ function App() {
           <>
             <Routes>
               <Route path="/" element={<Layout />}>
-                <Route path="/" index element={<HomePage />} />
+                <Route path="/" index={true} element={<HomePage />} />
                 <Route path="/postlist" element={<PostsPage />} />
                 <Route path="/postsDays" element={<PostsDays />} />
                 <Route path="/postdetails/:id" element={<PostsDetailPage />} />
@@ -44,8 +44,8 @@ function App() {
                 <Route path="/editpost/:id" element={<EditPostPage />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/contact" element={<Contact />} />
-                <Route path="*" element={<NotFound />} />
               </Route>
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </>
         ) : (
@@ -53,12 +53,12 @@ function App() {
           <>
             <Routes>
               <Route path="/" element={<Layout />}>
-                <Route path="/" index element={<HomePage />} />
+                <Route path="/" index={true} element={<HomePage />} />
                 <Route path="/login" element={<AuthPage setLoggedIn={setLoggedIn} />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/contact" element={<Contact />} />
-                <Route path="*" element={<NotFound />} />
               </Route>
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </>
         )}
