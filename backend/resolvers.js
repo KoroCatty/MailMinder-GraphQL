@@ -1,38 +1,28 @@
 // プリズマのクライアントをインポート
-import PC from '@prisma/client';
+
 
 import bcrypt from 'bcryptjs';
-
+import Joi from 'joi'; // Validation
 import jwt from 'jsonwebtoken';
 
 import fs from 'fs'; // file system module (built-in) これは、ファイルを読み書きするためのモジュール
 
-
-// import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs";
-// import { ApolloServer } from "apollo-server";
-// import { GraphQLUpload } from 'graphql-upload';
-
-
 // プリズマクライエントのインスタンスを格納
-const prisma = new PC.PrismaClient();
+import { PrismaClient } from '../prisma/generated/client/index.js'
+const prisma = new PrismaClient()
 
 
 //! ==========================================================
 //! Resolvers (what do you wanna resolve? query? mutation?)
 //! ==========================================================
 const resolvers = {
-  // This maps the `Upload` scalar to the implementation provided
-  // by the `graphql-upload` package.
-  // Upload: graphqlUploadExpress,
-  // Upload: GraphQLUpload,
-
   Query: {
     //* -----------------------------------------------
     //* GET ALL USERS
     //* -----------------------------------------------
     // context は server.js で定義済みで、ログインしていると、そのユーザーの情報が入っている
     users: async (_, args, context) => {
-      console.log(context.userId + "🥶🐴")
+      console.log(context.userId + "👤 user ID")
       console.log(context)
 
       // forbidden error means you are not allowed to do this
@@ -54,8 +44,8 @@ const resolvers = {
     //* GET ALL POSTS BY USER ID
     //* -----------------------------------------------
     PostsByUser: async (_, args, context) => {
-      console.log(context.userId + "🥶🐣") // ログイン者のID
-      console.log(context)
+      // console.log(context.userId + "👤 user ID") // ログイン者のID
+      // console.log(context)
 
       // Error means you are not allowed to do this
       if (!context.userId) throw Error("You must be logged in 😱")
@@ -75,9 +65,8 @@ const resolvers = {
     //* GET ALL POSTS BY USER ID LIMIT 4
     //* -----------------------------------------------
     PostsByUserLimit: async (_, args, context) => {
-      console.log(context.userId + "🥶") // ログイン者のID
-      console.log(context)
-      console.log(args.limit + "🥶👀")
+      // console.log(context.userId + "👤 user ID") // ログイン者のID
+      // console.log(args.limit + " - Limit 4 Posts -")
 
       // Error means you are not allowed to do this
       if (!context.userId) throw Error("You must be logged in 😱")
@@ -92,10 +81,7 @@ const resolvers = {
       });
       return posts;
     },
-
   },
-
-
 
   Mutation: {
     //* ===============================================
@@ -103,6 +89,25 @@ const resolvers = {
     //* ===============================================
     signupUser: async (_, args) => {
       await console.log(args.userNew);// typeDefsで定義済み
+
+      // Joi Validation
+      const schema = Joi.object({
+        firstName: Joi.string().required().min(5).max(30).alphanum(),// alphanum() は英数字のみ
+        lastName: Joi.string().required().min(5).max(30),
+        email: Joi.string().email().required(),
+        password: Joi.string()
+          .required()
+          .pattern(new RegExp('^[a-zA-Z0-9]{4,30}$')) // 英数字のみ Only Number and Alphabet
+          .messages({
+            'string.pattern.base': 'パスワードは英数字のみで、4文字以上30文字以下である必要があります。'
+          }),
+      })
+
+      // Joi Error Handling
+      const { error } = schema.validate(args.userNew);
+      if (error) {
+        throw new Error(error.details[0].message);
+      }
 
       // email が重複してないかチェック (args~は front から送られてきたデータ)
       // user は prisma.schema で定義済みのモデル
@@ -129,7 +134,23 @@ const resolvers = {
     //* Sign in USER (Login)
     //* ===============================================
     signinUser: async (_, args) => {
-      // console.log(args.userSignin.email + "😁");// typeDefsで定義済み
+      // await console.log(args.userSignin);// typeDefsで定義済み
+
+      // Joi Validation
+      const schema = Joi.object({
+        email: Joi.string().email().required(),
+        password: Joi.string()
+          .required()
+          .pattern(new RegExp('^[a-zA-Z0-9]{4,30}$')) // 英数字のみ Only Number and Alphabet
+          .messages({
+            'string.pattern.base': 'Password is only Number & Alphabet and more than 4 to 30 characters - パスワードは英数字のみで、4文字以上30文字以下である必要があります。'
+          }),
+      })
+      // Joi Error Handling
+      const { error } = schema.validate(args.userSignin);
+      if (error) {
+        throw new Error(error.details[0].message);
+      }
 
       // email が重複してないかチェック (args~は front から送られてきたデータ)
       const user = await prisma.user.findUnique({ where: { email: args.userSignin.email } });
@@ -139,29 +160,44 @@ const resolvers = {
         throw new Error("Email does not exist🫡");
       }
       // DB内のhash化されたパスと, 入力されたパスを比較 (Promiseで返却)
-      await bcrypt.compare(args.userSignin.password, user.password, (err, res) => {
-        if (res) {
-          console.log("Login success👍");
-        }
-      });
+      const isPasswordCorrect = await bcrypt.compare(args.userSignin.password, user.password);
+      if (!isPasswordCorrect) {
+        throw new Error("Credential is incorrect🤬");
+      }
 
       // Generate token out of this user.id 
       // 第一にはトークンに入れたいデータ, 第二にはシークレットキー, 第三にはオプション
       const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '3h' });
-      console.log(token + " 🤬Tokenを作りました🤬");
+      console.log(token + " - Token Generated".red.underline + "🔑 - ");
       return { token: token };
     },
 
     //* ===============================================
     //* CREATE A POST
     //* ===============================================
-    createPost: async (_, args, context, { file }) => {
-      // console.log(file);
-      console.log(args)
+    createPost: async (_, args, context) => {
+      await console.log(args) // typeDefsで定義済み
+      await console.log(args.postNew.imgUrl + " - 💀👻 Image URL💀👻")
+      await console.log(args.postNew.imgFile + "- 🌃 imgFile -".red);
 
-      console.log(args.postNew.imgUrl + " - 💀👻 Image URL💀👻")
-
-      console.log(args.postNew.imgFile + "- 😢imgFile 😢 -");
+      // Joi Validation
+      const schema = Joi.object({
+        title: Joi.string().required().max(255)
+          .messages({
+            'string.max': '255文字以下で入力してください。'
+          }),
+        content: Joi.string().required().max(3000)
+          .messages({
+            'string.max': '3000文字以下で入力してください。'
+          }),
+        imgUrl: Joi.string(),
+        // imgFile: Joi.string(),
+      })
+      // Joi Error Handling
+      const { error } = schema.validate(args.postNew);
+      if (error) {
+        throw new Error(error.details[0].message);
+      }
 
       // ログインしてなかったらエラー(contextで先に確認できる)
       if (!context.userId) {
@@ -183,7 +219,6 @@ const resolvers = {
         args.postNew.imgUrl = `/uploads/${filename}`; // Set the URL to the uploaded file
       }
 
-
       //! save to DB
       // post は prisma.schema で定義済みのモデル
       const newPost = await prisma.post.create({
@@ -202,13 +237,13 @@ const resolvers = {
     //* DELETE A POST
     //* ===============================================
     deletePost: async (_, args, context) => {
-      console.log(args.id + "🦋")
-      console.log(context.userId + "🐝")
+      console.log(args.id + " - PostID Deleted📨")
 
       // ログインしてなかったらエラー(contextで先に確認できる)
       if (!context.userId) {
         throw new Error("You must be logged in (Contextにトークンがありません)😱");
       }
+
 
       // post は prisma.schema で定義済みのモデル
       const deletedPost = await prisma.post.delete({
@@ -223,11 +258,32 @@ const resolvers = {
     //* UPDATE A POST
     //* ===============================================
     updatePost: async (_, args, context) => {
-      console.log(args.id + "🦋")
-      console.log(args.postUpdate.title + "🐝 - UPDATED -")
-      console.log(args.postUpdate.content + "🐝")
-      console.log(args.postUpdate.imgUrl + "🐝")
-      console.log(context.userId + "🐝")
+      await console.log(args.id + " - PostID 📨")
+      await console.log(args.postUpdate.title + " - Title -")
+      await console.log(args.postUpdate.content + "- Content -")
+      await console.log(args.postUpdate.imgUrl + "- imgUrl -")
+      await console.log(context.userId + " 👤 user ID")
+
+      // Joi Validation
+      const schema = Joi.object({
+        title: Joi.string().required().max(255)
+          .messages({
+            'string.max': '255文字以下で入力してください。'
+          }),
+        content: Joi.string().required().max(3000)
+          .messages({
+            'string.max': '3000文字以下で入力してください。'
+          }),
+        imgUrl: Joi.string(),
+        createdAt: Joi.date(),
+        updatedAt: Joi.date(),
+        // imgFile: Joi.string(),
+      })
+      // Joi Error Handling
+      const { error } = schema.validate(args.postUpdate);
+      if (error) {
+        throw new Error(error.details[0].message);
+      }
 
       // ログインしてなかったらエラー(contextで先に確認できる)
       if (!context.userId) {

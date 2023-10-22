@@ -12,10 +12,8 @@ const __dirname = path.resolve();
 
 
 // プリズマのクライアントをインポート
-import PC from '@prisma/client';
-
-// プリズマクライエントのインスタンスを格納
-const prisma = new PC.PrismaClient();
+import { PrismaClient } from '../../prisma/generated/client/index.js'
+const prisma = new PrismaClient()
 
 // node mailer
 import nodemailer from 'nodemailer';
@@ -35,7 +33,7 @@ import cron from 'node-cron';
 
 
 //! Send Email at 8:00 AM, 12:00 PM, and 5:00 PM JST every day (日本時間)
-const sendEmail = cron.schedule('0 23,3,8 * * *', async () => { 
+const sendEmail = cron.schedule('0 23,3,8 * * *', async () => {
   try {
     // email transport configuration
     const transporter = nodemailer.createTransport({

@@ -1,21 +1,6 @@
 import colors from 'colors';
 import { ApolloServer } from '@apollo/server';
 
-// import {
-//   GraphQLUpload,
-//   graphqlUploadExpress, // A Koa implementation is also exported.
-// } from 'graphql-upload';
-
-
-// import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs";
-
-const { default: graphqlUploadExpress } = await import("graphql-upload/graphqlUploadExpress.mjs");
-
-// import { GraphQLUpload, processRequest } from 'graphql-upload';
-
-// For Development
-// import { startStandaloneServer } from '@apollo/server/standalone';
-
 import express from 'express';
 import path from 'path';
 
@@ -36,14 +21,12 @@ import crypto from 'crypto';
 // Token
 import jwt from 'jsonwebtoken';
 
-// Sending Email Function
-import sendEmail  from './cron/email.js';
+//! Sending Email Function (DO NOT DELETE)
+import sendEmail from './cron/email.js';
 
 // プリズマのクライアントをインポート (DB接続確認のため)
-import PC from '@prisma/client';
-
-// プリズマクライエントのインスタンスを格納 (DB接続確認のため)
-const prisma = new PC.PrismaClient();
+import { PrismaClient } from '../prisma/generated/client/index.js'
+const prisma = new PrismaClient()
 
 // Initialize express
 const app = express();
@@ -63,7 +46,7 @@ const storage = multer.diskStorage({
   //! Create a file name
   // fieldname = image なので image-163123123.jpg というファイル名になる
   filename(req, file, cb) {
-    cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`); 
+    cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
   },
 });
 
@@ -73,13 +56,13 @@ function fileFilter(req, file, cb) {
 
   // 受け入れられるファイルの拡張子を正規表現で定義
   const filetypes = /jpe?g|png|webp/;
-    // 受け入れられるMIMEタイプ（ファイルの種類）を正規表現で定義
+  // 受け入れられるMIMEタイプ（ファイルの種類）を正規表現で定義
   const mimetypes = /image\/jpe?g|image\/png|image\/webp/;
 
-   // アップロードされたファイルの拡張子が受け入れられるものかテスト
+  // アップロードされたファイルの拡張子が受け入れられるものかテスト
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
 
-   // アップロードされたファイルのMIMEタイプが受け入れられるものかテスト
+  // アップロードされたファイルのMIMEタイプが受け入れられるものかテスト
   const mimetype = mimetypes.test(file.mimetype);
 
   // 拡張子とMIMEタイプの両方が受け入れられる場合、ファイルを受け入れる
@@ -98,13 +81,13 @@ const uploadSingleImage = upload.single('img');
 // 画像をアップロードするためのエンドポイントを追加
 app.post('/uploads', uploadSingleImage, (req, res) => {
   // res.json({ file: req.file }); // Return file path after upload
-    res.json({ url: `/uploads/${req.file.filename}` });
+  res.json({ url: `/uploads/${req.file.filename}` });
 });
 
 
 //* uploads Folder 公開ディレクトリを指定
 //* Create a uploads folder in the root directory
-const __dirname = path.resolve(); 
+const __dirname = path.resolve();
 //  console.log(__dirname); // /Users/Full-Stack/RemindApp (全てのパスを取得)
 
 // 現在のディレクトリからの相対パス./uploadsを絶対パスに変換して格納
@@ -113,20 +96,11 @@ const uploadsDirectory = path.join(__dirname, '/uploads');
 
 // この設定により、uploadsディレクトリ内のすべてのファイルは、/uploads/<filename> のURLでアクセス可能
 // '/uploads' エンドポイントを使用して、そのディレクトリ内の静的ファイルを提供
-// '/uploads'というパスのリクエストがあったときに、次の express.static()ミドルウェアが動作
+// '/uploads'というパスのリクエストがあったときに次の express.static()ミドルウェアが動作
 app.use('/uploads', express.static(uploadsDirectory));
-
-//* ==============================================================
-
-
-app.use(cors('*'));
-app.use(graphqlUploadExpress() );
-app.use(cors('*'));
 //* ==============================================================
 
 app.use(cors('*'));
-
-
 
 //? ==============================================================
 //? Deploy Settings
@@ -163,37 +137,21 @@ const server = new ApolloServer({
   typeDefs: typeDefs,
   resolvers: resolvers,
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })], // Added
-  //! ver 4 からは context がここで定義できない 
-
   cors: {
     origin: '*',  // or true to allow any origin
-    credentials: true
-}
+    credentials: true 
+  }
 })
 
 // Ensure we wait for our server to start
 await server.start();
 
-  // This middleware should be added before calling `applyMiddleware`.
-  app.use(graphqlUploadExpress());
 
-  // server.applyMiddleware({ app });
-
-
-// Before your server.applyMiddleware({ app }) line
-app.use(
-  '/', // Or your endpoint
-  graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }) // 10MB max file size
-);
-
-// server.applyMiddleware({ app });
-
-// Set up our Express middleware to handle CORS, body parsing,
-// and our expressMiddleware function.
 app.use(
   '/',
   cors('*'),
-  // 50mb is the limit that `startStandaloneServer` uses, but you may configure this to suit your needs
+
+  // 50mb is the limit that `startStandaloneServer` 
   bodyParser.json({ limit: '50mb' }),
   // expressMiddleware accepts the same arguments:
   // an Apollo Server instance and optional configuration options
@@ -204,7 +162,6 @@ app.use(
 
       // destructure from req
       const { authorization } = req.headers;
-      
 
       // トークンがあれば、トークンを検証し、userId を返す
       if (authorization) {
@@ -213,7 +170,7 @@ app.use(
           return { userId };
         } catch (error) {
           console.error("トークン Verification Error", error); // JWTの検証中のエラーをログに出力
-          return {}; 
+          return {};
         }
       }
     },
@@ -231,7 +188,7 @@ console.log(`🚀 Server ready at http://localhost:${PORT}`.cyan.underline);
 
 
 //* ==============================================================
-//* MySQL DB接続確認
+//* MySQL DB CONNECTION CHECK (接続確認)
 //* ==============================================================
 async function testConnection() {
   try {
@@ -247,7 +204,6 @@ testConnection();
 
 
 
-//* ==============================================================
 //* This is for Development (StandAloneServer)
 //* ==============================================================
 // Define the startServer function

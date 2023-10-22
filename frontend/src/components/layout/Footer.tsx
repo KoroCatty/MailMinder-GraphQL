@@ -1,3 +1,4 @@
+import { useState } from "react";
 // Emotion
 import { css } from "@emotion/react";
 import { min, max } from "../../utils/mediaQueries";
@@ -150,6 +151,9 @@ const FooterCSS = css`
 `;
 
 function Footer() {
+  // Login Check 
+  const [loggedIn] = useState(localStorage.getItem("token_GraphQL") ? true : false);
+
   return (
     <footer css={FooterCSS}>
       <div className="footer">
@@ -175,23 +179,44 @@ function Footer() {
             </Col>
 
             <Col>
-              <div className="footer__links">
-                <Link to="/" onClick={goTop}>
-                  HOME
-                </Link>
-                <Link to="/postlist" onClick={goTop}>
-                  POSTS
-                </Link>
-                <Link to="/settings" onClick={goTop}>
-                  SETTINGS
-                </Link>
-                <Link to="/contact" onClick={goTop}>
-                  CONTACT
-                </Link>
-                {/* <Link to="/privacy" onClick={ChangePageTop}>
-                    PRIVACY POLICY
-                  </Link> */}
-              </div>
+
+              {loggedIn ? (
+                <div className="footer__links">
+                  <Link to="/" onClick={goTop}>
+                    HOME
+                  </Link>
+                  <Link to="/postlist" onClick={goTop}>
+                    POSTS
+                  </Link>
+                  <Link to="/settings" onClick={goTop}>
+                    SETTINGS
+                  </Link>
+                  <Link to="/contact" onClick={goTop}>
+                    CONTACT
+                  </Link>
+                  {/* <Link to="/privacy" onClick={ChangePageTop}>
+                  PRIVACY POLICY
+                </Link> */}
+                </div>
+              ) : (
+                <div className="footer__links">
+                  <Link to="/" onClick={goTop}>
+                    HOME
+                  </Link>
+                  <Link to="/contact" onClick={goTop}>
+                    CONTACT
+                  </Link>
+                  {/* <Link to="/privacy" onClick={ChangePageTop}>
+      PRIVACY POLICY
+    </Link> */}
+                </div>
+              )}
+
+
+
+
+
+
             </Col>
           </Row>
         </Container>

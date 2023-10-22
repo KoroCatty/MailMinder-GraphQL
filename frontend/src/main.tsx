@@ -20,6 +20,7 @@ const uploadLink = createUploadLink({
   uri: 'https://remindapp.onrender.com/' //! PRODUCTION
 });
 
+
 // Get the authentication token from local storage if it exists
 const authLink = setContext((_, { headers }) => {
   // return the headers to the context so httpLink can read them
@@ -27,7 +28,7 @@ const authLink = setContext((_, { headers }) => {
     headers: {
       ...headers,
       // token が存在すれば header に追加
-      Authorization: localStorage.getItem("token_GraphQL") || ""
+      Authorization: localStorage.getItem("token_GraphQL") || null
     }
   };
 });

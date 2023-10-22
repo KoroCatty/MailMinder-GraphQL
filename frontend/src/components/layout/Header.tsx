@@ -1,5 +1,6 @@
 import { useState } from "react";
 import { Link } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 
 // Bootstrap
 import { Navbar, Nav, Container } from "react-bootstrap";
@@ -156,6 +157,8 @@ const headerCss = css`
 //! ==============================================
 function Header() {
 
+  const navigate = useNavigate();
+
   // ログインチェック (ローカルストレージ)
   const [loggedIn, setLoggedIn] = useState(
     localStorage.getItem("token_GraphQL") ? true : false
@@ -183,16 +186,16 @@ function Header() {
             <Nav>
               {loggedIn ? (
                 <>
-                  <Nav.Link as={Link} to="/" onClick={()=>toTop() }>
+                  <Nav.Link as={Link} to="/" onClick={() => toTop()}>
                     Home
                   </Nav.Link>
-                  <Nav.Link as={Link} to="/postlist" onClick={()=>toTop()} >
+                  <Nav.Link as={Link} to="/postlist" onClick={() => toTop()} >
                     Posts
                   </Nav.Link>
-                  <Nav.Link as={Link} to="/settings" onClick={()=>toTop()} >
+                  <Nav.Link as={Link} to="/settings" onClick={() => toTop()} >
                     Settings
                   </Nav.Link>
-                  <Nav.Link as={Link} to="/contact" onClick={()=>toTop()} >
+                  <Nav.Link as={Link} to="/contact" onClick={() => toTop()} >
                     Contact
                   </Nav.Link>
                 </>
@@ -210,14 +213,21 @@ function Header() {
                   onClick={() => {
                     localStorage.removeItem("token_GraphQL");
                     setLoggedIn(false);
+                    navigate("/login");
+                    window.location.reload();
                   }}
                 >
                   LOGOUT
                 </button>
               ) : (
-                <Nav.Link as={Link} to="/Login">
-                  Login
-                </Nav.Link>
+                <>
+                  <Nav.Link as={Link} to="/Login">
+                    Login
+                  </Nav.Link>
+                  <Nav.Link as={Link} to="/contact" onClick={() => toTop()} >
+                    Contact
+                  </Nav.Link>
+                </>
               )}
 
               {/* avatar Icon */}

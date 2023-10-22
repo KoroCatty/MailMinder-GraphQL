@@ -26,6 +26,11 @@ const formsCss = css`
     word-wrap: break-word;
     line-height: 1.2;
 
+    // 1px〜479px
+    ${min[0] + max[0]} {
+      height: 60px;
+    }
+
     &:focus {
       outline: none;
     }

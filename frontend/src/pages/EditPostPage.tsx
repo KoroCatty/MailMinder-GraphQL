@@ -445,9 +445,9 @@ const EditPostPage = () => {
                     Updated:{" "}
                     {currentData.updatedAt
                       ? currentData.updatedAt
-                          .substring(0, 10)
-                          .replace("T", " ")
-                          .replace(/-/g, "/")
+                        .substring(0, 10)
+                        .replace("T", " ")
+                        .replace(/-/g, "/")
                       : "Not Updated"}
                   </time>
                 </div>
@@ -515,6 +515,8 @@ const EditPostPage = () => {
                 className="pasteImgUrl"
                 onChange={pasteImage}
               />
+              {/* //! COMPONENT */}
+              <GoogleSearch />
 
               {/* Button COMPONENT*/}
               <CommonBtn type="submit" className="submitBtn">
@@ -522,8 +524,7 @@ const EditPostPage = () => {
               </CommonBtn>
             </form>
           )}
-          {/* //! COMPONENT */}
-          <GoogleSearch />
+
         </div>
       </div>
     </main>

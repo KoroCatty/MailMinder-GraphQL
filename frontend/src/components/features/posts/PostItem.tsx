@@ -24,7 +24,8 @@ type PostsQueryCacheResult = {
 };
 
 const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
-  // DELETE POST MUTATION
+
+  //! DELETE POST MUTATION
   const [deletePostById, { error, loading }] = useMutation(DELETE_POST_BY_ID, {
     variables: { id: postProp.id },
     // refetchQueries: ['GET_POSTS_BY_ID'],
@@ -67,9 +68,7 @@ const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
         <button className="btn btn-primary mb-4" style={{width:"100%"}} >Edit</button>
       </Link>
 
-
-
-      {/* DELETE BUTTON */}
+      {/*//! DELETE BUTTON */}
       <button
         className="btn btn-danger btn-sm"
         onClick={(e) => {

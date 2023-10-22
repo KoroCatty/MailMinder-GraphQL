@@ -24,19 +24,19 @@ import 'bootstrap/dist/css/bootstrap.min.css'
 import 'react-bootstrap/dist/react-bootstrap.min.js'
 
 function App() {
-  // ログインチェック (ローカルストレージ)
+  // Login Check By Token in LocalStorage
   const [loggedIn, setLoggedIn] = useState(localStorage.getItem("token_GraphQL") ? true : false);
-
+  
   return (
     <>
       <BrowserRouter>
 
         {loggedIn ? (
-          // ログイン時
+          // LOGGED IN
           <>
             <Routes>
               <Route path="/" element={<Layout />}>
-                <Route path="/" index element={<HomePage />} />
+                <Route path="/" index={true} element={<HomePage />} />
                 <Route path="/postlist" element={<PostsPage />} />
                 <Route path="/postsDays" element={<PostsDays />} />
                 <Route path="/postdetails/:id" element={<PostsDetailPage />} />
@@ -44,21 +44,21 @@ function App() {
                 <Route path="/editpost/:id" element={<EditPostPage />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/contact" element={<Contact />} />
-                <Route path="*" element={<NotFound />} />
               </Route>
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </>
         ) : (
-          // ログインしていない時
+          // NOT LOGIN
           <>
             <Routes>
               <Route path="/" element={<Layout />}>
-                <Route path="/" index element={<HomePage />} />
+                <Route path="/" index={true} element={<HomePage />} />
                 <Route path="/login" element={<AuthPage setLoggedIn={setLoggedIn} />} />
                 <Route path="/privacy" element={<PrivacyPolicy />} />
                 <Route path="/contact" element={<Contact />} />
-                <Route path="*" element={<NotFound />} />
               </Route>
+              <Route path="*" element={<NotFound />} />
             </Routes>
           </>
         )}

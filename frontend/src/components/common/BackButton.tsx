@@ -17,7 +17,12 @@ const BackButtonStyle = css`
   }
 `;
 
-const BackButton: React.FC = () => {
+// TYPES (from NotFound.tsx)
+type BackButtonProps = {
+  classNameProp?: string;
+}
+
+const BackButton: React.FC<BackButtonProps> = ({ classNameProp }) => {
   const navigate = useNavigate();
 
   const handleGoBack = () => {
@@ -27,12 +32,11 @@ const BackButton: React.FC = () => {
       left: 0,
       behavior: 'smooth'
     });
-
   };
 
   return (
-    <div css={BackButtonStyle} className='backButton'>
-      <button onClick={handleGoBack}>戻る</button>
+    <div css={BackButtonStyle} className={`backButton ${classNameProp}`}>
+      <button onClick={handleGoBack}>Go Back</button>
     </div>
   );
 }

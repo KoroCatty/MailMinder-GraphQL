@@ -37,4 +37,6 @@ dist-ssr
 
 remindYou.sql
 
-prisma/generated
+# deploy時に必要 なので igonre しないこと ↓↓
+# prisma/generated 
+# prisma/migrations
