@@ -1,20 +1,10 @@
 import colors from 'colors';
 import { ApolloServer } from '@apollo/server';
 
-// import {
-//   GraphQLUpload,
-//   graphqlUploadExpress, // A Koa implementation is also exported.
-// } from 'graphql-upload';
+
+// const { default: graphqlUploadExpress } = await import("graphql-upload/graphqlUploadExpress.mjs");
 
 
-// import graphqlUploadExpress from "graphql-upload/graphqlUploadExpress.mjs";
-
-const { default: graphqlUploadExpress } = await import("graphql-upload/graphqlUploadExpress.mjs");
-
-// import { GraphQLUpload, processRequest } from 'graphql-upload';
-
-// For Development
-// import { startStandaloneServer } from '@apollo/server/standalone';
 
 import express from 'express';
 import path from 'path';
@@ -118,11 +108,8 @@ app.use('/uploads', express.static(uploadsDirectory));
 
 
 app.use(cors('*'));
-app.use(graphqlUploadExpress());
-app.use(cors('*'));
-//* ==============================================================
+// app.use(graphqlUploadExpress());
 
-app.use(cors('*'));
 
 
 
@@ -173,16 +160,16 @@ const server = new ApolloServer({
 await server.start();
 
 // This middleware should be added before calling `applyMiddleware`.
-app.use(graphqlUploadExpress());
+// app.use(graphqlUploadExpress());
 
 // server.applyMiddleware({ app });
 
 
 // Before your server.applyMiddleware({ app }) line
-app.use(
-  '/', // Or your endpoint
-  graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }) // 10MB max file size
-);
+// app.use(
+//   '/', // Or your endpoint
+//   graphqlUploadExpress({ maxFileSize: 10000000, maxFiles: 10 }) // 10MB max file size
+// );
 
 // server.applyMiddleware({ app });
 

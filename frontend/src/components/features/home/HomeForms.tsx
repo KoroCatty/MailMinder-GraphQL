@@ -259,14 +259,14 @@ console.log(selectedImage)
   // console.log(formData);
 
   //! ======================================================
-  //! When FORM SUBMITTED!!
+  //! FORM SUBMITTED!!
   //! ======================================================
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     
     // SERVER URL 
     const SERVER_URL = import.meta.env.VITE_PUBLIC_SERVER_URL || 'http://localhost:5001/uploads';
-    // console.log(SERVER_URL + "🫡")
+    // console.log(SERVER_URL + "🫡") // http://localhost:5001/uploads
 
 
     // Define a variable for asyncronous data to save DB
@@ -281,9 +281,11 @@ console.log(selectedImage)
         const response = await axios.post( SERVER_URL, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
-        // console.log(response.data.url);
+        // console.log(response.data.url); // /uploads/img-1697934272148.jpg
 
-        imageUrlForDB = `${response.data.url}`;
+        // imageUrlForDB = `${response.data.url}`;
+        // make tis absolute path and get rid of double 'uploads/'
+        imageUrlForDB = `${SERVER_URL}${response.data.url.replace('uploads/', '')}`;
         setFormData((prevFormData) => ({
           ...prevFormData,
           imgUrl: imageUrlForDB
@@ -298,7 +300,6 @@ console.log(selectedImage)
     //! 1. Save post to the database using Apollo Client's mutation.
     try {
       // if (!imageUrlForDB) return;
-
       await CreatePost({
         variables: {
           postNew: {
@@ -316,7 +317,7 @@ console.log(selectedImage)
 
 
   //* ===================================================
-  //* Choose image from local file 画像を選択した時に発火する関数
+  //* When Choose image from local file (画像を選択した時に発火する関数)
   //* ===================================================
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0];
