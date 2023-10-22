@@ -28,7 +28,7 @@ const authLink = setContext((_, { headers }) => {
     headers: {
       ...headers,
       // token が存在すれば header に追加
-      Authorization: localStorage.getItem("token_GraphQL") || ""
+      Authorization: localStorage.getItem("token_GraphQL") || null
     }
   };
 });
