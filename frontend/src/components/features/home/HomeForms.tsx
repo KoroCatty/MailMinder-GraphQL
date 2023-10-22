@@ -286,6 +286,8 @@ console.log(selectedImage)
         // imageUrlForDB = `${response.data.url}`;
         // make tis absolute path and get rid of double 'uploads/'
         imageUrlForDB = `${SERVER_URL}${response.data.url.replace('uploads/', '')}`;
+        // get rid of double '//' in a server (Local is fine)
+        imageUrlForDB = imageUrlForDB.replace('uploads//', 'uploads/');
         setFormData((prevFormData) => ({
           ...prevFormData,
           imgUrl: imageUrlForDB
