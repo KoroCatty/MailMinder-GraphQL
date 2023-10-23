@@ -15,9 +15,9 @@ const prisma = new PrismaClient()
 async function deleteFile(filePath) {
   try {
     await fs.unlink(filePath); // Delete the file method
-    console.log('File deleted successfully'.red.underline);
+    console.log('File deleted successfully'.red);
   } catch (err) {
-    console.error(err.red.underline.bold);
+    console.error(err.red);
   }
 }
 
