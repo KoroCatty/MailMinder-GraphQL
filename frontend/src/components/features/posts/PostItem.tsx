@@ -36,7 +36,7 @@ const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
       if (!data) return; 
       
       const { PostsByUser } = data;
-      cache.writeQuery({
+      cache.writeQuery({ // writeQueryでキャッシュを更新
         query: GET_POSTS_BY_ID,
         data: { PostsByUser: PostsByUser.filter(post => post.id !== deletePost.id) },
       });

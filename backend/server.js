@@ -1,3 +1,4 @@
+
 import colors from 'colors';
 import { ApolloServer } from '@apollo/server';
 
@@ -236,3 +237,7 @@ testConnection();
 // startServer();
 
 
+
+
+
+console.log(__dirname);

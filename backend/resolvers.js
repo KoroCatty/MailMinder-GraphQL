@@ -1,16 +1,25 @@
-// プリズマのクライアントをインポート
-
+// To get the current directory path (ESM module)
+import { promises as fs } from 'fs';
+import { URL, fileURLToPath } from 'url';
 
 import bcrypt from 'bcryptjs';
 import Joi from 'joi'; // Validation
 import jwt from 'jsonwebtoken';
 
-import fs from 'fs'; // file system module (built-in) これは、ファイルを読み書きするためのモジュール
 
 // プリズマクライエントのインスタンスを格納
 import { PrismaClient } from '../prisma/generated/client/index.js'
 const prisma = new PrismaClient()
 
+// Define DELETE FILE Function (Get the file path from Delete resolver)
+async function deleteFile(filePath) {
+  try {
+    await fs.unlink(filePath); // Delete the file method
+    console.log('File deleted successfully'.red.underline);
+  } catch (err) {
+    console.error(err.red.underline.bold);
+  }
+}
 
 //! ==========================================================
 //! Resolvers (what do you wanna resolve? query? mutation?)
@@ -244,13 +253,40 @@ const resolvers = {
         throw new Error("You must be logged in (Contextにトークンがありません)😱");
       }
 
-
       // post は prisma.schema で定義済みのモデル
       const deletedPost = await prisma.post.delete({
         where: {
           id: parseInt(args.id)
         }
       });
+
+      // Delete the file if it exists
+      if (deletedPost) {
+        const url = deletedPost.imgUrl;
+        // console.log(url); // ex) http://localhost:5001/uploads/img-1698041204833.jpg
+
+        //! This is for CommonJS module --------------------------------------------------------
+        // const path = new URL(url).pathname.replace(/^\/+/, __dirname); // remove leading slashes
+        // const currentURL = __dirname + '../' // need to get current directory path
+        // console.log(currentURL);
+        //! ------------------------------------------------------------------------------------
+
+        // Get the current directory path (ESM module)
+        // '.' は現在のディレクトリを示し、それを import.meta.url の基準として解釈することで、ディレクトリのフルURLが得られる
+        const __dirname = fileURLToPath(new URL('.', import.meta.url));
+        // console.log(__dirname);
+
+        // goes up one level
+        const currentURL = __dirname + '../'
+        // console.log(currentURL);
+
+        // 正規表現 ^\/+ を使用して、文字列の先頭にある1つ以上のスラッシュ (/) を検出し、currentURL に置き換える
+        const path = new URL(url).pathname.replace(/^\/+/, currentURL); 
+        // console.log(path); // /Full-Stack/MailMinder-GraphQL/backend/../uploads/img-1698041204305.jpg
+
+        // Pass the path defined above to the Function
+        deleteFile(path); 
+      }
       return deletedPost;
     },
 
@@ -304,8 +340,10 @@ const resolvers = {
       });
       return updatedPost;
     },
-
   }
 }
+
+
+
 
 export default resolvers;
