@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 // components
 import BackButton from "../../common/BackButton";
 import PostItem from "./PostItem";
@@ -40,26 +41,42 @@ const PostListCss = css`
 //! ============================================================
 function PostsList() {
   // GET All POSTS by User ID
-  const { data, loading, error } = useQuery(GET_POSTS_BY_ID, {
+  const { data, loading, error, refetch } = useQuery(GET_POSTS_BY_ID, {
     variables: {
-      uid: 1
+      uid: Number(), // backend (resolver) で id を指定しているので、空にする
     },
   });
+
+  // refetch posts
+  useEffect(() => {
+    refetch({ uid: Number() })
+  }, [ refetch ]);
+
+
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
   if (!data || !data.PostsByUser || data.PostsByUser.length === 0) return <p>No posts found.</p>;
 
+
+
   return (
     <div css={PostListCss}>
       <BackButton />
+
+
+      <button onClick={() => refetch({ uid: Number() })}>
+            Refetch up to date!
+          </button>
+
 
       <Row xs={1} md={2} className="g-4">
         {data.PostsByUser.map((item: PostPropType) => (
           <Col key={item.id}>
 
             {/* Component (Give a Prop) */}
-            <PostItem postProp={item} />
+            <PostItem postProp={item} refetch={() => refetch({ uid: Number() })} />
+
 
           </Col>
         ))}

@@ -18,18 +18,6 @@ import { useMutation } from "@apollo/client";
 import { GET_POSTS_BY_ID } from "../graphql/queries";
 import { DELETE_POST_BY_ID } from "../graphql/mutations";
 
-//* types
-type postProp = {
-  id: string;
-  title: string;
-  content: string;
-  imgUrl: string;
-  createdAt: string;
-  updatedAt: string;
-};
-type PostsQueryCacheResult = {
-  PostsByUser: postProp[];
-};
 
 // Emotion CSS
 import { css } from "@emotion/react";
@@ -184,7 +172,7 @@ const PostsDetailPage = () => {
   // console.log(typeof id) // string
 
   // GET All POSTS by User ID
-  const { data, loading, error } = useQuery(GET_POSTS_BY_ID, {
+  const { data, loading, error, refetch } = useQuery(GET_POSTS_BY_ID, {
     variables: {
       uid: id,
     },
@@ -199,14 +187,20 @@ const PostsDetailPage = () => {
       variables: {
         id: id,
       },
-      // refetchQueries: ['GET_POSTS_BY_ID'],
-      // awaitRefetchQueries: true, // refetchQueriesを実行する前にmutationを完了させる
+      refetchQueries: ['GET_POSTS_BY_ID'],
+      awaitRefetchQueries: true, // refetchQueriesを実行する前にmutationを完了させる
 
+      // update the cache to remove the deleted post
       update(cache, { data: { deletePost } }) {
         const data = cache.readQuery<PostsQueryCacheResult>({
           query: GET_POSTS_BY_ID,
         });
-        if (!data) return;
+        if (!data) {
+          console.log("No data - データがありません");
+          return;
+        } 
+
+        refetch();
 
         const { PostsByUser } = data;
         cache.writeQuery({
@@ -220,7 +214,7 @@ const PostsDetailPage = () => {
       },
     });
 
-  //* TYPES
+  //* types
   type postProp = {
     id: string;
     title: string;
@@ -229,6 +223,12 @@ const PostsDetailPage = () => {
     createdAt: string;
     updatedAt: string;
   };
+
+  type PostsQueryCacheResult = {
+    PostsByUser: postProp[];
+  };
+
+
 
   //! ============================================================
   //! JSX
@@ -247,9 +247,9 @@ const PostsDetailPage = () => {
             (item: postProp) => Number(item.id) === Number(id)
           ).map((filteredItem: postProp) => (
             <div key={filteredItem.id} className="detailItem">
- 
 
-                {/*  CREATED & UPDATED DATE */}
+
+              {/*  CREATED & UPDATED DATE */}
               <div className="timeContainer">
                 <div className="created">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -318,7 +318,7 @@ const PostsDetailPage = () => {
         )}
 
         {/* EDIT BUTTON */}
-        <Link onClick={()=>{window.scrollTo({top:0, behavior:"smooth"})}} to={`/editpost/${id}`}>
+        <Link onClick={() => { window.scrollTo({ top: 0, behavior: "smooth" }) }} to={`/editpost/${id}`}>
           <button className="btn btn-primary mb-4" style={{ width: "100%" }}>
             Edit
           </button>
@@ -332,7 +332,7 @@ const PostsDetailPage = () => {
             window.confirm("Are you sure you want to delete this post?") &&
               deletePostById();
             navigate("/postlist");
-            window.scrollTo({top:0, behavior:"smooth"});
+            window.scrollTo({ top: 0, behavior: "smooth" });
             // window.location.reload();//! 強制リロード
           }}
         >

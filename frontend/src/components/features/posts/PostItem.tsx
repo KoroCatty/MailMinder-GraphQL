@@ -2,7 +2,7 @@ import { useMutation } from '@apollo/client';
 
 // queries & mutations
 import { DELETE_POST_BY_ID } from '../../../graphql/mutations';
-import { GET_POSTS_BY_ID } from '../../../graphql/queries';  // Import the query
+// import { GET_POSTS_BY_ID } from '../../../graphql/queries';  // Import the query
 
 import { Link } from 'react-router-dom';
 import Card from 'react-bootstrap/Card';
@@ -19,11 +19,11 @@ type PostPropTypeComponent = {
   postProp: PostPropType;
 };
 
-type PostsQueryCacheResult = {
-  PostsByUser: PostPropType[];
-};
+// type PostsQueryCacheResult = {
+//   PostsByUser: PostPropType[];
+// };
 
-const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
+const PostCard: React.FC<PostPropTypeComponent> = ({ postProp, refetch }) => {
 
   //! DELETE POST MUTATION
   const [deletePostById, { error, loading }] = useMutation(DELETE_POST_BY_ID, {
@@ -31,16 +31,22 @@ const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
     // refetchQueries: ['GET_POSTS_BY_ID'],
     awaitRefetchQueries: true, // refetchQueriesを実行する前にmutationを完了させる
 
-    update(cache, { data: { deletePost } }) {
-      const data = cache.readQuery<PostsQueryCacheResult>({ query: GET_POSTS_BY_ID });
-      if (!data) return; 
+    // update(cache, { data: { deletePost } }) {
+    //   const data = cache.readQuery<PostsQueryCacheResult>({ query: GET_POSTS_BY_ID, variables: { uid: Number() } });
+    //   console.log(data)
+    //   if (!data) return; 
+
+    //   // console.log(deletePost.id)
       
-      const { PostsByUser } = data;
-      cache.writeQuery({ // writeQueryでキャッシュを更新
-        query: GET_POSTS_BY_ID,
-        data: { PostsByUser: PostsByUser.filter(post => post.id !== deletePost.id) },
-      });
-    }
+    //   const { PostsByUser } = data;
+    //   console.log(PostsByUser)
+    //   cache.writeQuery({ // writeQueryでキャッシュを更新
+    //     query: GET_POSTS_BY_ID,
+    //     data: { PostsByUser: PostsByUser.filter(post => post.id !== deletePost.id) },
+    //   });
+    //   console.log(PostsByUser)
+    //   if (error) console.log(error);
+    // }
   });
 
   const scrollTop = () => {
@@ -75,6 +81,8 @@ const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
           e.preventDefault();
           window.confirm('Are you sure you want to delete this post?') &&
             deletePostById();
+
+            refetch(); // From parent component
         }}
       >
         {loading ? 'Deleting...' : 'Delete'}
