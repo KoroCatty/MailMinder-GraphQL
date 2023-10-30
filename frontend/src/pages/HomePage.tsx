@@ -5,8 +5,12 @@ import { Link } from "react-router-dom";
 import HomeForms from "../components/features/home/HomeForms";
 import RecentPosts from "../components/features/home/RecentPosts";
 // import MonthPosts from '../components/features/home/MonthPosts';
-
 import { CommonBtn } from "../components/common/CommonBtn";
+
+// Apollo client
+// import { GET_POSTS_BY_ID } from "../graphql/queries";
+import { GET_POSTS_BY_ID_LIMIT } from "../graphql/queries";
+import { useQuery } from "@apollo/client";
 
 // bootstrap
 import { Container } from "react-bootstrap";
@@ -61,12 +65,30 @@ const HomePage = () => {
 
   const loggedIn = localStorage.getItem("token_GraphQL") ? true : false;
 
+  // Get All Posts by User ID
+  // const { data, loading, error, refetch } = useQuery(GET_POSTS_BY_ID, {
+  //   variables: {
+  //     uid: Number(), // backend (resolver) で id を指定しているので、空にする
+  //   },
+  // });
+
+  // Get 4 Posts by User ID
+  const {data, loading, error, refetch } = useQuery(GET_POSTS_BY_ID_LIMIT, {
+    variables: {
+      uid: Number(), // backend (resolver) で id を指定しているので、空にする
+      limit: Number(4),
+    },
+  });
+
+
   return (
     <main css={HomePageCss}>
       {loggedIn ? (
         <Container className="homeContainer">
-          <RecentPosts />
-          <HomeForms />
+          {/* <RecentPosts limitPostsProps={props} /> */}
+          <RecentPosts data={data} loading={loading} error={error} refetch={refetch} />
+
+          <HomeForms refetch={refetch} />
           {/* <MonthPosts /> */}
         </Container>
       ) : (

@@ -22,10 +22,14 @@ import { Form } from "react-bootstrap";
 //   }
 // });
 
+// TYPES 
+interface RefetchProps {
+  refetch: () => void;
+}
+
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
 import { min, max } from "../../../utils/mediaQueries";
-
 const homeFormsStyles = css`
   position: relative;
   margin-top: 18rem;
@@ -211,11 +215,11 @@ interface FormDataProps {
   [key: string]: string | undefined; // This makes it indexable for dynamic keys
 }
 
-const HomeForms = () => {
+const HomeForms = ({ refetch }: RefetchProps) => {
   // HOOKS
   // For Selfie & Paste Image URL
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  console.log(selectedImage)
+  const [, setSelectedImage] = useState<string | null>(null);
+  // console.log(selectedImage)
 
   const [formData, setFormData] = useState<FormDataProps>({});
 
@@ -295,6 +299,12 @@ const HomeForms = () => {
       } catch (error) {
         console.error("Error uploading the file:", error);
         return;
+
+      } finally {
+        // reset local selected file in useState
+        // setSelectedLocalFile(null);
+        // reset selected image input value
+        // resetLocalFileSelectValue();
       }
     }
 
@@ -310,6 +320,12 @@ const HomeForms = () => {
           },
         },
       });
+
+      // Props で受け取った refetch を実行
+      refetch();
+      await refetch();
+      console.log("Refetched!");
+
     } catch (error) {
       console.error("Error saving post to database🫡:", error);
       return;
@@ -416,6 +432,7 @@ const HomeForms = () => {
           onChange={(e) => handleChange(e)}
           text="MESSAGE"
           name="content"
+          required
         />
 
         {/* COMPONENT */}
@@ -462,8 +479,6 @@ const HomeForms = () => {
           <span className="w-100">Create Post</span>
         </CommonBtn>
       </form>
-
-
 
     </section>
   );

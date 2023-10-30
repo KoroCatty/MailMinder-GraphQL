@@ -2,8 +2,8 @@ import { Link } from 'react-router-dom';
 import { useEffect } from 'react';
 
 // Apollo Client
-import { useQuery } from '@apollo/client';
-import { GET_POSTS_BY_ID_LIMIT } from '../../../graphql/queries';
+// import { useQuery } from '@apollo/client';
+// import { GET_POSTS_BY_ID_LIMIT } from '../../../graphql/queries';
 
 // components
 import { TitleLarge } from '../../common/Titles';
@@ -24,6 +24,19 @@ type PostType = {
   //   updatedAt: string
   // }
 }
+
+// TYPES Props
+interface LimitPostsPropsType {
+  data: {
+    PostsByUserLimit: PostType[]
+  },
+  loading: boolean,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  error: any,
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
+  refetch: () => void;
+}
+
 
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
@@ -46,29 +59,35 @@ const recentPostsCss = css`
 `;
 
 //! =========================================================
-const RecentPosts = () => {
+// const RecentPosts = ( { limitPostsProps } ) => {
+const RecentPosts = (limitPostsProps: LimitPostsPropsType) => {
+  console.log(limitPostsProps);
 
-  const { data, loading, error, refetch } = useQuery(GET_POSTS_BY_ID_LIMIT, {
-    variables: {
-      uid: Number(), // backend (resolver) で id を指定しているので、空にする
-      limit: Number(4),
-    },
-  },
-  );
-
-// refetch posts 
-useEffect(() => {
-  refetch({ uid: Number() })
-}
-, [refetch])
+  const { data, loading, error, refetch } = limitPostsProps;
+  
+  // const { data, loading, error, refetch } = useQuery(GET_POSTS_BY_ID_LIMIT, {
+  //   variables: {
+  //     uid: Number(), // backend (resolver) で id を指定しているので、空にする
+  //     limit: Number(4),
+  //   },
+  // },
+  // );
 
 
-  // destructuring
-  const { PostsByUserLimit } = data ? data : [];
+  // refetch posts 
+  useEffect(() => {
+    refetch()
+  }
+    , [refetch])
+
+
+  // if data exists PostsByUserLimit assigned
+  const postsByUserLimit: PostType[] = data?.PostsByUserLimit || [];
+  // console.log(PostsByUserLimit);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>エラー: {error.message}</p>;
-  if (data && !PostsByUserLimit) return <p>No posts found.</p>;
+  if (data && !postsByUserLimit) return <p>No posts found.</p>;
 
 
   return (
@@ -81,12 +100,12 @@ useEffect(() => {
         <>
           <TitleLarge title="RECENT POSTS" />
 
-          <button onClick={() => refetch({ uid: Number() })}>
+          <button onClick={() => refetch()}>
             Refetch up to date!
           </button>
 
           <div className="row">
-            {PostsByUserLimit.map((item: PostType) => (
+            {postsByUserLimit.map((item: PostType) => (
               <div className="col-md-3 col-6 col-sm-6 mb-4 " key={item.id}>
 
                 <Link to={`/postdetails/${item.id}`} className="card" style={{ height: "252px" }}>
