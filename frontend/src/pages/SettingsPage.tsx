@@ -26,6 +26,7 @@ const settingPageCss = css`
   
     // 1px〜479px
     ${min[0] + max[0]} {
+      height: auto;
     }
     // 480px〜767px
     ${min[1] + max[1]} {

@@ -64,12 +64,6 @@ function PostsList() {
     <div css={PostListCss}>
       <BackButton />
 
-
-      <button onClick={() => refetch({ uid: Number() })}>
-            Refetch up to date!
-          </button>
-
-
       <Row xs={1} md={2} className="g-4">
         {data.PostsByUser.map((item: PostPropType) => (
           <Col key={item.id}>

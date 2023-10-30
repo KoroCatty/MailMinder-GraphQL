@@ -99,10 +99,6 @@ const RecentPosts = (limitPostsProps: LimitPostsPropsType) => {
         <>
           <TitleLarge title="RECENT POSTS" />
 
-          <button onClick={() => refetch()}>
-            Refetch up to date!
-          </button>
-
           <div className="row">
             {postsByUserLimit.map((item: PostType) => (
               <div className="col-md-3 col-6 col-sm-6 mb-4 " key={item.id}>

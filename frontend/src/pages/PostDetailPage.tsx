@@ -172,7 +172,7 @@ const PostsDetailPage = () => {
   // console.log(typeof id) // string
 
   // GET All POSTS by User ID
-  const { data, loading, error, refetch } = useQuery(GET_POSTS_BY_ID, {
+  const { data, loading, error } = useQuery(GET_POSTS_BY_ID, {
     variables: {
       uid: id,
     },
@@ -181,37 +181,32 @@ const PostsDetailPage = () => {
   // useNavigate
   const navigate = useNavigate();
 
-  // DELETE POST MUTATION
+  //! DELETE POST MUTATION
+  // `useMutation` フックを使用して、投稿の削除を行うmutationをセットアップ
   const [deletePostById, { error: deleteErr, loading: deleteLoading }] =
     useMutation(DELETE_POST_BY_ID, {
       variables: {
         id: id,
       },
-      refetchQueries: ['GET_POSTS_BY_ID'],
-      awaitRefetchQueries: true, // refetchQueriesを実行する前にmutationを完了させる
 
-      // update the cache to remove the deleted post
+      // キャッシュを更新するための関数
       update(cache, { data: { deletePost } }) {
-        const data = cache.readQuery<PostsQueryCacheResult>({
-          query: GET_POSTS_BY_ID,
-        });
-        if (!data) {
-          console.log("No data - データがありません");
-          return;
-        } 
-
-        refetch();
-
-        const { PostsByUser } = data;
-        cache.writeQuery({
-          query: GET_POSTS_BY_ID,
-          data: {
-            PostsByUser: PostsByUser.filter(
-              (post) => post.id !== deletePost.id
-            ),
-          },
-        });
-      },
+        // キャッシュの中の特定のフィールドを変更
+        cache.modify({
+          fields: {
+            // `PostsByUser` フィールドを変更
+            PostsByUser(existingPostsByUser = []) {
+              // 削除した投稿をキャッシュから削除
+              cache.evict({ id: cache.identify(deletePost) });
+              // 削除した投稿を除外して、更新後の投稿リストを返す
+              return existingPostsByUser.filter(
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (postRef: any) => postRef.__ref !== deletePost.__ref
+              );
+            }
+          }
+        })
+      }
     });
 
   //* types
@@ -224,9 +219,9 @@ const PostsDetailPage = () => {
     updatedAt: string;
   };
 
-  type PostsQueryCacheResult = {
-    PostsByUser: postProp[];
-  };
+  // type PostsQueryCacheResult = {
+  //   PostsByUser: postProp[];
+  // };
 
 
 

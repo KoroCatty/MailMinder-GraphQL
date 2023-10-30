@@ -122,7 +122,6 @@ if (process.env.NODE_ENV === 'production') {
     res.send('API is running...');
   });
 }
-//? ==============================================================
 
 //! ==============================================================
 //! Middleware (swap StandAloneServer for Express deployment)
@@ -140,7 +139,7 @@ const server = new ApolloServer({
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })], // Added
   cors: {
     origin: '*',  // or true to allow any origin
-    credentials: true 
+    credentials: true
   }
 })
 
@@ -191,7 +190,7 @@ console.log(`🚀 Server ready at http://localhost:${PORT}`.cyan.underline);
 //* ==============================================================
 //* MySQL DB CONNECTION CHECK (接続確認)
 //* ==============================================================
-async function testConnection() {
+async function connectDB() {
   try {
     await prisma.$connect();
     console.log("connected to MySQL! - DB接続成功💾".yellow.underline);
@@ -201,43 +200,7 @@ async function testConnection() {
     await prisma.$disconnect();
   }
 }
-testConnection();
-
-
-
-//* This is for Development (StandAloneServer)
-//* ==============================================================
-// Define the startServer function
-// async function startServer() {
-
-//   // second optional argument is an object for configuring your server's options
-//   const { url } = await startStandaloneServer(server, {
-//     // req は この standaloneServer からのもの
-//     context: async ({ req }) => {
-
-//       // destructure from req
-//       const { authorization } = req.headers;
-
-//       // トークンがあれば、トークンを検証し、userId を返す
-//       if (authorization) {
-//         try {
-//           const { userId } = await jwt.verify(authorization, process.env.JWT_SECRET);
-//           return { userId };
-//         } catch (error) {
-//           console.error("トークン Verification Error", error); // JWTの検証中のエラーをログに出力
-//           return {}; 
-//         }
-//       }
-//     },
-//     listen: { port: PORT },
-//   });
-//   console.log(`🚀 Server ready at ${url}`);
-
-// }
-// startServer();
-
-
-
+connectDB();
 
 
 console.log(__dirname);

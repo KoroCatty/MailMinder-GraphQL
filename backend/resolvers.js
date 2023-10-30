@@ -251,7 +251,7 @@ const resolvers = {
         // console.log(url); // ex) http://localhost:5001/uploads/img-1698041204833.jpg
 
         
-        // http://localhost:5001/imgs/ 以外なら実際のファイルは存在しないので、削除しない処理を記載
+        // 実際の画像ファイルが存在しないpostの、画像を削除しない処理を記載 (エラー対策)
         if (url !== "http://localhost:5001/imgs/**" || `${import.meta.url}/uploads/**`) {
           return deletedPost;
         }

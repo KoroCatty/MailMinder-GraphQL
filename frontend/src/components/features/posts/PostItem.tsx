@@ -50,23 +50,6 @@ const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
         }
       })
     }
-
-  //   update(cache, { data: { deletePost } }) {
-  //     const data = cache.readQuery<PostsQueryCacheResult>({ query: GET_POSTS_BY_ID, variables: { uid: Number() } });
-  //     console.log(data)
-  //     if (!data) return; 
-
-  //     // console.log(deletePost.id)
-      
-  //     const { PostsByUser } = data;
-  //     console.log(PostsByUser)
-  //     cache.writeQuery({ // writeQueryでキャッシュを更新
-  //       query: GET_POSTS_BY_ID,
-  //       data: { PostsByUser: PostsByUser.filter(post => post.id !== deletePost.id) },
-  //     });
-  //     console.log(PostsByUser)
-  //     if (error) console.log(error);
-  //   }
   });
 
   const scrollTop = () => {
