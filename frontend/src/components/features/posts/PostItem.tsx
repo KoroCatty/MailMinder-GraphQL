@@ -23,7 +23,7 @@ type PostPropTypeComponent = {
 //   PostsByUser: PostPropType[];
 // };
 
-const PostCard: React.FC<PostPropTypeComponent> = ({ postProp, refetch }) => {
+const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
 
   //! DELETE POST MUTATION
   // `useMutation` フックを使用して、投稿の削除を行うmutationをセットアップ

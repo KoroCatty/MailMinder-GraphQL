@@ -250,10 +250,17 @@ const resolvers = {
         const url = deletedPost.imgUrl;
         // console.log(url); // ex) http://localhost:5001/uploads/img-1698041204833.jpg
 
-        // もし、デフォルトの画像だったら実際のファイルは存在しないので、削除しない処理を記載
-        if (url === "/imgs/noImg.jpeg"){
+        
+        // http://localhost:5001/imgs/ 以外なら実際のファイルは存在しないので、削除しない処理を記載
+        if (url !== "http://localhost:5001/imgs/**" || `${import.meta.url}/uploads/**`) {
           return deletedPost;
         }
+
+   
+        // もし、デフォルトの画像だったら実際のファイルは存在しないので、削除しない処理を記載
+        // if (url === "/imgs/noImg.jpeg"){
+        //   return deletedPost;
+        // }
 
         //! This is for CommonJS module -----------------------------------------------
         // const path = new URL(url).pathname.replace(/^\/+/, __dirname); // remove leading slashes

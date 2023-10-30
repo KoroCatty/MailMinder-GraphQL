@@ -75,7 +75,7 @@ function PostsList() {
           <Col key={item.id}>
 
             {/* Component (Give a Prop) */}
-            <PostItem postProp={item} refetch={() => refetch({ uid: Number() })} />
+            <PostItem postProp={item} />
 
 
           </Col>
