@@ -1,10 +1,9 @@
 import { Outlet } from "react-router-dom";
-import { useState } from "react";
 import { useLocation } from "react-router-dom";
 
 // component for layout
-import Header from "./Header";
-import Footer from "./Footer";
+// import Header from "./Header";
+// import Footer from "./Footer";
 import Hero from "../common/Hero";
 import ContactHero from "../features/contact/ContactHero";
 
@@ -12,13 +11,18 @@ import ContactHero from "../features/contact/ContactHero";
 import { css } from "@emotion/react";
 import { min, max } from "../../utils/mediaQueries";
 
+// TYPE
+type IsLoggedInPropType = {
+  isLoggedIn: boolean;
+}
+
 //! ================================================
-const Layout = () => {
+const Layout = ({ isLoggedIn }: IsLoggedInPropType) => {
   const location = useLocation();
   // console.log(location.pathname); // ex) /about
 
   // Login Check 
-  const [loggedIn] = useState(localStorage.getItem("token_GraphQL") ? true : false);
+  // const [loggedIn] = useState(localStorage.getItem("token_GraphQL") ? true : false);
 
 
   //? Emotion CSS (Responsive Design)
@@ -50,10 +54,10 @@ const Layout = () => {
   `;
   return (
     <>
-      <Header />
+      {/* <Header isLoggedIn={isLoggedIn} /> */}
 
       {/* Only Logged in, show Hero */}
-      {loggedIn &&
+      {isLoggedIn &&
         (
           location.pathname === "/postlist" ? <Hero />
             : null
@@ -69,7 +73,7 @@ const Layout = () => {
         <Outlet />
       </div>
 
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };

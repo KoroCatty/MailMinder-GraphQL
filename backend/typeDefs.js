@@ -9,7 +9,7 @@ const typeDefs = gql`
   scalar Upload 
 
   type Token {
-    token: String!
+    token: String
   }
 
 # QUERY
@@ -17,6 +17,7 @@ const typeDefs = gql`
     users: [User!]! # return an array
     PostsByUser(id: ID!): [Post!]! # resolverで定義した名前を使う
     PostsByUserLimit(id: ID!, limit: Int!): [Post!]! # limit を使ったresolver関数
+    isLoggedIn: Boolean! # login しているかどうか
   }
 
 #//!  実際にクライエントに返すデータの型(これを使い回す)
@@ -90,7 +91,7 @@ const typeDefs = gql`
     signupUser(userNew: UserInput!): User! # return a single user (配列じゃない)
 
     # SIGNIN USER
-    signinUser(userSignin: UserSigninInput!): Token! #トークンを返す
+    signinUser(userSignin: UserSigninInput!): Token #トークンを返す
 
     # CREATE A POST
     createPost(postNew: PostInput!): Post! # これが playground で出現
@@ -101,6 +102,9 @@ const typeDefs = gql`
     # UPDATE A POST
     # The mutation expects an id and a postUpdate object of type PostUpdateInput. This PostUpdateInput has fields title, content, imgUrl, and updatedAt.
     updatePost(id: ID!, postUpdate: PostUpdateInput!): Post!
+
+    # LOGOUT USER
+    logout: Boolean! # return a boolean
   }
 `;
 

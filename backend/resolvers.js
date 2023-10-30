@@ -27,6 +27,13 @@ async function deleteFile(filePath) {
 const resolvers = {
   Query: {
     //* -----------------------------------------------
+    //* CHECK LOGIN STATUS
+    //* -----------------------------------------------
+    isLoggedIn: (_, __, context) => {
+      return Boolean(context.userId); // httpOnly で取得したトークンがあるかどうか
+    },
+
+    //* -----------------------------------------------
     //* GET ALL USERS
     //* -----------------------------------------------
     // context は server.js で定義済みで、ログインしていると、そのユーザーの情報が入っている
@@ -53,7 +60,7 @@ const resolvers = {
     //* GET ALL POSTS BY USER ID
     //* -----------------------------------------------
     PostsByUser: async (_, args, context) => {
-      // console.log(context.userId + "👤 user ID") // ログイン者のID
+      console.log(context.userId + "👤 user ID") // ログイン者のID
       // console.log(context)
 
       // Error means you are not allowed to do this
@@ -140,10 +147,11 @@ const resolvers = {
     },
 
     //* ===============================================
-    //* Sign in USER (Login)
+    //* Sign in USER (Login) 
     //* ===============================================
-    signinUser: async (_, args) => {
-      // await console.log(args.userSignin);// typeDefsで定義済み
+    // (resは HttpOnly Cookieで返ってきたもの)
+    signinUser: async (_, args, { res }) => {
+      console.log(res.cookie)
 
       // Joi Validation
       const schema = Joi.object({
@@ -168,17 +176,35 @@ const resolvers = {
       if (!user) {
         throw new Error("Email does not exist🫡");
       }
+
       // DB内のhash化されたパスと, 入力されたパスを比較 (Promiseで返却)
       const isPasswordCorrect = await bcrypt.compare(args.userSignin.password, user.password);
       if (!isPasswordCorrect) {
         throw new Error("Credential is incorrect🤬");
       }
 
-      // Generate token out of this user.id 
+      //! GENERATE TOKEN
       // 第一にはトークンに入れたいデータ, 第二にはシークレットキー, 第三にはオプション
       const token = jwt.sign({ userId: user.id }, process.env.JWT_SECRET, { expiresIn: '3h' });
-      console.log(token + " - Token Generated".red.underline + "🔑 - ");
-      return { token: token };
+
+      // Set token as an httpOnly cookie
+      res.cookie('jwt_httpOnly', token, {
+        httpOnly: true, // クッキーがJavaScriptからアクセスされるのを防ぐ
+        secure: process.env.NODE_ENV === 'production', // Use 'secure' flag when in production mode
+        maxAge: 3 * 60 * 60 * 1000 // 3 hours in milliseconds
+      });
+
+      console.log(token + " - Token Generated".blue.underline + "🔑 - ");
+      return { token, user };
+    },
+
+    //* ===============================================
+    //* LOGOUT USER 
+    //* ===============================================
+    // (HttpOnly Cookie内の token を削除)
+    logout: (_, __, { res }) => {
+      res.cookie('jwt_httpOnly', '', { expires: new Date(0), httpOnly: true });
+      return true;
     },
 
     //* ===============================================
@@ -250,13 +276,13 @@ const resolvers = {
         const url = deletedPost.imgUrl;
         // console.log(url); // ex) http://localhost:5001/uploads/img-1698041204833.jpg
 
-        
+
         // 実際の画像ファイルが存在しないpostの、画像を削除しない処理を記載 (エラー対策)
         if (url !== "http://localhost:5001/imgs/**" || `${import.meta.url}/uploads/**`) {
           return deletedPost;
         }
 
-   
+
         // もし、デフォルトの画像だったら実際のファイルは存在しないので、削除しない処理を記載
         // if (url === "/imgs/noImg.jpeg"){
         //   return deletedPost;
@@ -278,11 +304,11 @@ const resolvers = {
         // console.log(currentURL);
 
         // 正規表現 ^\/+ を使用して、文字列の先頭にある1つ以上のスラッシュ (/) を検出し、currentURL に置き換える
-        const path = new URL(url).pathname.replace(/^\/+/, currentURL); 
+        const path = new URL(url).pathname.replace(/^\/+/, currentURL);
         // console.log(path); // /Full-Stack/MailMinder-GraphQL/backend/../uploads/img-1698041204305.jpg
 
         // Pass the path defined above to the Function
-        deleteFile(path); 
+        deleteFile(path);
       }
       return deletedPost;
     },

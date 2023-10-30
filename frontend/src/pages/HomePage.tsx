@@ -1,4 +1,4 @@
-// import { useState } from "react";
+// import { useState, useEffect } from "react"; 
 import { Link } from "react-router-dom";
 
 // Home components
@@ -56,21 +56,13 @@ const HomePageCss = css`
   }
 `;
 
+// TYPE
+type IsLoggedInPropType = {
+  isLoggedIn: boolean;
+}
+
 //! ============================================
-const HomePage = () => {
-  // Login Check By Token in LocalStorage
-  // const [loggedIn, setLoggedIn] = useState(
-  //   localStorage.getItem("token_GraphQL") ? true : false
-  // );
-
-  const loggedIn = localStorage.getItem("token_GraphQL") ? true : false;
-
-  // Get All Posts by User ID
-  // const { data, loading, error, refetch } = useQuery(GET_POSTS_BY_ID, {
-  //   variables: {
-  //     uid: Number(), // backend (resolver) で id を指定しているので、空にする
-  //   },
-  // });
+const HomePage = ({ isLoggedIn }: IsLoggedInPropType) => {
 
   // Get 4 Posts by User ID
   const {data, loading, error, refetch } = useQuery(GET_POSTS_BY_ID_LIMIT, {
@@ -80,10 +72,9 @@ const HomePage = () => {
     },
   });
 
-
   return (
     <main css={HomePageCss}>
-      {loggedIn ? (
+      {isLoggedIn ? (
         <Container className="homeContainer">
           {/* <RecentPosts limitPostsProps={props} /> */}
           <RecentPosts data={data} loading={loading} error={error} refetch={refetch} />

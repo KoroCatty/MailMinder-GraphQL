@@ -11,6 +11,7 @@ import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHt
 import http from 'http';
 import cors from 'cors';
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
 
 // Schema and Resolvers
 import typeDefs from './typeDefs.js';
@@ -31,7 +32,13 @@ const prisma = new PrismaClient()
 
 // Initialize express
 const app = express();
-app.use(cors('*'));
+
+app.use(cors( {
+  origin: true,     //! allow any origin
+  credentials: true //! allow cookies
+}));
+
+app.use(cookieParser());
 
 //* ==============================================================
 //* UPLOAD IMAGE multer & express
@@ -85,6 +92,22 @@ app.post('/uploads', uploadSingleImage, (req, res) => {
   res.json({ url: `/uploads/${req.file.filename}` });
 });
 
+//! New endpoint to check if user is logged in
+// app.get('/auth/status', (req, res) => {
+//    // logic to check if user is logged in
+//    const loggedIn = true;
+//    res.json({ loggedIn });
+// });
+//! ==============================================================
+//! LOGOUT ENDPOINT
+//! ==============================================================
+// app.post('/logout', (res) => {
+//   // トークンをクッキーから削除
+//   res.cookie('token', '', { expires: new Date(0), httpOnly: true });
+//   res.sendStatus(200);
+// });
+
+
 
 //* uploads Folder 公開ディレクトリを指定
 //* Create a uploads folder in the root directory
@@ -101,7 +124,10 @@ const uploadsDirectory = path.join(__dirname, '/uploads');
 app.use('/uploads', express.static(uploadsDirectory));
 //* ==============================================================
 
-app.use(cors('*'));
+app.use(cors( {
+  origin: true,  // or true to allow any origin
+  credentials: true
+}));
 
 //? ==============================================================
 //? Deploy Settings
@@ -136,9 +162,10 @@ const PORT = process.env.PORT || 5001;
 const server = new ApolloServer({
   typeDefs: typeDefs,
   resolvers: resolvers,
+  context: ({ req, res }) => ({ req, res }),
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })], // Added
   cors: {
-    origin: '*',  // or true to allow any origin
+    origin: true,  // or true to allow any origin
     credentials: true
   }
 })
@@ -149,7 +176,12 @@ await server.start();
 
 app.use(
   '/',
-  cors('*'),
+  cors(
+    {
+      origin: true,
+      credentials: true,
+    }
+  ),
 
   // 50mb is the limit that `startStandaloneServer` 
   bodyParser.json({ limit: '50mb' }),
@@ -158,21 +190,24 @@ app.use(
   expressMiddleware(server, {
 
     // ログイン用 context を使い、resolver.js内の、各リクエストで使用できるようにする
-    context: async ({ req }) => {
+    // As i used HttpOnly, req, res are needed 
+    context: async ({ req, res }) => {
+      //! Token from HttpOnly Cookie 
+      const token = req.cookies.jwt_httpOnly; 
+      // 最初はトークンがないので、userId は null に設定
+      let userId = null;
 
-      // destructure from req
-      const { authorization } = req.headers;
-
-      // トークンがあれば、トークンを検証し、userId を返す
-      if (authorization) {
+      if (token) {
         try {
-          const { userId } = await jwt.verify(authorization, process.env.JWT_SECRET);
-          return { userId };
+          // トークンを検証
+          const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+          userId = decodedToken.userId;
+
         } catch (error) {
-          console.error("トークン Verification Error", error); // JWTの検証中のエラーをログに出力
-          return {};
+          console.error("トークン Verification Error 😢", error);
         }
       }
+        return { userId, req, res };
     },
     options: {
       //Maximum upload file size set at 10 MB

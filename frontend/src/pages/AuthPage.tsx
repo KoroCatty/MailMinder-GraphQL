@@ -12,9 +12,9 @@ import { SIGNUP_USER } from "../graphql/mutations";
 import { LOGIN_USER } from "../graphql/mutations";
 
 // TYPES
-type AuthPageProps = {
-  setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
-};
+// type AuthPageProps = {
+//   setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
+// };
 
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
@@ -75,7 +75,8 @@ const authPageCss = css`
 `;
 
 //! ======================================================
-const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
+// const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
+const AuthPage = () => {
   // HOOKS
   const [showLogin, setShowLogin] = useState(true); // true = login, false = signup
   const [formData, setFormData] = useState({});
@@ -93,12 +94,16 @@ const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
     loginUser,
     { data: loginData, loading: loginLoading, error: loginError },
   ] = useMutation(LOGIN_USER, {
-    onCompleted(data) {
-      // mutaion.ts で定義したものを取得しローカルに保存
-      localStorage.setItem("token_GraphQL", data.signinUser.token);
+    // onCompleted は mutation が完了した後に実行される
+    // onCompleted(data) {
+    onCompleted() {
+      // mutaion.ts で定義したものを取得し localStorage に保存
+      // localStorage.setItem("token_GraphQL", data.signinUser.token);
       navigate("/");
-      setLoggedIn(true);
-      window.location.reload();
+      // scroll to top
+      window.scrollTo(0, 0);
+      // setLoggedIn(true);
+      // window.location.reload();
     },
   });
 

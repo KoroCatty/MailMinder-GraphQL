@@ -2,8 +2,8 @@
 import BackButton from "../components/common/BackButton";
 
 // components
-import Header from "../components/layout/Header";
-import Footer from "../components/layout/Footer";
+// import Header from "../components/layout/Header";
+// import Footer from "../components/layout/Footer";
 
 // Color schema
 import colorSchema from "../utils/colorSchema";
@@ -131,7 +131,7 @@ const notFoundCss = css`
 const NotFound = () => {
   return (
     <>
-      <Header />
+      {/* <Header /> */}
 
       <main css={notFoundCss}>
         <section>
@@ -151,7 +151,7 @@ const NotFound = () => {
         <BackButton classNameProp="notFoundBackBtn" />
       </main>
 
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };

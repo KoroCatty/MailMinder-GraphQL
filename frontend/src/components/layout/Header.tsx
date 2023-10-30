@@ -1,9 +1,18 @@
-import { useState } from "react";
+// import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
 // Bootstrap
 import { Navbar, Nav, Container } from "react-bootstrap";
+
+// Apollo client
+import { gql } from "@apollo/client";
+import { useApolloClient } from '@apollo/client';// Main.tsx で wrapしたもの
+
+// TYPE
+type IsLoggedInPropType = {
+  isLoggedIn: boolean;
+}
 
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
@@ -155,22 +164,42 @@ const headerCss = css`
 
 
 //! ==============================================
-function Header() {
+function Header({ isLoggedIn }: IsLoggedInPropType) {
 
   const navigate = useNavigate();
 
-  // ログインチェック (ローカルストレージ)
-  const [loggedIn, setLoggedIn] = useState(
-    localStorage.getItem("token_GraphQL") ? true : false
-  );
-  // console.log(loggedIn)
-
+  // Scroll to Top
   const toTop = () => {
     window.scrollTo({
       top: 0,
       left: 0,
       behavior: 'smooth'
     });
+  };
+
+  // Logout Mutation
+  const LOGOUT_MUTATION = gql`
+  mutation Logout {
+    logout
+  }
+`;
+
+  // main.tsx で wrapしたもの
+  const client = useApolloClient();
+
+  // ログアウト処理
+  const logout = async () => {
+    try {
+      const { data } = await client.mutate({ mutation: LOGOUT_MUTATION });
+      console.log(data)
+      if (data.logout) {
+        // ログアウトが成功した後の処理
+        navigate('/login');
+        // window.location.reload();
+      }
+    } catch (error) {
+      console.error('ログアウト中にエラーが発生しました:', error);
+    }
   };
 
   return (
@@ -184,7 +213,7 @@ function Header() {
 
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav>
-              {loggedIn ? (
+              {isLoggedIn ? (
                 <>
                   <Nav.Link as={Link} to="/" onClick={() => toTop()}>
                     Home
@@ -207,14 +236,15 @@ function Header() {
 
             {/* //! LOGOUT / LOGIN */}
             <div className="navRight">
-              {loggedIn ? (
+              {isLoggedIn ? (
                 <button
                   className="navRight__logoutBtn"
                   onClick={() => {
-                    localStorage.removeItem("token_GraphQL");
-                    setLoggedIn(false);
-                    navigate("/login");
-                    window.location.reload();
+                    // localStorage.removeItem("token_GraphQL");
+                    // setLoggedIn(false);
+                    logout(); // ログアウト処理
+                    // navigate("/login");
+                    // window.location.reload();
                   }}
                 >
                   LOGOUT
@@ -231,7 +261,7 @@ function Header() {
               )}
 
               {/* avatar Icon */}
-              {loggedIn ? (
+              {isLoggedIn ? (
                 <Nav.Link as={Link} to="/settings">
                   <img
                     src="https://picsum.photos/200"
