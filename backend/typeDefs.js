@@ -62,7 +62,7 @@ const typeDefs = gql`
     # imgUrl: String
     # imgUrl: File
     imgUrl: Upload
-    imgFile: Upload
+    # imgFile: Upload
   }
 
   # //! UPDATE A POST INPUT

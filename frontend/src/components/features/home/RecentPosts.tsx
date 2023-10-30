@@ -59,9 +59,8 @@ const recentPostsCss = css`
 `;
 
 //! =========================================================
-// const RecentPosts = ( { limitPostsProps } ) => {
+// Receive Props
 const RecentPosts = (limitPostsProps: LimitPostsPropsType) => {
-  console.log(limitPostsProps);
 
   const { data, loading, error, refetch } = limitPostsProps;
   

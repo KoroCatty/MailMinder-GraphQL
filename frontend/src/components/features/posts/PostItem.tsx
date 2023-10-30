@@ -2,7 +2,7 @@ import { useMutation } from '@apollo/client';
 
 // queries & mutations
 import { DELETE_POST_BY_ID } from '../../../graphql/mutations';
-import { GET_POSTS_BY_ID } from '../../../graphql/queries';  // Import the query
+// import { GET_POSTS_BY_ID } from '../../../graphql/queries';  // Import the query
 
 import { Link } from 'react-router-dom';
 import Card from 'react-bootstrap/Card';
@@ -19,24 +19,31 @@ type PostPropTypeComponent = {
   postProp: PostPropType;
 };
 
-type PostsQueryCacheResult = {
-  PostsByUser: PostPropType[];
-};
+// type PostsQueryCacheResult = {
+//   PostsByUser: PostPropType[];
+// };
 
 const PostCard: React.FC<PostPropTypeComponent> = ({ postProp, refetch }) => {
 
   //! DELETE POST MUTATION
+  // `useMutation` フックを使用して、投稿の削除を行うmutationをセットアップ
   const [deletePostById, { error, loading }] = useMutation(DELETE_POST_BY_ID, {
+    // 削除する投稿のIDを変数としてセット
     variables: { id: postProp.id },
-    // refetchQueries: ['GET_POSTS_BY_ID'],
-    awaitRefetchQueries: true, // refetchQueriesを実行する前にmutationを完了させる
+    awaitRefetchQueries: true, // mutationが完了するのを待ってから、refetchQueriesを実行
 
+    // キャッシュを更新するための関数
     update(cache, { data: { deletePost } }) {
+      // キャッシュの中の特定のフィールドを変更
       cache.modify({
         fields: {
+          // `PostsByUser` フィールドを変更
           PostsByUser(existingPostsByUser = []) {
+            // 削除した投稿をキャッシュから削除
             cache.evict({ id: cache.identify(deletePost) });
+            // 削除した投稿を除外して、更新後の投稿リストを返す
             return existingPostsByUser.filter(
+              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               (postRef: any) => postRef.__ref !== deletePost.__ref
             );
           }

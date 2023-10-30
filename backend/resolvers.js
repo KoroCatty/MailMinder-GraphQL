@@ -187,7 +187,7 @@ const resolvers = {
     createPost: async (_, args, context) => {
       await console.log(args) // typeDefsで定義済み
       await console.log(args.postNew.imgUrl + " - 💀👻 Image URL💀👻")
-      await console.log(args.postNew.imgFile + "- 🌃 imgFile -".red);
+      // await console.log(args.postNew.imgFile + "- 🌃 imgFile -".red);
 
       // Joi Validation
       const schema = Joi.object({
@@ -213,29 +213,14 @@ const resolvers = {
         throw new Error("You must be logged in (Contextにトークンがありません)😱");
       }
 
-      // If a file is provided in the mutation, handle its upload
-      if (args.postNew.imgFile) {
-        const { createReadStream, filename } = await args.postNew.imgFile;
-        const pathToSave = join(process.cwd(), 'uploads', filename);
-        const stream = createReadStream();
-
-        await new Promise((resolve, reject) => {
-          stream.pipe(createWriteStream(pathToSave))
-            .on('finish', resolve)
-            .on('error', reject);
-        });
-
-        args.postNew.imgUrl = `/uploads/${filename}`; // Set the URL to the uploaded file
-      }
-
       //! save to DB
       // post は prisma.schema で定義済みのモデル
       const newPost = await prisma.post.create({
         data: {
           title: args.postNew.title,
           content: args.postNew.content,
-          // imgUrl: args.postNew.imgUrl,
           imgUrl: args.postNew.imgUrl ? args.postNew.imgUrl : "/imgs/noImg.jpeg", // use the uploaded file URL or default
+          // imgUrl: args.postNew.imgUrl ? args.postNew.imgUrl : `${import.meta.url}/uploads/noImg.jpeg`,
           userId: context.userId
         }
       })
@@ -260,16 +245,21 @@ const resolvers = {
         }
       });
 
-      // Delete the file if it exists
+      // Delete the actual File if the post exists
       if (deletedPost) {
         const url = deletedPost.imgUrl;
         // console.log(url); // ex) http://localhost:5001/uploads/img-1698041204833.jpg
 
-        //! This is for CommonJS module --------------------------------------------------------
+        // もし、デフォルトの画像だったら実際のファイルは存在しないので、削除しない処理を記載
+        if (url === "/imgs/noImg.jpeg"){
+          return deletedPost;
+        }
+
+        //! This is for CommonJS module -----------------------------------------------
         // const path = new URL(url).pathname.replace(/^\/+/, __dirname); // remove leading slashes
         // const currentURL = __dirname + '../' // need to get current directory path
         // console.log(currentURL);
-        //! ------------------------------------------------------------------------------------
+        //! ---------------------------------------------------------------------------
 
         // Get the current directory path (ESM module)
         // '.' は現在のディレクトリを示し、それを import.meta.url の基準として解釈することで、ディレクトリのフルURLが得られる
