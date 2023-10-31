@@ -36,8 +36,6 @@ const PostListCss = css`
   }
 `;
 
-
-
 //! ============================================================
 function PostsList() {
   // GET All POSTS by User ID
@@ -52,26 +50,20 @@ function PostsList() {
     refetch({ uid: Number() })
   }, [ refetch ]);
 
-
-
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
   if (!data || !data.PostsByUser || data.PostsByUser.length === 0) return <p>No posts found.</p>;
-
-
 
   return (
     <div css={PostListCss}>
       <BackButton />
 
-      <Row xs={1} md={2} className="g-4">
+      <Row className="g-4">
         {data.PostsByUser.map((item: PostPropType) => (
-          <Col key={item.id}>
+          <Col key={item.id} col-md-3 col-6 col-sm-6 mb-4 >
 
             {/* Component (Give a Prop) */}
             <PostItem postProp={item} />
-
-
           </Col>
         ))}
       </Row>

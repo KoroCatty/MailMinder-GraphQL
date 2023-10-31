@@ -7,6 +7,8 @@ import Layout from './components/layout/Layout';
 import PrivateRoutes from "./components/common/PrivateRoutes";
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
+import ColorThemeGlobal from "./components/common/ColorThemeGlobal";
+
 
 // pages
 import AuthPage from "./pages/AuthPage"
@@ -40,6 +42,9 @@ function App() {
   // ログイン状態
   const [isLoggedIn, setIsLoggedIn] = useState(data?.isLoggedIn || false);
 
+  // Theme Color Toggle
+  const [darkTheme, setDarkTheme] = useState(false);
+
   // ログイン状態を更新 (If there's data)
   useEffect(() => {
     setIsLoggedIn(data?.isLoggedIn || false);
@@ -50,11 +55,20 @@ function App() {
 
   return (
     <>
+      {/* Toggle Dark Theme */}
+      {darkTheme ? <ColorThemeGlobal /> : null}
+
       <BrowserRouter>
-        <Header isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />
+        <Header
+          isLoggedIn={isLoggedIn}
+          setIsLoggedIn={setIsLoggedIn}
+          darkTheme={darkTheme}
+          setDarkTheme={setDarkTheme}
+        />
+
         <>
           <Routes>
-            <Route path="" element={<Layout isLoggedIn={isLoggedIn} />}>
+            <Route path="" element={<Layout isLoggedIn={isLoggedIn} darkTheme={darkTheme} />}>
               <Route path="/" element={<HomePage isLoggedIn={isLoggedIn} />} />
               <Route path="/login" element={<AuthPage isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />} />
               <Route path="/contact" element={<Contact />} />
@@ -62,7 +76,6 @@ function App() {
 
               {/* //! ログインユーザーのみ */}
               <Route path="" element={<PrivateRoutes isLoggedIn={isLoggedIn} />}>
-                {/* <Route path="/" index={true} element={<HomePage isLoggedIn={isLoggedIn} />} /> */}
                 <Route path="/postlist" element={<PostsPage />} />
                 <Route path="/postsDays" element={<PostsDays />} />
                 <Route path="/postdetails/:id" element={<PostsDetailPage />} />
@@ -80,8 +93,6 @@ function App() {
         {/* //! ADMIN ユーザーのみ */}
         {/* <Route path="" element={<AdminRoute />}>
             </Route> */}
-
-
       </BrowserRouter >
 
     </>

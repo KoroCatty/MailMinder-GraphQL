@@ -1,6 +1,5 @@
 import React from 'react';
 
-
 import ReactDOM from 'react-dom/client';//（ブラウザ向けのReactレンダラ）
 import App from './App.tsx';
 import './index.css';
@@ -20,8 +19,8 @@ import { createUploadLink } from 'apollo-upload-client';
 // フロントエンドからバックエンドに接続
 const uploadLink = createUploadLink({
   credentials: 'include',  //* allow cookies to be sent from Frontend to Backend
-  // uri: 'http://localhost:5001',             //!DEVELOPMENT
-  uri: 'https://remindapp.onrender.com/' //! PRODUCTION
+  uri: 'http://localhost:5001',             //!DEVELOPMENT
+  // uri: 'https://remindapp.onrender.com/' //! PRODUCTION
 });
 
 

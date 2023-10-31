@@ -9,9 +9,11 @@ import { useApolloClient } from '@apollo/client';// Main.tsx で wrapしたも�
 import { LOGOUT_MUTATION } from "../../graphql/mutations"
 
 // TYPE
-type IsLoggedInPropsType = {
+type PropsType = {
   isLoggedIn: boolean;
   setIsLoggedIn: (isLoggedIn: boolean) => void;
+  darkTheme: boolean;
+  setDarkTheme: (themeUpdater: (prevTheme: boolean) => boolean) => void;
 }
 
 // Emotion CSS (Responsive Design)
@@ -160,10 +162,64 @@ const headerCss = css`
   ${min[3] + max[3]} {
     background-color: yellow;
   } */
+
+  // TOGGLE BUTTON
+  .toggle-button-004 {
+    display: flex;
+    align-items: center;
+    position: relative;
+    width: 100px;
+    height: 50px;
+    border-radius: 50px;
+    box-sizing: content-box;
+    background-color: #1e101033;
+    cursor: pointer;
+    transition: background-color .4s;
+}
+
+.toggle-button-004:has(:checked) {
+    background-color: #6b9ed133;
+}
+
+.toggle-button-004::before {
+    position: absolute;
+    left: 5px;
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    background-color: #1e1010;
+    content: '';
+    transition: left .4s;
+}
+
+.toggle-button-004:has(:checked)::before {
+    left: 50px;
+    background-color: #6b9ed1;
+}
+
+.toggle-button-004::after {
+    position: absolute;
+    left: 26px;
+    transform: translateX(-50%);
+    color: #fff;
+    font-weight: 600;
+    font-size: .9em;
+    content: 'No';
+    transition: left .4s;
+}
+
+.toggle-button-004:has(:checked)::after {
+    left: 71px;
+    content: 'Yes';
+}
+
+.toggle-button-004 input {
+    display: none;
+}
 `;
 
 //! ==============================================
-function Header({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) {
+function Header({ isLoggedIn, setIsLoggedIn, darkTheme, setDarkTheme }: PropsType) {
 
   const navigate = useNavigate();
   const client = useApolloClient();  // main.tsx で wrapしたもの
@@ -221,6 +277,14 @@ function Header({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) {
               )}
             </Nav>
 
+            {/* //! Dark Theme Toggle */}
+            <label className="toggle-button-004">
+              <input type="checkbox"
+                checked={darkTheme}
+                onChange={() => setDarkTheme((prevTheme: boolean) => !prevTheme)}
+              />
+            </label>
+
             {/* //! LOGOUT / LOGIN */}
             <div className="navRight">
               {isLoggedIn ? (
@@ -258,6 +322,7 @@ function Header({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) {
               )}
             </div>
           </Navbar.Collapse>
+
         </Container>
       </Navbar>
     </>
