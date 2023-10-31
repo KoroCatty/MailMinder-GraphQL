@@ -211,7 +211,7 @@ interface FormDataProps {
   title?: string;
   content?: string;
   imgUrl?: string;
-  imgFile?: string;
+  // imgFile?: string;
   [key: string]: string | undefined; // This makes it indexable for dynamic keys
 }
 
@@ -263,7 +263,7 @@ const HomeForms = ({ refetch }: RefetchProps) => {
   // console.log(formData);
 
   //! ======================================================
-  //! FORM SUBMITTED!!
+  //! FORM SUBMIT !!
   //! ======================================================
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -334,7 +334,7 @@ const HomeForms = ({ refetch }: RefetchProps) => {
 
 
   //* ===================================================
-  //* When Choose image from local file (画像を選択した時に発火する関数)
+  //* Choose image from local file (画像を選択した時に発火する関数)
   //* ===================================================
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0];
@@ -345,6 +345,7 @@ const HomeForms = ({ refetch }: RefetchProps) => {
 
     // Create a local URL for the file to display it in an img tag
     const localImageUrl = URL.createObjectURL(file);
+    // console.log(localImageUrl) // blob:http://localhost:3000/9ad32e0f-6952-45c7-99c9-051430a562a9
 
     // Update the display image
     setDisplayImg(localImageUrl);
@@ -408,7 +409,6 @@ const HomeForms = ({ refetch }: RefetchProps) => {
       <TitleLarge title="YOUR REMINDER" />
 
       <form onSubmit={handleSubmit}>
-        {/* <form onSubmit={handleFormSubmit}> */}
         <br />
         <br />
         <TitleSmall title="TEXTS" />

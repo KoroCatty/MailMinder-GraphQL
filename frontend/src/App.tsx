@@ -69,7 +69,7 @@ function App() {
         <>
           <Routes>
             <Route path="" element={<Layout isLoggedIn={isLoggedIn} darkTheme={darkTheme} />}>
-              <Route path="/" element={<HomePage isLoggedIn={isLoggedIn} />} />
+              <Route path="/" index={true} element={<HomePage isLoggedIn={isLoggedIn} />} />
               <Route path="/login" element={<AuthPage isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />} />
               <Route path="/contact" element={<Contact />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />

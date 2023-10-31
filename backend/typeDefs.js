@@ -70,8 +70,8 @@ const typeDefs = gql`
     title: String!
     content: String!
     # expecting a file upload. If you're sending a URL or base64 string instead of a file, this could be causing the issue.
-    imgUrl: Upload
-    # imgUrl: String
+    # imgUrl: Upload
+    imgUrl: String
     updatedAt: Date
   }
 

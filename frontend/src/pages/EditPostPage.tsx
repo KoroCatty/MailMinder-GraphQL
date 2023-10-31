@@ -1,5 +1,7 @@
 import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+
+import axios from "axios";
 
 // COMPONENTS
 import BackButton from "../components/common/BackButton";
@@ -25,6 +27,8 @@ import { Form } from "react-bootstrap";
 // Emotion CSS
 import { css } from "@emotion/react";
 import { min, max } from "../utils/mediaQueries";
+
+
 
 const EditPostCss = css`
   // 1px〜479px
@@ -246,8 +250,11 @@ const EditPostPage = () => {
   // useParam
   const { id: idUrl } = useParams<{ id: string }>();
 
+    // Get local selected image value
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
   //* GET POSTS BY ID (Apollo Client)
-  const { data } = useQuery(GET_POSTS_BY_ID, {
+  const { data, refetch } = useQuery(GET_POSTS_BY_ID, {
     variables: {
       uid: Number(idUrl), // queries.ts で uid を定義している
     },
@@ -265,13 +272,6 @@ const EditPostPage = () => {
     src: "",
     createdAt: "",
     updatedAt: "",
-    // user: {
-    //   id: 0,
-    //   name: "",
-    //   email: "",
-    //   createdAt: "",
-    //   updatedAt: "",
-    // }
   });
 
   // TYPES (data.PostsByUser)
@@ -284,11 +284,36 @@ const EditPostPage = () => {
     updateAt: string;
   };
 
+  //? TYPES (For Form Data)
+interface FormDataProps {
+  title?: string;
+  content?: string;
+  imgUrl?: string;
+  // imgFile?: string;
+  [key: string]: string | undefined; // This makes it indexable for dynamic keys
+}
+
   //* useState
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [formData, setFormData] = useState({});
+
+  const [formData, setFormData] = useState<FormDataProps>({});
+
+   // local selected image
+   const [selectedLocalFile, setSelectedLocalFile] = useState<File | null>(null);
+
+     // which image to preview
+  const [displayImg, setDisplayImg] = useState<string>("/imgs/noImg.jpeg");
+
+  // Reset the local selected image input value
+  const resetLocalFileSelectValue = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
 
   //* useEffect
+  // DB からデータを取得
   useEffect(() => {
     if (data && data.PostsByUser) {
       const idToFind = Number(idUrl); // 特定のID
@@ -321,18 +346,36 @@ const EditPostPage = () => {
   //* ===================================================
   //* Choose Image from local file 画像を選択した時に発火する関数
   //* ===================================================
-  const chooseImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files && e.target.files[0];
-    if (file) {
-      setSelectedImage(URL.createObjectURL(file));
+  // const chooseImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   const file = e.target.files && e.target.files[0];
+  //   if (file) {
+  //     setSelectedImage(URL.createObjectURL(file));
 
-      // FormDataを更新
-      setFormData({
-        ...formData,
-        imgFile: file, // これが重要です！
-      });
-    }
-  };
+  //     // FormDataを更新
+  //     setFormData({
+  //       ...formData,
+  //       imgUrl: file,
+  //       // imgFile: file, 
+  //     });
+  //   }
+  // };
+
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files && e.target.files[0];
+    if (!file) return;
+
+    // Set the selected file to state for later use in handleSubmit
+    setSelectedLocalFile(file);
+
+    // Create a local URL for the file to display it in an img tag
+    const localImageUrl = URL.createObjectURL(file);
+    console.log(localImageUrl)// blob:http://localhost:3000/9ad32e0f-6952-45c7-99c9-051430a562a9
+
+    // Update the display image
+    setDisplayImg(localImageUrl);
+
+    // e.target.value = '';
+  }
 
   //* ===================================================
   //* Paste Image URL
@@ -344,13 +387,22 @@ const EditPostPage = () => {
       ...formData,
       imgUrl: imageUrl,
     });
+
+     // reset local selected file in useState
+     setSelectedLocalFile(null);
+
+     // reset selected image input value
+     resetLocalFileSelectValue();
+ 
+     // display image
+     setDisplayImg(imageUrl);
   };
 
   //* ===================================================
   //*  Selfie Image
   //* ===================================================
   const selfieImage = (image64: string | null) => {
-    // Check if image64 (or selectedImage if you prefer) is not null before reading its length
+    // Check if image64 is not null before reading its length
     if (image64 && image64.length > 10000) {
       setSelectedImage(image64);
       // Handle error - maybe return a user-friendly error message
@@ -358,19 +410,74 @@ const EditPostPage = () => {
         ...formData,
         imgUrl: image64,
       });
+      // reset selected image value
+      resetLocalFileSelectValue();
+
+      // reset local selected file in useState
+      setSelectedLocalFile(null);
+
+      setDisplayImg(image64);
     } else {
       console.log("Too Big");
       window.alert("Too Big");
-      // Proceed with saving to the database
-      // ...your code to save the image to the database
     }
   };
-  //? ================================================
-  //? Submit (UPDATE BUTTON)
-  //? ================================================
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // prevent default form submission
 
+
+
+
+
+
+  //! ================================================
+  //! FORM SUBMIT !! (UPDATE BUTTON)
+  //! ================================================
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // SERVER URL 
+    const SERVER_URL = import.meta.env.VITE_PUBLIC_SERVER_URL || 'http://localhost:5001/uploads';
+    //  console.log(SERVER_URL + "🫡") // http://localhost:5001/uploads
+
+    // Define a variable for asyncronous data to save DB
+    let imageUrlForDB: string | undefined = await formData.imgUrl;
+    console.log(formData)
+    console.log(imageUrlForDB)
+
+
+    //! 1. Upload the image to the server using AXIOS
+    if (selectedLocalFile) {
+      const formData = new FormData();
+      formData.append('img', selectedLocalFile);
+
+      try {
+        const response = await axios.post(SERVER_URL, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        // console.log(response.data.url); // /uploads/img-1697934272148.jpg
+
+        // make tis absolute path and get rid of double 'uploads/'
+        imageUrlForDB = `${SERVER_URL}${response.data.url.replace('uploads/', '')}`;
+        // get rid of double '//' in a server (Local is fine)
+        imageUrlForDB = imageUrlForDB.replace('uploads//', 'uploads/');
+        setFormData((prevFormData) => ({
+          ...prevFormData,
+          imgUrl: imageUrlForDB
+        }));
+
+      } catch (error) {
+        console.error("Error uploading the file:", error);
+        return;
+
+      } finally {
+        // reset local selected file in useState
+        // setSelectedLocalFile(null);
+        // reset selected image input value
+        // resetLocalFileSelectValue();
+      }
+    }
+
+
+    //! 2. Update the post in the database
     try {
       const response = await updatePostById({
         variables: {
@@ -378,7 +485,7 @@ const EditPostPage = () => {
           postUpdate: {
             title: currentData.title,
             content: currentData.content,
-            imgUrl: selectedImage || currentData.imgUrl, // Use selectedImage if it's available, else use currentData.imgUrl
+            imgUrl: imageUrlForDB || currentData.imgUrl, // Use selectedImage if it's available, else use currentData.imgUrl
             updatedAt: new Date().toISOString(),
           },
         },
@@ -387,7 +494,12 @@ const EditPostPage = () => {
       if (response.data) {
         // Handle success. Maybe redirect user or show success message.
         console.log("Post updated successfully", response.data);
+        // Props で受け取った refetch を実行
+        refetch();
+        await refetch();
+        console.log("Refetched!");
       }
+
     } catch (error) {
       // Handle error. Maybe show error message to user.
       console.error("Error updating post - アップデートエラー:", error);
@@ -488,7 +600,7 @@ const EditPostPage = () => {
                   <img src={currentData.imgUrl} alt="no Image" />
                 )}
                 {selectedImage && (
-                  <img src={selectedImage} alt="chosen Image" />
+                  <img src={displayImg} alt="chosen Image" />
                 )}
               </div>
 
@@ -496,13 +608,14 @@ const EditPostPage = () => {
               <Form.Group controlId="formFileLg">
                 <h3>From Your Local File</h3>
                 <Form.Control
+                 ref={fileInputRef}
                   className="imgChooseBtn"
                   type="file"
                   size="lg"
                   accept="image/*" // 画像ファイルのみを選択できるようにする
                   // onChange={handleImageChange}
-                  onChange={chooseImage}
-                  name="image"
+                  onChange={handleImageUpload}
+                  name="img"
                 />
               </Form.Group>
 

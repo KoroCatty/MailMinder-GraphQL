@@ -48,7 +48,7 @@ const toggleCss = css`
       left: 70px;
       top: 8px;
       font-size: 1.4rem;
-      content: "☀️";
+      content: "🌙";
     }
 
     // slider の 背景色をチェックを入れたら変更
@@ -88,7 +88,7 @@ const toggleCss = css`
       transform: translateX(-50%);
       color: #fff;
       font-size: 1.3rem;
-      content: "🌙";
+      content: "☀️";
     }
   }
 }
