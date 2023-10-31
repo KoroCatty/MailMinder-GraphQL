@@ -61,3 +61,10 @@ export const UPDATE_POST_BY_ID = gql`
     }
   }
 `;
+
+//! LOGOUT USER
+export const LOGOUT_MUTATION = gql`
+    mutation Logout {
+    logout
+  }
+`;

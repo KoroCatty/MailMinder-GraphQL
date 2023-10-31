@@ -191,6 +191,7 @@ const resolvers = {
       res.cookie('jwt_httpOnly', token, {
         httpOnly: true, // クッキーがJavaScriptからアクセスされるのを防ぐ
         secure: process.env.NODE_ENV === 'production', // Use 'secure' flag when in production mode
+        sameSite: 'None',// ードパーティのコンテキストでクッキーを送信する方法を制御 (secureを true にする必要あり)
         maxAge: 3 * 60 * 60 * 1000 // 3 hours in milliseconds
       });
 
@@ -276,17 +277,10 @@ const resolvers = {
         const url = deletedPost.imgUrl;
         // console.log(url); // ex) http://localhost:5001/uploads/img-1698041204833.jpg
 
-
         // 実際の画像ファイルが存在しないpostの、画像を削除しない処理を記載 (エラー対策)
         if (url !== "http://localhost:5001/imgs/**" || `${import.meta.url}/uploads/**`) {
           return deletedPost;
         }
-
-
-        // もし、デフォルトの画像だったら実際のファイルは存在しないので、削除しない処理を記載
-        // if (url === "/imgs/noImg.jpeg"){
-        //   return deletedPost;
-        // }
 
         //! This is for CommonJS module -----------------------------------------------
         // const path = new URL(url).pathname.replace(/^\/+/, __dirname); // remove leading slashes

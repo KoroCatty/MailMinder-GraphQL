@@ -13,7 +13,7 @@ export const GET_POSTS_BY_ID = gql`
       updatedAt
     }
   }
-`
+`;
 
 //! GET POSTS BY ID WITH LIMIT
 export const GET_POSTS_BY_ID_LIMIT = gql`
@@ -27,7 +27,15 @@ export const GET_POSTS_BY_ID_LIMIT = gql`
       updatedAt
     }
   }
-`
+`;
+
+//! GET LOGIN USER STATUS
+export const IS_LOGGED_IN_QUERY = gql`
+    query IsLoggedIn {
+    isLoggedIn
+  }
+`;
+
 
 
 

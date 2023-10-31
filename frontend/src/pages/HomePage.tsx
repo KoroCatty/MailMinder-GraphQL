@@ -74,11 +74,10 @@ const HomePage = ({ isLoggedIn }: IsLoggedInPropType) => {
 
   return (
     <main css={HomePageCss}>
+      {/* LOGIN CHECK */}
       {isLoggedIn ? (
         <Container className="homeContainer">
-          {/* <RecentPosts limitPostsProps={props} /> */}
           <RecentPosts data={data} loading={loading} error={error} refetch={refetch} />
-
           <HomeForms refetch={refetch} />
           {/* <MonthPosts /> */}
         </Container>

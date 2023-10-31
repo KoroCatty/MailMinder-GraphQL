@@ -5,6 +5,9 @@ import BackButton from "../components/common/BackButton";
 // import Header from "../components/layout/Header";
 // import Footer from "../components/layout/Footer";
 
+// Image (import することで URL によって動的にパスが変わるのを防ぐ)
+import notFoundHeroImage from '/imgs/hero_404.jpg'
+
 // Color schema
 import colorSchema from "../utils/colorSchema";
 
@@ -137,7 +140,7 @@ const NotFound = () => {
         <section>
           <div className="notFoundHeroWrap">
             <img
-              src="./imgs/hero_404.jpg"
+              src={notFoundHeroImage}
               alt="notFoundHeroImage"
               className="notFoundHeroWrap__img"
             />

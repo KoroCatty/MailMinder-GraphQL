@@ -1,4 +1,3 @@
-// import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
@@ -6,12 +5,13 @@ import { useNavigate } from "react-router-dom";
 import { Navbar, Nav, Container } from "react-bootstrap";
 
 // Apollo client
-import { gql } from "@apollo/client";
 import { useApolloClient } from '@apollo/client';// Main.tsx で wrapしたもの
+import { LOGOUT_MUTATION } from "../../graphql/mutations"
 
 // TYPE
-type IsLoggedInPropType = {
+type IsLoggedInPropsType = {
   isLoggedIn: boolean;
+  setIsLoggedIn: (isLoggedIn: boolean) => void;
 }
 
 // Emotion CSS (Responsive Design)
@@ -162,11 +162,11 @@ const headerCss = css`
   } */
 `;
 
-
 //! ==============================================
-function Header({ isLoggedIn }: IsLoggedInPropType) {
+function Header({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) {
 
   const navigate = useNavigate();
+  const client = useApolloClient();  // main.tsx で wrapしたもの
 
   // Scroll to Top
   const toTop = () => {
@@ -177,25 +177,13 @@ function Header({ isLoggedIn }: IsLoggedInPropType) {
     });
   };
 
-  // Logout Mutation
-  const LOGOUT_MUTATION = gql`
-  mutation Logout {
-    logout
-  }
-`;
-
-  // main.tsx で wrapしたもの
-  const client = useApolloClient();
-
-  // ログアウト処理
+  //! ログアウト処理
   const logout = async () => {
     try {
       const { data } = await client.mutate({ mutation: LOGOUT_MUTATION });
-      console.log(data)
       if (data.logout) {
-        // ログアウトが成功した後の処理
+        setIsLoggedIn(false);  // Update the state 
         navigate('/login');
-        // window.location.reload();
       }
     } catch (error) {
       console.error('ログアウト中にエラーが発生しました:', error);
@@ -229,7 +217,6 @@ function Header({ isLoggedIn }: IsLoggedInPropType) {
                   </Nav.Link>
                 </>
               ) : (
-                // <Nav.Link as={Link} to="/Login">Login</Nav.Link>
                 ""
               )}
             </Nav>
@@ -240,11 +227,7 @@ function Header({ isLoggedIn }: IsLoggedInPropType) {
                 <button
                   className="navRight__logoutBtn"
                   onClick={() => {
-                    // localStorage.removeItem("token_GraphQL");
-                    // setLoggedIn(false);
                     logout(); // ログアウト処理
-                    // navigate("/login");
-                    // window.location.reload();
                   }}
                 >
                   LOGOUT

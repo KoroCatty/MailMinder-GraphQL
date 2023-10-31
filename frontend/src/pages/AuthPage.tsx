@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 // components
@@ -10,11 +10,11 @@ import { useMutation } from "@apollo/client";
 // mutation queries
 import { SIGNUP_USER } from "../graphql/mutations";
 import { LOGIN_USER } from "../graphql/mutations";
-
-// TYPES
-// type AuthPageProps = {
-//   setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
-// };
+// TYPE
+type IsLoggedInPropsType = {
+  isLoggedIn: boolean;
+  setIsLoggedIn: (isLoggedIn: boolean) => void;
+}
 
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
@@ -76,7 +76,7 @@ const authPageCss = css`
 
 //! ======================================================
 // const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
-const AuthPage = () => {
+const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
   // HOOKS
   const [showLogin, setShowLogin] = useState(true); // true = login, false = signup
   const [formData, setFormData] = useState({});
@@ -84,6 +84,14 @@ const AuthPage = () => {
   const authForm = useRef<HTMLFormElement>(null);
 
   const navigate = useNavigate();
+
+  // ログインしてたらホームに飛ばす
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/");
+    }
+  }, [isLoggedIn, navigate]);
+
 
   // Mutations (Sign Up)
   const [signupUser, { data: signupData, loading, error }] =
@@ -97,13 +105,9 @@ const AuthPage = () => {
     // onCompleted は mutation が完了した後に実行される
     // onCompleted(data) {
     onCompleted() {
-      // mutaion.ts で定義したものを取得し localStorage に保存
-      // localStorage.setItem("token_GraphQL", data.signinUser.token);
-      navigate("/");
-      // scroll to top
       window.scrollTo(0, 0);
-      // setLoggedIn(true);
-      // window.location.reload();
+      setIsLoggedIn(true);  // Update the state 
+      navigate("/");
     },
   });
 
@@ -140,9 +144,7 @@ const AuthPage = () => {
     } else {
       // Signup
       signupUser({
-        // mutation.ts で定義したもの
         variables: {
-          // お決まり
           userNew: formData, // mutation.ts で定義したもの
         },
       });
