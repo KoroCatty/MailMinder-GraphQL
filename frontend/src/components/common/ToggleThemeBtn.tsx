@@ -4,6 +4,7 @@ type PropsType = {
   setDarkTheme: (themeUpdater: (prevTheme: boolean) => boolean) => void;
 };
 
+
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
 import { min, max } from "../../utils/mediaQueries";
@@ -30,94 +31,88 @@ const toggleCss = css`
   }
 
   .toggleBtn {
-  position: relative;
-  display: flex;
-  align-items: center;
-
-  input[type="checkbox"] {
-    visibility: hidden;
-    position: absolute;
-
-    &:checked + .slider::before {
-      left: 54px;
-      top: 4px;
-      background-color: #323030;
-    }
-
-    &:checked + .slider::after {
-      left: 70px;
-      top: 8px;
-      font-size: 1.4rem;
-      content: "🌙";
-    }
-
-    // slider の 背景色をチェックを入れたら変更
-    &:checked + .slider {
-      background-color: #ffffff33;
-    }
-  }
-
-  // slider の 背景色
-  .slider {
     position: relative;
-    cursor: pointer;
-    width: 90px;
-    height: 40px;
-    border-radius: 50px;
-    background-color: #1e101033;
-    transition: background-color 0.4s;
+    display: flex;
+    align-items: center;
 
-    &::before, &::after {
+    input[type="checkbox"] {
+      visibility: hidden;
       position: absolute;
-      transition: left 0.4s;
+
+      &:checked + .slider::before {
+        left: 54px;
+        top: 4px;
+        background-color: #323030;
+      }
+
+      &:checked + .slider::after {
+        left: 70px;
+        top: 8px;
+        font-size: 1.4rem;
+        content: "🌙";
+      }
+
+      // slider の 背景色をチェックを入れたら変更
+      &:checked + .slider {
+        background-color: #ffffff33;
+      }
     }
 
-    &::before {
-      left: 5px;
-      top: 3px;
-      width: 32px;
-      height: 32px;
-      border-radius: 50%;
-      background-color: #1e1010;
-      content: "";
-    }
+    // slider の 背景色
+    .slider {
+      position: relative;
+      cursor: pointer;
+      width: 90px;
+      height: 40px;
+      border-radius: 50px;
+      background-color: #1e101033;
+      transition: background-color 0.4s;
 
-    &::after {
-      left: 20px;
-      top: 7px;
-      transform: translateX(-50%);
-      color: #fff;
-      font-size: 1.3rem;
-      content: "☀️";
+      &::before,
+      &::after {
+        position: absolute;
+        transition: left 0.4s;
+      }
+
+      &::before {
+        left: 5px;
+        top: 3px;
+        width: 32px;
+        height: 32px;
+        border-radius: 50%;
+        background-color: #1e1010;
+        content: "";
+      }
+
+      &::after {
+        left: 20px;
+        top: 7px;
+        transform: translateX(-50%);
+        color: #fff;
+        font-size: 1.3rem;
+        content: "☀️";
+      }
     }
   }
-}
-
 `;
 
 function ToggleThemeBtn({ darkTheme, setDarkTheme }: PropsType) {
+
+    // Save Theme Color Boolean to LocalStorage
+    localStorage.setItem('Theme-color', JSON.stringify(darkTheme));
+  
   return (
     <div css={toggleCss}>
       {/* //! Dark Theme Toggle BUTTON */}
-      {/* <label className="toggleBtn">
-        <input
-        type="checkbox"
-        checked={darkTheme}
-        onChange={() => setDarkTheme((prevTheme: boolean) => !prevTheme)}
-        />
-        <FiSun />
-      </label> */}
-
-
-
       <div className="toggleBtn">
-        <input type="checkbox" id="toggleCheck" checked={darkTheme}
-          onChange={() => setDarkTheme((prevTheme: boolean) => !prevTheme)} />
+        <input
+          type="checkbox"
+          id="toggleCheck"
+          checked={darkTheme}
+          onChange={() => setDarkTheme((prevTheme: boolean) => !prevTheme)}
+        />
         <label htmlFor="toggleCheck" className="slider"></label>
       </div>
-
-
-
     </div>
   );
 }

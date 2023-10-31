@@ -43,7 +43,9 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(data?.isLoggedIn || false);
 
   // Theme Color Toggle
-  const [darkTheme, setDarkTheme] = useState(false);
+  const [darkTheme, setDarkTheme] = useState(localStorage.getItem('Theme-color') === 'true');
+
+
 
   // ログイン状態を更新 (If there's data)
   useEffect(() => {
