@@ -16,6 +16,12 @@ const settingAvatarStyles = css`
     margin-bottom: 4rem;
   }
 
+  // 480px〜767px
+  ${min[1] + max[1]} {
+    flex-direction: column-reverse;
+    margin-bottom: 4rem;
+  }
+
   input {
     display: block;
     padding: 10px 20px;

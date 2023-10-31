@@ -1,3 +1,5 @@
+//! GLOBAL STYLE CSS
+
 // components
 import colorSchema from "../../utils/colorSchema";
 
@@ -5,7 +7,7 @@ import colorSchema from "../../utils/colorSchema";
 import { Global, css } from "@emotion/react";
 const globalCss = css`
   body {
-    background-color: #242424 ;
+    background-color: ${colorSchema.dark};
     color: white;
   }
   h2, h3, h4, h5, h6 {
@@ -16,24 +18,7 @@ const globalCss = css`
     color: white !important;
   }
 
-  button {
-    /* background-color: white !important ; */
-    /* color: black !important;
-    border: 1px solid white ;
-    border-color: white ;
-    border-radius: 5px ;
-    padding: 5px 10px ;
-    font-size: 1.2em ;
-    cursor: pointer ; */
-  }
-
   p {
-    color: white !important;
-  }
-
-  .openBtn {
-    border: 1px solid white !important;
-    border-color: white !important;
     color: white !important;
   }
 
@@ -41,15 +26,45 @@ const globalCss = css`
     filter: brightness(0.8);
   }
 
+  // CAMERA BUTTON
+  .openBtn {
+    border: 1px solid white !important;
+    border-color: white !important;
+    color: white !important;
+  }
+
+  // left side menu
 .navbar {
-  background-color: #242424 !important;
+  background-color: ${colorSchema.darkLight} !important;
+  box-shadow: 0 4px 4px rgba(186, 186, 186, 0.5) !important;
 }
+
+// Hamburger Button
+.navbar-toggler {
+  color: white !important;
+  border-color: white !important;
+  background-color: ${colorSchema.lightDark} !important;
+
+  span {
+    color: white !important;
+    border-color: white !important;
+  }
+}
+
+  // Recent Card
+  .card-title, .card-text {
+    color: ${colorSchema.font} !important;
+  }
+  
+  // Big Submit Button
+  .submitBtn {
+    background-color: ${colorSchema.danger} !important;
+  }
+
+
 `;
 
 function ColorThemeGlobal() {
-
-
-
   return (
     <>
       <Global styles={globalCss} />

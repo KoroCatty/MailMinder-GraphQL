@@ -1,6 +1,9 @@
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
+// components
+import ToggleThemeBtn from "../common/ToggleThemeBtn";
+
 // Bootstrap
 import { Navbar, Nav, Container } from "react-bootstrap";
 
@@ -113,13 +116,13 @@ const headerCss = css`
     }
   }
 
-  /* Logout Btn & User Icon */
+  /* Logout Btn & User Icon & Toggle Btn */
   .navRight {
     @media screen and (min-width: 989px) {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 1rem;
+      gap: 2rem;
     }
 
     @media screen and (min-width: 1201px) {
@@ -136,6 +139,10 @@ const headerCss = css`
       padding: 12px 16px;
       transition: all 0.3s ease-in-out;
       border-radius: 4px;
+      
+      @media screen and (max-width: 992px) {
+        margin: 2rem 0;
+      }
 
       &:hover {
         background-color: white;
@@ -163,62 +170,29 @@ const headerCss = css`
     background-color: yellow;
   } */
 
-  // TOGGLE BUTTON
-  .toggle-button-004 {
-    display: flex;
-    align-items: center;
-    position: relative;
-    width: 100px;
-    height: 50px;
-    border-radius: 50px;
-    box-sizing: content-box;
-    background-color: #1e101033;
-    cursor: pointer;
-    transition: background-color .4s;
-}
-
-.toggle-button-004:has(:checked) {
-    background-color: #6b9ed133;
-}
-
-.toggle-button-004::before {
-    position: absolute;
-    left: 5px;
-    width: 42px;
-    height: 42px;
-    border-radius: 50%;
-    background-color: #1e1010;
-    content: '';
-    transition: left .4s;
-}
-
-.toggle-button-004:has(:checked)::before {
-    left: 50px;
-    background-color: #6b9ed1;
-}
-
-.toggle-button-004::after {
-    position: absolute;
-    left: 26px;
-    transform: translateX(-50%);
-    color: #fff;
-    font-weight: 600;
-    font-size: .9em;
-    content: 'No';
-    transition: left .4s;
-}
-
-.toggle-button-004:has(:checked)::after {
-    left: 71px;
-    content: 'Yes';
-}
-
-.toggle-button-004 input {
+  //! Control the Theme Toggle Button
+  .ToggleThemeBtn__PC {
     display: none;
-}
+
+    @media screen and (min-width: 1201px) {
+      display: block;
+    }
+  }
+
+  .ToggleThemeBtn__SP {
+    display: block;
+
+    @media screen and (max-width: 992px) {
+      margin: 2rem 0;
+    }
+
+    @media screen and (min-width: 1201px) {
+      display: none;
+    }
+  }
 `;
 
-//! ==============================================
+//! =================================================================
 function Header({ isLoggedIn, setIsLoggedIn, darkTheme, setDarkTheme }: PropsType) {
 
   const navigate = useNavigate();
@@ -277,37 +251,14 @@ function Header({ isLoggedIn, setIsLoggedIn, darkTheme, setDarkTheme }: PropsTyp
               )}
             </Nav>
 
-            {/* //! Dark Theme Toggle */}
-            <label className="toggle-button-004">
-              <input type="checkbox"
-                checked={darkTheme}
-                onChange={() => setDarkTheme((prevTheme: boolean) => !prevTheme)}
-              />
-            </label>
 
-            {/* //! LOGOUT / LOGIN */}
             <div className="navRight">
-              {isLoggedIn ? (
-                <button
-                  className="navRight__logoutBtn"
-                  onClick={() => {
-                    logout(); // ログアウト処理
-                  }}
-                >
-                  LOGOUT
-                </button>
-              ) : (
-                <>
-                  <Nav.Link as={Link} to="/Login">
-                    Login
-                  </Nav.Link>
-                  <Nav.Link as={Link} to="/contact" onClick={() => toTop()} >
-                    Contact
-                  </Nav.Link>
-                </>
-              )}
+              {/* //! TOGGLE BUTTON */}
+              <div className="ToggleThemeBtn__SP">
+                <ToggleThemeBtn darkTheme={darkTheme} setDarkTheme={setDarkTheme} />
+              </div>
 
-              {/* avatar Icon */}
+              {/*//!  Avatar Icon */}
               {isLoggedIn ? (
                 <Nav.Link as={Link} to="/settings">
                   <img
@@ -320,8 +271,35 @@ function Header({ isLoggedIn, setIsLoggedIn, darkTheme, setDarkTheme }: PropsTyp
               ) : (
                 ""
               )}
+
+              {/* //! LOGOUT / LOGIN */}
+              {isLoggedIn ? (
+                <button
+                  className="navRight__logoutBtn"
+                  onClick={() => {
+                    logout(); // ログアウト処理
+                  }}
+                >
+                  LOGOUT
+                </button>
+              ) : (
+                // ログインしていない場合
+                <>
+                  <Nav.Link as={Link} to="/Login">
+                    Login
+                  </Nav.Link>
+                  <Nav.Link as={Link} to="/contact" onClick={() => toTop()} >
+                    Contact
+                  </Nav.Link>
+                </>
+              )}
             </div>
           </Navbar.Collapse>
+
+          {/* //! TOGGLE BUTTON */}
+          <div className="ToggleThemeBtn__PC">
+            <ToggleThemeBtn darkTheme={darkTheme} setDarkTheme={setDarkTheme} />
+          </div>
 
         </Container>
       </Navbar>

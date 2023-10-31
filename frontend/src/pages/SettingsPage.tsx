@@ -30,6 +30,7 @@ const settingPageCss = css`
     }
     // 480px〜767px
     ${min[1] + max[1]} {
+      height: auto;
     }
     // 768px〜989px
     ${min[2] + max[2]} {

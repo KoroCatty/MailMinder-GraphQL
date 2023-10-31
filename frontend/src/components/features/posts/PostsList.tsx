@@ -58,9 +58,9 @@ function PostsList() {
     <div css={PostListCss}>
       <BackButton />
 
-      <Row className="g-4">
+      <Row xs={1} md={2} className="g-4">
         {data.PostsByUser.map((item: PostPropType) => (
-          <Col key={item.id} col-md-3 col-6 col-sm-6 mb-4 >
+          <Col key={item.id}>
 
             {/* Component (Give a Prop) */}
             <PostItem postProp={item} />
