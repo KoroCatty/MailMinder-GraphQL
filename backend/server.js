@@ -143,13 +143,13 @@ if (process.env.NODE_ENV === 'production') {
 
   // if it doesn't recognize the route
   // Express が route を認識できない場合は、front-end の index.html ファイルを提供する
-  //   app.get('*', (req, res) => {
-  //     res.sendFile(path.resolve(__dirname, 'frontend', 'dist', 'index.html'));
-  //   });
-  // } else {
-  //   app.get('/', (req, res) => {
-  //     res.send('API is running...');
-  //   });
+    app.get('*', (req, res) => {
+      res.sendFile(path.resolve(__dirname, 'frontend', 'dist', 'index.html'));
+    });
+  } else {
+    app.get('/', (req, res) => {
+      res.send('API is running...');
+    });
 }
 
 //! ==============================================================
