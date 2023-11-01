@@ -226,7 +226,6 @@ const resolvers = {
             'string.max': '3000文字以下で入力してください。'
           }),
         imgUrl: Joi.string(),
-        // imgFile: Joi.string(),
       })
       // Joi Error Handling
       const { error } = schema.validate(args.postNew);

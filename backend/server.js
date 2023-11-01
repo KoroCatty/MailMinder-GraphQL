@@ -33,7 +33,6 @@ const prisma = new PrismaClient()
 
 // CLOUDINARY
 import cloudinaryConfig from './cloudinary.js';
-import { CloudinaryStorage } from 'multer-storage-cloudinary';
 
 // Initialize express
 const app = express();
@@ -46,7 +45,7 @@ app.use(cors({
 app.use(cookieParser());
 
 //* ==============================================================
-//* UPLOAD IMAGE Both uploads folder & Cloudinary 
+//* UPLOAD IMAGE to Both uploads folder & Cloudinary 
 //* ==============================================================
 import multer from "multer";
 
@@ -96,10 +95,14 @@ app.post('/uploads', uploadSingleImage, async (req, res) => {
   try {
     // Cloudinaryの設定
     const result = await cloudinaryConfig.uploader.upload(req.file.path, {
-      folder: 'YOUR_FOLDER_NAME',
+      folder: 'My Folder',
       allowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
       transformation: [{ width: 500, height: 500, crop: 'limit' }]
     });
+
+    // 画像のURLを取得
+    console.log(result.secure_url);
+
     res.json({
       url: `/uploads/${req.file.filename}`,// 画像のURLを返す(local)
       cloudinaryUrl: result.secure_url // 画像のURLを返す(cloudinary)
@@ -108,7 +111,6 @@ app.post('/uploads', uploadSingleImage, async (req, res) => {
     res.status(500).send({ error: 'Failed to upload image.' });
   }
 });
-
 
 //* uploads Folder 公開ディレクトリを指定
 //* Create a uploads folder in the root directory
@@ -141,13 +143,13 @@ if (process.env.NODE_ENV === 'production') {
 
   // if it doesn't recognize the route
   // Express が route を認識できない場合は、front-end の index.html ファイルを提供する
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'frontend', 'dist', 'index.html'));
-  });
-} else {
-  app.get('/', (req, res) => {
-    res.send('API is running...');
-  });
+  //   app.get('*', (req, res) => {
+  //     res.sendFile(path.resolve(__dirname, 'frontend', 'dist', 'index.html'));
+  //   });
+  // } else {
+  //   app.get('/', (req, res) => {
+  //     res.send('API is running...');
+  //   });
 }
 
 //! ==============================================================
@@ -171,6 +173,18 @@ const server = new ApolloServer({
 })
 // Ensure we wait for our server to start
 await server.start();
+
+// console.log(result.secure_url) // https://res.cloudinary.com/duo03b1kn/image/upload/v1698828261/h4zk9ynangre3iupys5o.png
+
+// app.get("/uploads", async (req, res) => {
+//   try {
+//     let user = await find();
+//     res.json(user);
+//   } catch (error) {
+//     console.log(error);
+//   }
+// });
+
 
 app.use(
   '/',

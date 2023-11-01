@@ -64,14 +64,16 @@ const RecentPosts = (limitPostsProps: LimitPostsPropsType) => {
 
   const { data, loading, error, refetch } = limitPostsProps;
   
-  // const { data, loading, error, refetch } = useQuery(GET_POSTS_BY_ID_LIMIT, {
-  //   variables: {
-  //     uid: Number(), // backend (resolver) で id を指定しているので、空にする
-  //     limit: Number(4),
-  //   },
-  // },
-  // );
-
+    // Cloudinary Images access
+    // useEffect(() => {
+    //   const fetchImages = async () => {
+    //   const res = await fetch('http://localhost:5001/uploads');
+    //   const data = await res.json();
+    //   console.log(data)
+    //   };
+    //   fetchImages();
+    // }, []);
+    
 
   // refetch posts 
   useEffect(() => {

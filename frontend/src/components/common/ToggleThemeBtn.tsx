@@ -80,7 +80,7 @@ const toggleCss = css`
         width: 32px;
         height: 32px;
         border-radius: 50%;
-        background-color: #1e1010;
+        background-color: #a6a6a6;
         content: "";
       }
 

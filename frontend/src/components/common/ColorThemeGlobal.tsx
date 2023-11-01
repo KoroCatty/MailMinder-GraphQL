@@ -68,8 +68,6 @@ const globalCss = css`
   .submitBtn {
     background-color: ${colorSchema.danger} !important;
   }
-
-
 `;
 
 function ColorThemeGlobal() {
