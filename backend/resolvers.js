@@ -11,10 +11,10 @@ import jwt from 'jsonwebtoken';
 import { PrismaClient } from '../prisma/generated/client/index.js'
 const prisma = new PrismaClient()
 
-// Define DELETE FILE Function (Get the file path from Delete resolver)
+//!  DELETE FILE Function (Get the file path from Delete resolver)
 async function deleteFile(filePath) {
   try {
-    await fs.unlink(filePath); // Delete the file method
+    await fs.unlink(filePath); // unlink でファイルを削除
     console.log('File deleted successfully'.red);
   } catch (err) {
     console.error(err.red);
@@ -272,15 +272,15 @@ const resolvers = {
         }
       });
 
-      // Delete the actual File if the post exists
+      // Delete the actual Image File if the post exists
       if (deletedPost) {
         const url = deletedPost.imgUrl;
         // console.log(url); // ex) http://localhost:5001/uploads/img-1698041204833.jpg
 
         // 実際の画像ファイルが存在しないpostの、画像を削除しない処理を記載 (エラー対策)
-        if (url !== "http://localhost:5001/imgs/**" || `${import.meta.url}/uploads/**`) {
-          return deletedPost;
-        }
+        // if (url !== "http://localhost:5001/imgs/**" || `${import.meta.url}/uploads/**`) {
+        //   return deletedPost;
+        // }
 
         //! This is for CommonJS module -----------------------------------------------
         // const path = new URL(url).pathname.replace(/^\/+/, __dirname); // remove leading slashes
@@ -357,10 +357,52 @@ const resolvers = {
       });
       return updatedPost;
     },
+
+    //* ===============================================
+    //* DELETE A POST IMAGE FILE
+    //* ===============================================
+    deletePostImage: async (_, args, context) => {
+      // ログインしてなかったらエラー(contextで先に確認できる)
+      if (!context.userId) {
+        throw new Error("You must be logged in (Contextにトークンがありません)😱");
+      }
+
+      // postモデルから投稿を取得
+      const post = await prisma.post.findUnique({
+        where: {
+          id: parseInt(args.id)
+        }
+      });
+
+      // 投稿に画像が関連付けられている場合、画像を削除
+      if (post && post.imgUrl) {
+        // 画像のURLから画像のパスを取得して削除するロジック...
+        // Delete the actual Image File if the post exists
+        if (post) {
+          const url = post.imgUrl;
+          console.log(url + " - Post Image URL💀👻") // http://localhost:5001/uploads/img-1698804958184.jpg 古いURL
+
+          // Get the current directory path (ESM module)
+          const __dirname = fileURLToPath(new URL('.', import.meta.url));
+          // console.log(__dirname.red.underline);
+
+          // goes up one level
+          const currentURL = __dirname + '../'
+          // console.log(currentURL.yellow.underline);
+
+          // 正規表現 ^\/+ を使用して、文字列の先頭にある1つ以上のスラッシュ (/) を検出し、currentURL に置き換える
+          const path = new URL(url).pathname.replace(/^\/+/, currentURL);
+          // console.log(path.cyan.bold); // /Full-Stack/MailMinder-GraphQL/backend/../uploads/img-1698041204305.jpg
+
+          // Delete the file
+          deleteFile(path);
+        }
+
+      }
+      return post;
+    },
+
   }
 }
-
-
-
 
 export default resolvers;

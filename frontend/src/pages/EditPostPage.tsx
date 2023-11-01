@@ -18,8 +18,11 @@ import colorSchema from "../utils/colorSchema";
 import { useQuery } from "@apollo/client";
 import { useMutation } from "@apollo/client";
 
+// mutations & queries
 import { GET_POSTS_BY_ID } from "../graphql/queries";
 import { UPDATE_POST_BY_ID } from "../graphql/mutations";
+import { DELETE_POST_IMAGE_FILE } from "../graphql/mutations";
+
 
 // bootstrap
 import { Form } from "react-bootstrap";
@@ -250,8 +253,8 @@ const EditPostPage = () => {
   // useParam
   const { id: idUrl } = useParams<{ id: string }>();
 
-    // Get local selected image value
-    const fileInputRef = useRef<HTMLInputElement>(null);
+  // Get local selected image value
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
   //* GET POSTS BY ID (Apollo Client)
   const { data, refetch } = useQuery(GET_POSTS_BY_ID, {
@@ -260,8 +263,17 @@ const EditPostPage = () => {
     },
   });
 
-  //* UPDATE POST BY ID (Apollo Client)
+  //* UPDATE POST BY ID 
   const [updatePostById] = useMutation(UPDATE_POST_BY_ID);
+
+  //! DELETE POST IMAGE FILE 
+  // const [deletePostImage] = useMutation(DELETE_POST_IMAGE_FILE, {
+  //   variables: {
+  //     id: Number(idUrl),
+  //   },
+  // });
+  const [deletePostImage] = useMutation(DELETE_POST_IMAGE_FILE);
+
 
   // Initialize with an empty array or a suitable default value.
   const [currentData, setCurrentData] = useState({
@@ -285,23 +297,23 @@ const EditPostPage = () => {
   };
 
   //? TYPES (For Form Data)
-interface FormDataProps {
-  title?: string;
-  content?: string;
-  imgUrl?: string;
-  // imgFile?: string;
-  [key: string]: string | undefined; // This makes it indexable for dynamic keys
-}
+  interface FormDataProps {
+    title?: string;
+    content?: string;
+    imgUrl?: string;
+    // imgFile?: string;
+    [key: string]: string | undefined; // This makes it indexable for dynamic keys
+  }
 
   //* useState
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
 
   const [formData, setFormData] = useState<FormDataProps>({});
 
-   // local selected image
-   const [selectedLocalFile, setSelectedLocalFile] = useState<File | null>(null);
+  // local selected image
+  const [selectedLocalFile, setSelectedLocalFile] = useState<File | null>(null);
 
-     // which image to preview
+  // which image to preview
   // const [displayImg, setDisplayImg] = useState<string>("/imgs/noImg.jpeg");
 
   // Reset the local selected image input value
@@ -377,13 +389,13 @@ interface FormDataProps {
       imgUrl: imageUrl,
     });
 
-     // reset local selected file in useState
-     setSelectedLocalFile(null);
+    // reset local selected file in useState
+    setSelectedLocalFile(null);
 
-     // reset selected image input value
-     resetLocalFileSelectValue();
- 
-     // display image
+    // reset selected image input value
+    resetLocalFileSelectValue();
+
+    // display image
     //  setDisplayImg(imageUrl);
   };
 
@@ -453,6 +465,14 @@ interface FormDataProps {
         return;
       }
     }
+
+    // Delete Image File
+    deletePostImage({
+      variables: {
+        id: Number(idUrl),
+        imgUrl: currentData.imgUrl
+      },
+    });
 
 
     //! 2. Update the post in the database
@@ -584,7 +604,7 @@ interface FormDataProps {
               <Form.Group controlId="formFileLg">
                 <h3>From Your Local File</h3>
                 <Form.Control
-                 ref={fileInputRef}
+                  ref={fileInputRef}
                   className="imgChooseBtn"
                   type="file"
                   size="lg"

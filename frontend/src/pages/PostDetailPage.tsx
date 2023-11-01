@@ -326,8 +326,8 @@ const PostsDetailPage = () => {
             e.preventDefault();
             window.confirm("Are you sure you want to delete this post?") &&
               deletePostById();
-            navigate("/postlist");
             window.scrollTo({ top: 0, behavior: "smooth" });
+            navigate("/postlist");
             // window.location.reload();//! 強制リロード
           }}
         >

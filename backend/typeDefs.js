@@ -102,6 +102,9 @@ const typeDefs = gql`
     # The mutation expects an id and a postUpdate object of type PostUpdateInput. This PostUpdateInput has fields title, content, imgUrl, and updatedAt.
     updatePost(id: ID!, postUpdate: PostUpdateInput!): Post!
 
+    # DELETE A POST IMAGE FILE
+    deletePostImage(id: ID!): Post!
+
     # LOGOUT USER
     logout: Boolean! # return a boolean
   }

@@ -68,3 +68,13 @@ export const LOGOUT_MUTATION = gql`
     logout
   }
 `;
+
+//! DELETE A POST IMAGE FILE
+export const DELETE_POST_IMAGE_FILE = gql`
+  mutation deletePostImage($id: ID!) {
+    deletePostImage(id: $id) {
+      id
+      imgUrl
+    }
+  }
+`;

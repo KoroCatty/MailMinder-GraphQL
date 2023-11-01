@@ -8,6 +8,7 @@ import path from 'path';
 // StandAloneServer -> Express server に変更するために必要なモジュール
 import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+
 import http from 'http';
 import cors from 'cors';
 import bodyParser from 'body-parser';
@@ -92,23 +93,10 @@ app.post('/uploads', uploadSingleImage, (req, res) => {
   res.json({ url: `/uploads/${req.file.filename}` });
 });
 
-//! New endpoint to check if user is logged in
-// app.get('/auth/status', (req, res) => {
-//    // logic to check if user is logged in
-//    const loggedIn = true;
-//    res.json({ loggedIn });
-// });
+
 //! ==============================================================
 //! LOGOUT ENDPOINT
 //! ==============================================================
-// app.post('/logout', (res) => {
-//   // トークンをクッキーから削除
-//   res.cookie('token', '', { expires: new Date(0), httpOnly: true });
-//   res.sendStatus(200);
-// });
-
-
-
 //* uploads Folder 公開ディレクトリを指定
 //* Create a uploads folder in the root directory
 const __dirname = path.resolve();
@@ -153,8 +141,7 @@ if (process.env.NODE_ENV === 'production') {
 //! Middleware (swap StandAloneServer for Express deployment)
 //! ==============================================================
 // Our httpServer handles incoming requests to our Express app.
-// Below, we tell Apollo Server to "drain" this httpServer,
-// enabling our servers to shut down gracefully.
+// tell Apollo Server to "drain" this httpServer,
 const httpServer = http.createServer(app);
 
 const PORT = process.env.PORT || 5001;
@@ -169,10 +156,8 @@ const server = new ApolloServer({
     credentials: true
   }
 })
-
 // Ensure we wait for our server to start
 await server.start();
-
 
 app.use(
   '/',
@@ -207,7 +192,7 @@ app.use(
           console.error("トークン Verification Error 😢", error);
         }
       }
-        return { userId, req, res };
+        return { userId, req, res }; // resolvers で context として使用可能
     },
     options: {
       //Maximum upload file size set at 10 MB
