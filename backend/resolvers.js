@@ -213,8 +213,7 @@ const resolvers = {
     //* ===============================================
     createPost: async (_, args, context) => {
       await console.log(args) // typeDefsで定義済み
-      await console.log(args.postNew.imgUrl + " - 💀👻 Image URL💀👻")
-      // await console.log(args.postNew.imgFile + "- 🌃 imgFile -".red);
+      await console.log(args.postNew.imgUrl + " -  Image URL 💻")
 
       // Joi Validation
       const schema = Joi.object({
@@ -277,10 +276,11 @@ const resolvers = {
         const url = deletedPost.imgUrl;
         // console.log(url); // ex) http://localhost:5001/uploads/img-1698041204833.jpg
 
-        // 実際の画像ファイルが存在しないpostの、画像を削除しない処理を記載 (エラー対策)
-        // if (url !== "http://localhost:5001/imgs/**" || `${import.meta.url}/uploads/**`) {
-        //   return deletedPost;
-        // }
+        // 実際の画像ファイルが存在しないpostがある場合処理をここで停止 (エラー対策)
+        if (url.includes('noImg.jpeg')) {
+          return deletedPost;
+        }
+
 
         //! This is for CommonJS module -----------------------------------------------
         // const path = new URL(url).pathname.replace(/^\/+/, __dirname); // remove leading slashes
