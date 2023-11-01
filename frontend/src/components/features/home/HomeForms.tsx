@@ -320,9 +320,8 @@ const HomeForms = ({ refetch }: RefetchProps) => {
           },
         },
       });
-
-      // Props で受け取った refetch を実行
-      refetch();
+      window.alert("Reminder added Successfully!");
+      refetch(); // Props で受け取った refetch を実行
       await refetch();
       console.log("Refetched!");
 

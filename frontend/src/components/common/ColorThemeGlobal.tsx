@@ -26,6 +26,14 @@ const globalCss = css`
     filter: brightness(0.8);
   }
 
+  input {
+    filter: brightness(0.8);
+  }
+
+  textarea {
+    filter: brightness(0.8);
+  }
+
   // CAMERA BUTTON
   .openBtn {
     border: 1px solid white !important;

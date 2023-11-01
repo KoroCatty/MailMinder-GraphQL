@@ -302,7 +302,7 @@ interface FormDataProps {
    const [selectedLocalFile, setSelectedLocalFile] = useState<File | null>(null);
 
      // which image to preview
-  const [displayImg, setDisplayImg] = useState<string>("/imgs/noImg.jpeg");
+  // const [displayImg, setDisplayImg] = useState<string>("/imgs/noImg.jpeg");
 
   // Reset the local selected image input value
   const resetLocalFileSelectValue = () => {
@@ -346,20 +346,6 @@ interface FormDataProps {
   //* ===================================================
   //* Choose Image from local file 画像を選択した時に発火する関数
   //* ===================================================
-  // const chooseImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-  //   const file = e.target.files && e.target.files[0];
-  //   if (file) {
-  //     setSelectedImage(URL.createObjectURL(file));
-
-  //     // FormDataを更新
-  //     setFormData({
-  //       ...formData,
-  //       imgUrl: file,
-  //       // imgFile: file, 
-  //     });
-  //   }
-  // };
-
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0];
     if (!file) return;
@@ -372,7 +358,10 @@ interface FormDataProps {
     console.log(localImageUrl)// blob:http://localhost:3000/9ad32e0f-6952-45c7-99c9-051430a562a9
 
     // Update the display image
-    setDisplayImg(localImageUrl);
+    // setDisplayImg(localImageUrl);
+
+    setSelectedImage(localImageUrl);
+    resetLocalFileSelectValue();
 
     // e.target.value = '';
   }
@@ -395,7 +384,7 @@ interface FormDataProps {
      resetLocalFileSelectValue();
  
      // display image
-     setDisplayImg(imageUrl);
+    //  setDisplayImg(imageUrl);
   };
 
   //* ===================================================
@@ -416,17 +405,12 @@ interface FormDataProps {
       // reset local selected file in useState
       setSelectedLocalFile(null);
 
-      setDisplayImg(image64);
+      // setDisplayImg(image64);
     } else {
       console.log("Too Big");
       window.alert("Too Big");
     }
   };
-
-
-
-
-
 
   //! ================================================
   //! FORM SUBMIT !! (UPDATE BUTTON)
@@ -439,9 +423,9 @@ interface FormDataProps {
     //  console.log(SERVER_URL + "🫡") // http://localhost:5001/uploads
 
     // Define a variable for asyncronous data to save DB
-    let imageUrlForDB: string | undefined = await formData.imgUrl;
-    console.log(formData)
-    console.log(imageUrlForDB)
+    let imageUrlForDB: string | undefined = formData.imgUrl;
+    // console.log(formData)
+    // console.log(imageUrlForDB)
 
 
     //! 1. Upload the image to the server using AXIOS
@@ -455,24 +439,18 @@ interface FormDataProps {
         });
         // console.log(response.data.url); // /uploads/img-1697934272148.jpg
 
-        // make tis absolute path and get rid of double 'uploads/'
+        // make this absolute path and get rid of double 'uploads/'
         imageUrlForDB = `${SERVER_URL}${response.data.url.replace('uploads/', '')}`;
         // get rid of double '//' in a server (Local is fine)
         imageUrlForDB = imageUrlForDB.replace('uploads//', 'uploads/');
         setFormData((prevFormData) => ({
-          ...prevFormData,
-          imgUrl: imageUrlForDB
+          ...prevFormData, // shallow copy
+          imgUrl: imageUrlForDB // add or update the imgUrl property
         }));
 
       } catch (error) {
         console.error("Error uploading the file:", error);
         return;
-
-      } finally {
-        // reset local selected file in useState
-        // setSelectedLocalFile(null);
-        // reset selected image input value
-        // resetLocalFileSelectValue();
       }
     }
 
@@ -482,7 +460,7 @@ interface FormDataProps {
       const response = await updatePostById({
         variables: {
           updatePostId: currentData.id, // ここで指定したIDのデータを更新する
-          postUpdate: {
+          postUpdate: { // typeDefs.jsで定義
             title: currentData.title,
             content: currentData.content,
             imgUrl: imageUrlForDB || currentData.imgUrl, // Use selectedImage if it's available, else use currentData.imgUrl
@@ -492,16 +470,14 @@ interface FormDataProps {
       });
 
       if (response.data) {
-        // Handle success. Maybe redirect user or show success message.
+        window.alert("Post updated successfully");
         console.log("Post updated successfully", response.data);
-        // Props で受け取った refetch を実行
-        refetch();
-        await refetch();
+        await refetch();// Props で受け取った refetch を実行
         console.log("Refetched!");
       }
 
     } catch (error) {
-      // Handle error. Maybe show error message to user.
+      window.alert("Error updating post");
       console.error("Error updating post - アップデートエラー:", error);
     }
   };
@@ -600,7 +576,7 @@ interface FormDataProps {
                   <img src={currentData.imgUrl} alt="no Image" />
                 )}
                 {selectedImage && (
-                  <img src={displayImg} alt="chosen Image" />
+                  <img src={selectedImage} alt="chosen Image" />
                 )}
               </div>
 
@@ -613,7 +589,6 @@ interface FormDataProps {
                   type="file"
                   size="lg"
                   accept="image/*" // 画像ファイルのみを選択できるようにする
-                  // onChange={handleImageChange}
                   onChange={handleImageUpload}
                   name="img"
                 />
