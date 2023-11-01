@@ -31,10 +31,14 @@ import sendEmail from './cron/email.js';
 import { PrismaClient } from '../prisma/generated/client/index.js'
 const prisma = new PrismaClient()
 
+// CLOUDINARY
+import cloudinaryConfig from './cloudinary.js';
+import { CloudinaryStorage } from 'multer-storage-cloudinary';
+
 // Initialize express
 const app = express();
 
-app.use(cors( {
+app.use(cors({
   origin: true,     //! allow any origin
   credentials: true //! allow cookies
 }));
@@ -42,19 +46,19 @@ app.use(cors( {
 app.use(cookieParser());
 
 //* ==============================================================
-//* UPLOAD IMAGE multer & express
+//* UPLOAD IMAGE Both uploads folder & Cloudinary 
 //* ==============================================================
 import multer from "multer";
 
 // which storage/server  we want to use  (cb = callback)
-const storage = multer.diskStorage({
+const LocalStorage = multer.diskStorage({
   destination(req, file, cb) {
     // null is for error | 画像は root の uploads からサーバーに保存される
     cb(null, "uploads/");
   },
   //! Create a file name
-  // fieldname = image なので image-163123123.jpg というファイル名になる
   filename(req, file, cb) {
+    // fieldname = image なので image-163123123.jpg というファイル名になる
     cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
   },
 });
@@ -82,21 +86,30 @@ function fileFilter(req, file, cb) {
   }
 }
 // multerの設定を適用して、アップロード機能を初期化
-const upload = multer({ storage, fileFilter });
+const upload = multer({ storage: LocalStorage, fileFilter });
 
 // 'img' という名前の単一の画像をアップロードするためのミドルウェアを設定
 const uploadSingleImage = upload.single('img');
 
 // 画像をアップロードするためのエンドポイントを追加
-app.post('/uploads', uploadSingleImage, (req, res) => {
-  // res.json({ file: req.file }); // Return file path after upload
-  res.json({ url: `/uploads/${req.file.filename}` });
+app.post('/uploads', uploadSingleImage, async (req, res) => {
+  try {
+    // Cloudinaryの設定
+    const result = await cloudinaryConfig.uploader.upload(req.file.path, {
+      folder: 'YOUR_FOLDER_NAME',
+      allowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
+      transformation: [{ width: 500, height: 500, crop: 'limit' }]
+    });
+    res.json({
+      url: `/uploads/${req.file.filename}`,// 画像のURLを返す(local)
+      cloudinaryUrl: result.secure_url // 画像のURLを返す(cloudinary)
+    });
+  } catch (error) {
+    res.status(500).send({ error: 'Failed to upload image.' });
+  }
 });
 
 
-//! ==============================================================
-//! LOGOUT ENDPOINT
-//! ==============================================================
 //* uploads Folder 公開ディレクトリを指定
 //* Create a uploads folder in the root directory
 const __dirname = path.resolve();
@@ -112,7 +125,7 @@ const uploadsDirectory = path.join(__dirname, '/uploads');
 app.use('/uploads', express.static(uploadsDirectory));
 //* ==============================================================
 
-app.use(cors( {
+app.use(cors({
   origin: true,  // or true to allow any origin
   credentials: true
 }));
@@ -178,7 +191,7 @@ app.use(
     // As i used HttpOnly, req, res are needed 
     context: async ({ req, res }) => {
       //! Token from HttpOnly Cookie 
-      const token = req.cookies.jwt_httpOnly; 
+      const token = req.cookies.jwt_httpOnly;
       // 最初はトークンがないので、userId は null に設定
       let userId = null;
 
@@ -192,7 +205,7 @@ app.use(
           console.error("トークン Verification Error 😢", error);
         }
       }
-        return { userId, req, res }; // resolvers で context として使用可能
+      return { userId, req, res }; // resolvers で context として使用可能
     },
     options: {
       //Maximum upload file size set at 10 MB
@@ -221,6 +234,3 @@ async function connectDB() {
   }
 }
 connectDB();
-
-
-console.log(__dirname);

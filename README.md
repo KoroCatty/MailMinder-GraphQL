@@ -220,6 +220,9 @@ we need to add "type": "module" in package.json
       ### cookie-parser
          npm install cookie-parser
 
+      ### cloudinary & multer-storage-cloudinary (少し古い)
+         npm install cloudinary multer-storage-cloudinary
+
       
       
          
