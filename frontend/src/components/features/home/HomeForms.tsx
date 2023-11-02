@@ -258,6 +258,8 @@ const HomeForms = ({ refetch }: RefetchProps) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value, // name attribute
+      // imgCloudinaryUrl : formData.imgCloudinaryUrl,
+
     });
   };
   // console.log(formData);
@@ -276,7 +278,8 @@ const HomeForms = ({ refetch }: RefetchProps) => {
     // Define a variable for asyncronous data to save DB
     let imageUrlForDB: string | undefined = formData.imgUrl;
 
-    let cloudinaryUrl: string | undefined = formData.imgCloudinaryUrl;
+    // 初期化
+    let cloudinaryUrl;
 
     //! 1. Upload the image to the server using AXIOS
     if (selectedLocalFile) {
@@ -289,20 +292,21 @@ const HomeForms = ({ refetch }: RefetchProps) => {
         });
         // console.log(response.data.url); // /uploads/img-1697934272148.jpg
 
-        //  CLOUDINARY URL  (Backend から返したもの)
-        console.log(response.data.cloudinaryUrl);
-        // const cloudinaryUrl = response.data.cloudinaryUrl;
 
+        //  CLOUDINARY URL  (Backend から返したもの)
+        await console.log(response.data.cloudinaryUrl);
+
+        // 初期化した変数に値を代入
+        cloudinaryUrl = await response.data.cloudinaryUrl;
+
+        // 値がない場合はエラー
         if (!cloudinaryUrl) {
-          console.error("Error: Cloudinary URL is missing ありません.😿");
+          await console.error("Error: Cloudinary URL is missing ありません.😿");
           return;
         }
 
         // make tis absolute path and get rid of double 'uploads/'
         imageUrlForDB = `${SERVER_URL}${response.data.url.replace('uploads/', '')}`;
-
-
-        // if (!imageUrlForDB || cloudinaryUrl) return;
 
         // get rid of double '//' in a server (Local is fine)
         imageUrlForDB = imageUrlForDB.replace('uploads//', 'uploads/');
@@ -310,7 +314,6 @@ const HomeForms = ({ refetch }: RefetchProps) => {
           ...prevFormData,
           // これらを追加
           imgUrl: imageUrlForDB,
-          imgCloudinaryUrl : cloudinaryUrl,
         }));
 
       } catch (error) {
@@ -325,6 +328,7 @@ const HomeForms = ({ refetch }: RefetchProps) => {
       }
     }
 
+
     //! 1. Save post to the database using Apollo Client's mutation.
     try {
       // if (!imageUrlForDB) return;
@@ -334,7 +338,7 @@ const HomeForms = ({ refetch }: RefetchProps) => {
             title: formData.title,
             content: formData.content,
             imgUrl: imageUrlForDB,
-            imgCloudinaryUrl : formData.imgCloudinaryUrl
+            imgCloudinaryUrl: cloudinaryUrl,
           },
         },
       });
