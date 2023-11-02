@@ -15,6 +15,7 @@ type PostPropType = {
   title: string;
   content: string;
   imgUrl: string;
+  imgCloudinaryUrl: string;
 };
 
 // Emotion CSS (Responsive Design)
