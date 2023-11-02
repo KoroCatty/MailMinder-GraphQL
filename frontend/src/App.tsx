@@ -32,6 +32,7 @@ import 'react-bootstrap/dist/react-bootstrap.min.js'
 import { useQuery } from '@apollo/client';
 import { IS_LOGGED_IN_QUERY } from "./graphql/queries";
 
+
 function App() {
   // Login Check 
   const { data, loading, error } = useQuery(IS_LOGGED_IN_QUERY, {

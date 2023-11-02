@@ -211,7 +211,7 @@ interface FormDataProps {
   title?: string;
   content?: string;
   imgUrl?: string;
-  // imgFile?: string;
+  imgCloudinaryUrl?: string;
   [key: string]: string | undefined; // This makes it indexable for dynamic keys
 }
 
@@ -276,6 +276,8 @@ const HomeForms = ({ refetch }: RefetchProps) => {
     // Define a variable for asyncronous data to save DB
     let imageUrlForDB: string | undefined = formData.imgUrl;
 
+    let cloudinaryUrl: string | undefined = formData.imgCloudinaryUrl;
+
     //! 1. Upload the image to the server using AXIOS
     if (selectedLocalFile) {
       const formData = new FormData();
@@ -287,13 +289,28 @@ const HomeForms = ({ refetch }: RefetchProps) => {
         });
         // console.log(response.data.url); // /uploads/img-1697934272148.jpg
 
+        //  CLOUDINARY URL  (Backend から返したもの)
+        console.log(response.data.cloudinaryUrl);
+        // const cloudinaryUrl = response.data.cloudinaryUrl;
+
+        if (!cloudinaryUrl) {
+          console.error("Error: Cloudinary URL is missing ありません.😿");
+          return;
+        }
+
         // make tis absolute path and get rid of double 'uploads/'
         imageUrlForDB = `${SERVER_URL}${response.data.url.replace('uploads/', '')}`;
+
+
+        // if (!imageUrlForDB || cloudinaryUrl) return;
+
         // get rid of double '//' in a server (Local is fine)
         imageUrlForDB = imageUrlForDB.replace('uploads//', 'uploads/');
         setFormData((prevFormData) => ({
           ...prevFormData,
-          imgUrl: imageUrlForDB
+          // これらを追加
+          imgUrl: imageUrlForDB,
+          imgCloudinaryUrl : cloudinaryUrl,
         }));
 
       } catch (error) {
@@ -317,6 +334,7 @@ const HomeForms = ({ refetch }: RefetchProps) => {
             title: formData.title,
             content: formData.content,
             imgUrl: imageUrlForDB,
+            imgCloudinaryUrl : formData.imgCloudinaryUrl
           },
         },
       });
@@ -324,7 +342,6 @@ const HomeForms = ({ refetch }: RefetchProps) => {
       refetch(); // Props で受け取った refetch を実行
       await refetch();
       console.log("Refetched!");
-
     } catch (error) {
       console.error("Error saving post to database🫡:", error);
       return;

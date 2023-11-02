@@ -78,3 +78,12 @@ export const DELETE_POST_IMAGE_FILE = gql`
     }
   }
 `;
+
+export const UPLOAD_IMAGE_CLOUDINARY = gql`
+  mutation UploadImageToCloudinary($imgUrlCloudinary: String!) {
+    uploadImgCloudinary(imgUrlCloudinary: $imgUrlCloudinary) {
+      id
+      imgCloudinaryUrl
+    }
+  }
+`;

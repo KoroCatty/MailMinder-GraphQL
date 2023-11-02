@@ -38,8 +38,8 @@ const resolvers = {
     //* -----------------------------------------------
     // context は server.js で定義済みで、ログインしていると、そのユーザーの情報が入っている
     users: async (_, args, context) => {
-      console.log(context.userId + "👤 user ID")
-      console.log(context)
+      // console.log(context.userId + "👤 user ID")
+      // console.log(context)
 
       // forbidden error means you are not allowed to do this
       if (!context.userId) throw Error("You must be logged in 😱")
@@ -104,12 +104,12 @@ const resolvers = {
     //* CREATE USER
     //* ===============================================
     signupUser: async (_, args) => {
-      await console.log(args.userNew);// typeDefsで定義済み
+      // await console.log(args.userNew);// typeDefsで定義済み
 
       // Joi Validation
       const schema = Joi.object({
-        firstName: Joi.string().required().min(5).max(30).alphanum(),// alphanum() は英数字のみ
-        lastName: Joi.string().required().min(5).max(30),
+        firstName: Joi.string().required().min(3).max(30).alphanum(),// alphanum() は英数字のみ
+        lastName: Joi.string().required().min(1).max(30),
         email: Joi.string().email().required(),
         password: Joi.string()
           .required()
@@ -212,8 +212,9 @@ const resolvers = {
     //* CREATE A POST
     //* ===============================================
     createPost: async (_, args, context) => {
-      await console.log(args) // typeDefsで定義済み
-      await console.log(args.postNew.imgUrl + " -  Image URL 💻")
+      // await console.log(args) // typeDefsで定義済み
+      // await console.log(args.postNew.imgUrl + " -  Image URL 💻")
+       console.log(args.postNew.imgCloudinaryUrl + " -  Cloudinary URL 💻")
 
       // Joi Validation
       const schema = Joi.object({
@@ -226,6 +227,7 @@ const resolvers = {
             'string.max': '3000文字以下で入力してください。'
           }),
         imgUrl: Joi.string(),
+        imgCloudinaryUrl: Joi.string(),
       })
       // Joi Error Handling
       const { error } = schema.validate(args.postNew);
@@ -245,7 +247,7 @@ const resolvers = {
           title: args.postNew.title,
           content: args.postNew.content,
           imgUrl: args.postNew.imgUrl ? args.postNew.imgUrl : "/imgs/noImg.jpeg", // use the uploaded file URL or default
-          // imgUrl: args.postNew.imgUrl ? args.postNew.imgUrl : `${import.meta.url}/uploads/noImg.jpeg`,
+          imgCloudinaryUrl: args.postNew.imgCloudinaryUrl, // CLOUDINARY URL
           userId: context.userId
         }
       })
@@ -256,7 +258,7 @@ const resolvers = {
     //* DELETE A POST
     //* ===============================================
     deletePost: async (_, args, context) => {
-      console.log(args.id + " - PostID Deleted📨")
+     await console.log(`👤 user ID: ${args.id} Deleted📨`)
 
       // ログインしてなかったらエラー(contextで先に確認できる)
       if (!context.userId) {
@@ -310,11 +312,12 @@ const resolvers = {
     //* UPDATE A POST
     //* ===============================================
     updatePost: async (_, args, context) => {
-      await console.log(args.id + " - PostID 📨")
-      await console.log(args.postUpdate.title + " - Title -")
-      await console.log(args.postUpdate.content + "- Content -")
-      await console.log(args.postUpdate.imgUrl + "- imgUrl -")
-      await console.log(context.userId + " 👤 user ID")
+      // await console.log(args.id + " - PostID 📨")
+      // await console.log(args.postUpdate.title + " - Title -")
+      // await console.log(args.postUpdate.content + "- Content -")
+      // await console.log(args.postUpdate.imgUrl + "- imgUrl -")
+      await console.log(args.postUpdate.imgCloudinaryUrl + "- imgCloudinaryUrl -")
+      // await console.log(context.userId + " 👤 user ID")
 
       // Joi Validation
       const schema = Joi.object({
@@ -327,9 +330,9 @@ const resolvers = {
             'string.max': '3000文字以下で入力してください。'
           }),
         imgUrl: Joi.string(),
+        imgCloudinaryUrl: Joi.string(),
         createdAt: Joi.date(),
         updatedAt: Joi.date(),
-        // imgFile: Joi.string(),
       })
       // Joi Error Handling
       const { error } = schema.validate(args.postUpdate);
@@ -351,6 +354,7 @@ const resolvers = {
           title: args.postUpdate.title,
           content: args.postUpdate.content,
           imgUrl: args.postUpdate.imgUrl,
+          imgCloudinaryUrl: args.postUpdate.imgCloudinaryUrl, // CLOUDINARY URL
           updatedAt: new Date().toISOString(), // 更新日時を追加
         }
       });
@@ -379,7 +383,7 @@ const resolvers = {
         // Delete the actual Image File if the post exists
         if (post) {
           const url = post.imgUrl;
-          console.log(url + " - Post Image URL💀👻") // http://localhost:5001/uploads/img-1698804958184.jpg 古いURL
+          console.log(url + " - Post Image URL💀") // http://localhost:5001/uploads/img-1698804958184.jpg 古いURL
 
           // Get the current directory path (ESM module)
           const __dirname = fileURLToPath(new URL('.', import.meta.url));
@@ -396,10 +400,32 @@ const resolvers = {
           // Delete the file
           deleteFile(path);
         }
-
       }
       return post;
     },
+
+    //* ===============================================
+    //* UPLOAD IMAGE CLOUDINARY
+    //* ===============================================
+    // uploadImgCloudinary: async (_, { imgCloudinaryUrl }, context) => {
+    //      // ログインしてなかったらエラー(contextで先に確認)
+    //      if (!context.userId) {
+    //       throw new Error("You must be logged in (Contextにトークンがありません)😱");
+    //     }
+
+    //     console.log(imgCloudinaryUrl + "👁️");
+  
+    //   // 画像のURLをDBに保存
+    //   const newPost = await prisma.post.create({
+    //     data: {
+    //       imgCloudinaryUrl: imgCloudinaryUrl,
+    //       // imgCloudinary_id: imgCloudinary_id,
+    //       userId: context.userId  // 認証されたユーザーのID
+    //     }
+    //   });
+
+    //   return newPost;
+    // },
 
   }
 }

@@ -38,6 +38,28 @@ interface LimitPostsPropsType {
 }
 
 
+// const response = await fetch(`http://localhost:5001/graphql`, {
+//   method: 'POST',
+//   headers: {
+//     'Content-Type': 'application/json',
+//   },
+//   body: JSON.stringify({
+//     query: `
+//       mutation ($imgCloudinaryUrl: String!) {
+//         uploadImage(imgCloudinaryUrl: $imgCloudinaryUrl) {
+//           id
+//           imgCloudinaryUrl
+//         }
+//       }
+//     `,
+//     // variables: {
+//     //   imgCloudinaryUrl: receivedCloudinaryUrlFromUploadEndpoint
+//     // }
+//   })
+// });
+// console.log(response)
+
+
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
 import { min, max } from '../../../utils/mediaQueries'

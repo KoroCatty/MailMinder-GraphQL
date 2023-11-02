@@ -33,6 +33,7 @@ model Post {
   title     String
   content   String
   imgUrl    String   @db.VarChar(15000) // 15000文字まで可能
+  imgCloudinaryUrl String? @db.Text //CLOUDINARY
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

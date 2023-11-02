@@ -281,6 +281,7 @@ const EditPostPage = () => {
     title: "",
     content: "",
     imgUrl: "",
+    imgCloudinaryUrl: "",
     src: "",
     createdAt: "",
     updatedAt: "",
@@ -292,6 +293,7 @@ const EditPostPage = () => {
     title: string;
     content: string;
     imgUrl: string;
+    imgCloudinaryUrl: string;
     createAt: string;
     updateAt: string;
   };
@@ -301,6 +303,7 @@ const EditPostPage = () => {
     title?: string;
     content?: string;
     imgUrl?: string;
+    imgCloudinaryUrl?: string;
     // imgFile?: string;
     [key: string]: string | undefined; // This makes it indexable for dynamic keys
   }
@@ -449,7 +452,10 @@ const EditPostPage = () => {
         const response = await axios.post(SERVER_URL, formData, {
           headers: { 'Content-Type': 'multipart/form-data' },
         });
-        // console.log(response.data.url); // /uploads/img-1697934272148.jpg
+        console.log(response.data.url); // /uploads/img-1697934272148.jpg
+
+        // CLOUDINARY Image URL (backendから返したもの)
+        console.log(response.data.cloudinaryUrl)
 
         // make this absolute path and get rid of double 'uploads/'
         imageUrlForDB = `${SERVER_URL}${response.data.url.replace('uploads/', '')}`;
@@ -457,7 +463,8 @@ const EditPostPage = () => {
         imageUrlForDB = imageUrlForDB.replace('uploads//', 'uploads/');
         setFormData((prevFormData) => ({
           ...prevFormData, // shallow copy
-          imgUrl: imageUrlForDB // add or update the imgUrl property
+          imgUrl: imageUrlForDB, // add or update the imgUrl property
+          imgCloudinaryUrl: response.data.cloudinaryUrl,
         }));
 
       } catch (error) {
@@ -470,10 +477,10 @@ const EditPostPage = () => {
     deletePostImage({
       variables: {
         id: Number(idUrl),
-        imgUrl: currentData.imgUrl
+        imgUrl: currentData.imgUrl,
+        imgCloudinaryUrl: currentData.imgCloudinaryUrl,
       },
     });
-
 
     //! 2. Update the post in the database
     try {
@@ -484,6 +491,7 @@ const EditPostPage = () => {
             title: currentData.title,
             content: currentData.content,
             imgUrl: imageUrlForDB || currentData.imgUrl, // Use selectedImage if it's available, else use currentData.imgUrl
+            imgCloudinaryUrl: formData.imgCloudinaryUrl,
             updatedAt: new Date().toISOString(),
           },
         },

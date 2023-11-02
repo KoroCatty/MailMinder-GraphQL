@@ -100,15 +100,83 @@ app.post('/uploads', uploadSingleImage, async (req, res) => {
       transformation: [{ width: 500, height: 500, crop: 'limit' }]
     });
 
-    // 画像のURLを取得
-    console.log(result.secure_url);
+    // 画像のURLを取得 (From Cloudinary)
+    // console.log(result.secure_url);
 
-    res.json({
+        // reqにresult.secure_urlを追加
+        // Expressのリクエストオブジェクト req にこの情報を追加
+        // これを context に渡し、resolver で使用できるようにする
+        // req.imgCloudinaryUrl = result.secure_url;
+
+        // // save to session 
+        // req.session.imgCloudinaryUrl = result.secure_url; 
+        // console.log(req.session.imgCloudinaryUrl + "🚀😾")
+        // res.send({ success: true });
+
+        // console.log(req.session)
+
+
+
+    // 画像のURLをデータベースに保存
+    // const savedImage = await prisma.post.create({
+    //   data: {
+    //     // title: "デフォルトのタイトル",    // 仮のタイトル
+    //     // content: "デフォルトのコンテンツ", // 仮のコンテンツ
+    //     // imgUrl: `/uploads/${req.file.filename}`, // ローカルの画像URL
+    //     // userId: 1, // 仮のユーザーID。実際のユーザーIDを設定する必要があります
+    //     imgCloudinaryUrl: result.secure_url, // Cloudinaryの画像URL
+    //   }
+    // });
+    // console.log(savedImage.cyan.underline);
+
+
+    //! DB SAVE
+    // GraphQL エンドポイントを呼び出して `result.secure_url` をDBに保存
+    // const response = await fetch(`http://localhost:5001/graphql`, {
+    //   method: 'POST',
+    //   headers: {
+    //     'Content-Type': 'application/json',
+    //     // 必要に応じて他のヘッダーや認証情報を追加
+    //   },
+    //   body: JSON.stringify({
+    //     query: `
+    //       mutation ($imgCloudinaryUrl: String!) {
+    //         uploadImage(imgCloudinaryUrl: $imgUrlCloudinary) {
+    //           id
+    //           imgCloudinaryUrl
+    //         }
+    //       }
+    //     `,
+    //     variables: {
+    //       imgUrlCloudinary: result.secure_url
+    //     }
+    //   })
+    // });
+
+    // const data = await response.json();
+
+    // if (data.errors) {
+    //   throw new Error(data.errors[0].message);
+    // }
+
+      // クライアントにスクリプトを送信してローカルストレージにデータを保存
+    // res.send(`
+    //   <script>
+    //     localStorage.setItem('cloudinaryImageUrl', '${result.secure_url}');
+    //     window.location.href = '/'; // オプション: メインページまたは他のページにリダイレクト
+    //   </script>
+    // `);
+
+
+// Response to FrontEnd
+    res.json({ 
       url: `/uploads/${req.file.filename}`,// 画像のURLを返す(local)
       cloudinaryUrl: result.secure_url // 画像のURLを返す(cloudinary)
     });
+
   } catch (error) {
-    res.status(500).send({ error: 'Failed to upload image.' });
+    res.status(500).send({ error: error.message });
+    // res.status(500).send({ error: 'Failed to upload image.' });
   }
 });
 
@@ -153,18 +221,17 @@ if (process.env.NODE_ENV === 'production') {
 }
 
 //! ==============================================================
-//! Middleware (swap StandAloneServer for Express deployment)
+//! Apollo Server
 //! ==============================================================
 // Our httpServer handles incoming requests to our Express app.
 // tell Apollo Server to "drain" this httpServer,
 const httpServer = http.createServer(app);
-
 const PORT = process.env.PORT || 5001;
 
 const server = new ApolloServer({
   typeDefs: typeDefs,
   resolvers: resolvers,
-  context: ({ req, res }) => ({ req, res }),
+  // context: ({ req, res }) => ({ req, res }),
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })], // Added
   cors: {
     origin: true,  // or true to allow any origin
@@ -174,18 +241,6 @@ const server = new ApolloServer({
 // Ensure we wait for our server to start
 await server.start();
 
-// console.log(result.secure_url) // https://res.cloudinary.com/duo03b1kn/image/upload/v1698828261/h4zk9ynangre3iupys5o.png
-
-// app.get("/uploads", async (req, res) => {
-//   try {
-//     let user = await find();
-//     res.json(user);
-//   } catch (error) {
-//     console.log(error);
-//   }
-// });
-
-
 app.use(
   '/',
   cors(
@@ -194,6 +249,7 @@ app.use(
       credentials: true,
     }
   ),
+
 
   // 50mb is the limit that `startStandaloneServer` 
   bodyParser.json({ limit: '50mb' }),
@@ -206,6 +262,7 @@ app.use(
     context: async ({ req, res }) => {
       //! Token from HttpOnly Cookie 
       const token = req.cookies.jwt_httpOnly;
+
       // 最初はトークンがないので、userId は null に設定
       let userId = null;
 

@@ -37,6 +37,7 @@ const typeDefs = gql`
     createdAt: Date!
     updatedAt: Date!
     user : User! # PostモデルにはUserモデルが含まれている
+    imgCloudinaryUrl: String!
   }
 
   #//! CREATE A USER
@@ -63,6 +64,7 @@ const typeDefs = gql`
     # imgUrl: File
     imgUrl: Upload
     # imgFile: Upload
+    imgCloudinaryUrl: String
   }
 
   # //! UPDATE A POST INPUT
@@ -72,6 +74,7 @@ const typeDefs = gql`
     # expecting a file upload. If you're sending a URL or base64 string instead of a file, this could be causing the issue.
     # imgUrl: Upload
     imgUrl: String
+    imgCloudinaryUrl: String
     updatedAt: Date
   }
 
@@ -107,6 +110,8 @@ const typeDefs = gql`
 
     # LOGOUT USER
     logout: Boolean! # return a boolean
+
+    # uploadImgCloudinary(imgUrlCloudinary: String): Post
   }
 `;
 
