@@ -23,15 +23,12 @@ import { GET_POSTS_BY_ID } from "../graphql/queries";
 import { UPDATE_POST_BY_ID } from "../graphql/mutations";
 import { DELETE_POST_IMAGE_FILE } from "../graphql/mutations";
 
-
 // bootstrap
 import { Form } from "react-bootstrap";
 
 // Emotion CSS
 import { css } from "@emotion/react";
 import { min, max } from "../utils/mediaQueries";
-
-
 
 const EditPostCss = css`
   // 1px〜479px
@@ -267,11 +264,6 @@ const EditPostPage = () => {
   const [updatePostById] = useMutation(UPDATE_POST_BY_ID);
 
   //! DELETE POST IMAGE FILE 
-  // const [deletePostImage] = useMutation(DELETE_POST_IMAGE_FILE, {
-  //   variables: {
-  //     id: Number(idUrl),
-  //   },
-  // });
   const [deletePostImage] = useMutation(DELETE_POST_IMAGE_FILE);
 
 
@@ -315,9 +307,6 @@ const EditPostPage = () => {
 
   // local selected image
   const [selectedLocalFile, setSelectedLocalFile] = useState<File | null>(null);
-
-  // which image to preview
-  // const [displayImg, setDisplayImg] = useState<string>("/imgs/noImg.jpeg");
 
   // Reset the local selected image input value
   const resetLocalFileSelectValue = () => {
@@ -439,9 +428,10 @@ const EditPostPage = () => {
 
     // Define a variable for asyncronous data to save DB
     let imageUrlForDB: string | undefined = formData.imgUrl;
-    // console.log(formData)
     // console.log(imageUrlForDB)
 
+// 初期化
+let cloudinaryUrl;
 
     //! 1. Upload the image to the server using AXIOS
     if (selectedLocalFile) {
@@ -457,14 +447,18 @@ const EditPostPage = () => {
         // CLOUDINARY Image URL (backendから返したもの)
         console.log(response.data.cloudinaryUrl)
 
+        // 初期化してた変数に値を入れる
+        cloudinaryUrl = response.data.cloudinaryUrl;
+
         // make this absolute path and get rid of double 'uploads/'
         imageUrlForDB = `${SERVER_URL}${response.data.url.replace('uploads/', '')}`;
+
         // get rid of double '//' in a server (Local is fine)
         imageUrlForDB = imageUrlForDB.replace('uploads//', 'uploads/');
+
         setFormData((prevFormData) => ({
           ...prevFormData, // shallow copy
           imgUrl: imageUrlForDB, // add or update the imgUrl property
-          imgCloudinaryUrl: response.data.cloudinaryUrl,
         }));
 
       } catch (error) {
@@ -491,7 +485,7 @@ const EditPostPage = () => {
             title: currentData.title,
             content: currentData.content,
             imgUrl: imageUrlForDB || currentData.imgUrl, // Use selectedImage if it's available, else use currentData.imgUrl
-            imgCloudinaryUrl: formData.imgCloudinaryUrl,
+            imgCloudinaryUrl: cloudinaryUrl,
             updatedAt: new Date().toISOString(),
           },
         },
