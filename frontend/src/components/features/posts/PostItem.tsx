@@ -13,6 +13,7 @@ export type PostPropType = {
   title: string;
   content: string;
   imgUrl: string;
+  imgCloudinaryUrl: string;
 };
 
 type PostPropTypeComponent = {
@@ -62,7 +63,15 @@ const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
   return (
     <Card>
       <Link to={`/postdetails/${postProp.id}`}>
-        <Card.Img variant="top" src={postProp.imgUrl} style={{ width: "300px", height: "300px", margin: "0 auto", display: "block" }} />
+        <Card.Img variant="top" src={postProp.imgUrl}
+          onError={(e) => {
+            const imgElement = e.target as HTMLImageElement;
+            if (imgElement.src !== postProp.imgCloudinaryUrl) {
+              imgElement.src = postProp.imgCloudinaryUrl;
+            }
+          }} style={{ width: "300px", height: "300px", margin: "0 auto", display: "block" }} />
+
+
         <Card.Body>
           <Card.Title>{postProp.title}</Card.Title>
           <Card.Text>
@@ -73,8 +82,8 @@ const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
       {error && <p>Error! {error.message}</p>}
 
       {/* EDIT BUTTON */}
-      <Link to={`/editpost/${postProp.id}`} onClick={()=>{scrollTop()}}>
-        <button className="btn btn-primary mb-4" style={{width:"100%"}} >Edit</button>
+      <Link to={`/editpost/${postProp.id}`} onClick={() => { scrollTop() }}>
+        <button className="btn btn-primary mb-4" style={{ width: "100%" }} >Edit</button>
       </Link>
 
       {/*//! DELETE BUTTON */}
@@ -84,8 +93,7 @@ const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
           e.preventDefault();
           window.confirm('Are you sure you want to delete this post?') &&
             deletePostById();
-
-            // refetch(); // From parent component
+          // refetch(); // From parent component
         }}
       >
         {loading ? 'Deleting...' : 'Delete'}

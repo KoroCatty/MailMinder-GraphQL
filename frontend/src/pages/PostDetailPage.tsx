@@ -217,6 +217,7 @@ const PostsDetailPage = () => {
     imgUrl: string;
     createdAt: string;
     updatedAt: string;
+    imgCloudinaryUrl: string;
   };
 
   // type PostsQueryCacheResult = {
@@ -285,6 +286,12 @@ const PostsDetailPage = () => {
               <h1>{filteredItem.title}</h1>
               <img
                 src={filteredItem.imgUrl}
+                onError={(e) => {
+                  const imgElement = e.target as HTMLImageElement;
+                  if (imgElement.src !== filteredItem.imgCloudinaryUrl) {
+                    imgElement.src = filteredItem.imgCloudinaryUrl;
+                  }
+                }}
                 alt={`post image ${id}`}
                 className="mx-auto d-block"
               />

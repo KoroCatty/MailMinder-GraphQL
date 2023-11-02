@@ -32,6 +32,7 @@ export const CREATE_POST = gql`
       imgUrl
       createdAt
       updatedAt
+      imgCloudinaryUrl
     }
   }
 `;
@@ -58,6 +59,7 @@ export const UPDATE_POST_BY_ID = gql`
       imgUrl
       createdAt
       updatedAt
+      imgCloudinaryUrl
     }
   }
 `;
@@ -75,14 +77,6 @@ export const DELETE_POST_IMAGE_FILE = gql`
     deletePostImage(id: $id) {
       id
       imgUrl
-    }
-  }
-`;
-
-export const UPLOAD_IMAGE_CLOUDINARY = gql`
-  mutation UploadImageToCloudinary($imgUrlCloudinary: String!) {
-    uploadImgCloudinary(imgUrlCloudinary: $imgUrlCloudinary) {
-      id
       imgCloudinaryUrl
     }
   }

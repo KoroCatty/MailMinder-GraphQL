@@ -16,6 +16,7 @@ type PostType = {
   imgUrl: string,
   createdAt: string,
   updatedAt: string,
+  imgCloudinaryUrl: string,
   // user: {
   //   id: number,
   //   name: string,
@@ -36,29 +37,6 @@ interface LimitPostsPropsType {
   // eslint-disable-next-line @typescript-eslint/no-explicit-any
   refetch: () => void;
 }
-
-
-// const response = await fetch(`http://localhost:5001/graphql`, {
-//   method: 'POST',
-//   headers: {
-//     'Content-Type': 'application/json',
-//   },
-//   body: JSON.stringify({
-//     query: `
-//       mutation ($imgCloudinaryUrl: String!) {
-//         uploadImage(imgCloudinaryUrl: $imgCloudinaryUrl) {
-//           id
-//           imgCloudinaryUrl
-//         }
-//       }
-//     `,
-//     // variables: {
-//     //   imgCloudinaryUrl: receivedCloudinaryUrlFromUploadEndpoint
-//     // }
-//   })
-// });
-// console.log(response)
-
 
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
@@ -84,18 +62,8 @@ const recentPostsCss = css`
 // Receive Props
 const RecentPosts = (limitPostsProps: LimitPostsPropsType) => {
 
+  // Destructure Props
   const { data, loading, error, refetch } = limitPostsProps;
-  
-    // Cloudinary Images access
-    // useEffect(() => {
-    //   const fetchImages = async () => {
-    //   const res = await fetch('http://localhost:5001/uploads');
-    //   const data = await res.json();
-    //   console.log(data)
-    //   };
-    //   fetchImages();
-    // }, []);
-    
 
   // refetch posts 
   useEffect(() => {
@@ -128,7 +96,23 @@ const RecentPosts = (limitPostsProps: LimitPostsPropsType) => {
               <div className="col-md-3 col-6 col-sm-6 mb-4 " key={item.id}>
 
                 <Link to={`/postdetails/${item.id}`} className="card" style={{ height: "252px" }}>
-                  <img src={item.imgUrl} className="card-img-top" style={{ width: "100%", height: "160px", objectFit: "cover" }} alt={item.title} />
+                  {/* <img src={item.imgCloudinaryUrl || item.imgUrl} className="card-img-top" style={{ width: "100%", height: "160px", objectFit: "cover" }} alt={item.title} /> */}
+
+                  {/* uploads から画像ファイルが削除されても、CLOUDINARY から取得 */}
+                  {/* onError で画像の読み込みに失敗したときの処理 */}
+                  <img
+                    src={item.imgUrl}
+                    onError={(e) => {
+                      const imgElement = e.target as HTMLImageElement;
+                      if (imgElement.src !== item.imgCloudinaryUrl) {
+                          imgElement.src = item.imgCloudinaryUrl;
+                      }
+                    }}
+                    className="card-img-top"
+                    style={{ width: "100%", height: "160px", objectFit: "cover" }}
+                    alt={item.title}
+                  />
+
 
                   <div className="card-body">
                     <h5 className="card-title">{item.title}</h5>

@@ -37,7 +37,7 @@ const typeDefs = gql`
     createdAt: Date!
     updatedAt: Date!
     user : User! # PostモデルにはUserモデルが含まれている
-    imgCloudinaryUrl: String!
+    imgCloudinaryUrl: String
   }
 
   #//! CREATE A USER
@@ -64,7 +64,7 @@ const typeDefs = gql`
     # imgUrl: File
     imgUrl: Upload
     # imgFile: Upload
-    imgCloudinaryUrl: String!
+    imgCloudinaryUrl: String
   }
 
   # //! UPDATE A POST INPUT

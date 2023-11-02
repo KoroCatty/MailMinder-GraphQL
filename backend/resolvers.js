@@ -76,7 +76,6 @@ const resolvers = {
       return posts;
     },
 
-
     //* -----------------------------------------------
     //* GET ALL POSTS BY USER ID LIMIT 4
     //* -----------------------------------------------
@@ -381,9 +380,15 @@ const resolvers = {
       if (post && post.imgUrl) {
         // 画像のURLから画像のパスを取得して削除するロジック...
         // Delete the actual Image File if the post exists
+
+        // 実際の画像ファイルが存在しないpostがある場合処理をここで停止 (エラー対策)
+        if (post.imgUrl.includes('noImg.jpeg')) {
+          return post;
+        }
+
         if (post) {
           const url = post.imgUrl;
-          console.log(url + " - Post Image URL💀") // http://localhost:5001/uploads/img-1698804958184.jpg 古いURL
+          console.log(`Image URL: ${url} Deleted 📨`)
 
           // Get the current directory path (ESM module)
           const __dirname = fileURLToPath(new URL('.', import.meta.url));
@@ -397,7 +402,7 @@ const resolvers = {
           const path = new URL(url).pathname.replace(/^\/+/, currentURL);
           // console.log(path.cyan.bold); // /Full-Stack/MailMinder-GraphQL/backend/../uploads/img-1698041204305.jpg
 
-          // Delete the file
+          // Execute Function
           deleteFile(path);
         }
       }
