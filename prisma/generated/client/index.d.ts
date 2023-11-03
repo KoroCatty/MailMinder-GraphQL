@@ -1985,6 +1985,7 @@ export namespace Prisma {
     content: string | null
     imgUrl: string | null
     imgCloudinaryUrl: string | null
+    imgCloudinaryId: string | null
     createdAt: Date | null
     updatedAt: Date | null
     userId: number | null
@@ -1996,6 +1997,7 @@ export namespace Prisma {
     content: string | null
     imgUrl: string | null
     imgCloudinaryUrl: string | null
+    imgCloudinaryId: string | null
     createdAt: Date | null
     updatedAt: Date | null
     userId: number | null
@@ -2007,6 +2009,7 @@ export namespace Prisma {
     content: number
     imgUrl: number
     imgCloudinaryUrl: number
+    imgCloudinaryId: number
     createdAt: number
     updatedAt: number
     userId: number
@@ -2030,6 +2033,7 @@ export namespace Prisma {
     content?: true
     imgUrl?: true
     imgCloudinaryUrl?: true
+    imgCloudinaryId?: true
     createdAt?: true
     updatedAt?: true
     userId?: true
@@ -2041,6 +2045,7 @@ export namespace Prisma {
     content?: true
     imgUrl?: true
     imgCloudinaryUrl?: true
+    imgCloudinaryId?: true
     createdAt?: true
     updatedAt?: true
     userId?: true
@@ -2052,6 +2057,7 @@ export namespace Prisma {
     content?: true
     imgUrl?: true
     imgCloudinaryUrl?: true
+    imgCloudinaryId?: true
     createdAt?: true
     updatedAt?: true
     userId?: true
@@ -2150,6 +2156,7 @@ export namespace Prisma {
     content: string
     imgUrl: string
     imgCloudinaryUrl: string | null
+    imgCloudinaryId: string | null
     createdAt: Date
     updatedAt: Date
     userId: number
@@ -2180,6 +2187,7 @@ export namespace Prisma {
     content?: boolean
     imgUrl?: boolean
     imgCloudinaryUrl?: boolean
+    imgCloudinaryId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     userId?: boolean
@@ -2192,6 +2200,7 @@ export namespace Prisma {
     content?: boolean
     imgUrl?: boolean
     imgCloudinaryUrl?: boolean
+    imgCloudinaryId?: boolean
     createdAt?: boolean
     updatedAt?: boolean
     userId?: boolean
@@ -2213,6 +2222,7 @@ export namespace Prisma {
       content: string
       imgUrl: string
       imgCloudinaryUrl: string | null
+      imgCloudinaryId: string | null
       createdAt: Date
       updatedAt: Date
       userId: number
@@ -2616,6 +2626,7 @@ export namespace Prisma {
     readonly content: FieldRef<"Post", 'String'>
     readonly imgUrl: FieldRef<"Post", 'String'>
     readonly imgCloudinaryUrl: FieldRef<"Post", 'String'>
+    readonly imgCloudinaryId: FieldRef<"Post", 'String'>
     readonly createdAt: FieldRef<"Post", 'DateTime'>
     readonly updatedAt: FieldRef<"Post", 'DateTime'>
     readonly userId: FieldRef<"Post", 'Int'>
@@ -2978,6 +2989,7 @@ export namespace Prisma {
     content: 'content',
     imgUrl: 'imgUrl',
     imgCloudinaryUrl: 'imgCloudinaryUrl',
+    imgCloudinaryId: 'imgCloudinaryId',
     createdAt: 'createdAt',
     updatedAt: 'updatedAt',
     userId: 'userId'
@@ -3109,6 +3121,7 @@ export namespace Prisma {
     content?: StringFilter<"Post"> | string
     imgUrl?: StringFilter<"Post"> | string
     imgCloudinaryUrl?: StringNullableFilter<"Post"> | string | null
+    imgCloudinaryId?: StringNullableFilter<"Post"> | string | null
     createdAt?: DateTimeFilter<"Post"> | Date | string
     updatedAt?: DateTimeFilter<"Post"> | Date | string
     userId?: IntFilter<"Post"> | number
@@ -3121,6 +3134,7 @@ export namespace Prisma {
     content?: SortOrder
     imgUrl?: SortOrder
     imgCloudinaryUrl?: SortOrderInput | SortOrder
+    imgCloudinaryId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     userId?: SortOrder
@@ -3136,6 +3150,7 @@ export namespace Prisma {
     content?: StringFilter<"Post"> | string
     imgUrl?: StringFilter<"Post"> | string
     imgCloudinaryUrl?: StringNullableFilter<"Post"> | string | null
+    imgCloudinaryId?: StringNullableFilter<"Post"> | string | null
     createdAt?: DateTimeFilter<"Post"> | Date | string
     updatedAt?: DateTimeFilter<"Post"> | Date | string
     userId?: IntFilter<"Post"> | number
@@ -3148,6 +3163,7 @@ export namespace Prisma {
     content?: SortOrder
     imgUrl?: SortOrder
     imgCloudinaryUrl?: SortOrderInput | SortOrder
+    imgCloudinaryId?: SortOrderInput | SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     userId?: SortOrder
@@ -3167,6 +3183,7 @@ export namespace Prisma {
     content?: StringWithAggregatesFilter<"Post"> | string
     imgUrl?: StringWithAggregatesFilter<"Post"> | string
     imgCloudinaryUrl?: StringNullableWithAggregatesFilter<"Post"> | string | null
+    imgCloudinaryId?: StringNullableWithAggregatesFilter<"Post"> | string | null
     createdAt?: DateTimeWithAggregatesFilter<"Post"> | Date | string
     updatedAt?: DateTimeWithAggregatesFilter<"Post"> | Date | string
     userId?: IntWithAggregatesFilter<"Post"> | number
@@ -3241,6 +3258,7 @@ export namespace Prisma {
     content: string
     imgUrl: string
     imgCloudinaryUrl?: string | null
+    imgCloudinaryId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     user: UserCreateNestedOneWithoutPostsInput
@@ -3252,6 +3270,7 @@ export namespace Prisma {
     content: string
     imgUrl: string
     imgCloudinaryUrl?: string | null
+    imgCloudinaryId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     userId: number
@@ -3262,6 +3281,7 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     imgUrl?: StringFieldUpdateOperationsInput | string
     imgCloudinaryUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imgCloudinaryId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     user?: UserUpdateOneRequiredWithoutPostsNestedInput
@@ -3273,6 +3293,7 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     imgUrl?: StringFieldUpdateOperationsInput | string
     imgCloudinaryUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imgCloudinaryId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: IntFieldUpdateOperationsInput | number
@@ -3284,6 +3305,7 @@ export namespace Prisma {
     content: string
     imgUrl: string
     imgCloudinaryUrl?: string | null
+    imgCloudinaryId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
     userId: number
@@ -3294,6 +3316,7 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     imgUrl?: StringFieldUpdateOperationsInput | string
     imgCloudinaryUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imgCloudinaryId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -3304,6 +3327,7 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     imgUrl?: StringFieldUpdateOperationsInput | string
     imgCloudinaryUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imgCloudinaryId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
     userId?: IntFieldUpdateOperationsInput | number
@@ -3467,6 +3491,7 @@ export namespace Prisma {
     content?: SortOrder
     imgUrl?: SortOrder
     imgCloudinaryUrl?: SortOrder
+    imgCloudinaryId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     userId?: SortOrder
@@ -3483,6 +3508,7 @@ export namespace Prisma {
     content?: SortOrder
     imgUrl?: SortOrder
     imgCloudinaryUrl?: SortOrder
+    imgCloudinaryId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     userId?: SortOrder
@@ -3494,6 +3520,7 @@ export namespace Prisma {
     content?: SortOrder
     imgUrl?: SortOrder
     imgCloudinaryUrl?: SortOrder
+    imgCloudinaryId?: SortOrder
     createdAt?: SortOrder
     updatedAt?: SortOrder
     userId?: SortOrder
@@ -3738,6 +3765,7 @@ export namespace Prisma {
     content: string
     imgUrl: string
     imgCloudinaryUrl?: string | null
+    imgCloudinaryId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -3748,6 +3776,7 @@ export namespace Prisma {
     content: string
     imgUrl: string
     imgCloudinaryUrl?: string | null
+    imgCloudinaryId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -3787,6 +3816,7 @@ export namespace Prisma {
     content?: StringFilter<"Post"> | string
     imgUrl?: StringFilter<"Post"> | string
     imgCloudinaryUrl?: StringNullableFilter<"Post"> | string | null
+    imgCloudinaryId?: StringNullableFilter<"Post"> | string | null
     createdAt?: DateTimeFilter<"Post"> | Date | string
     updatedAt?: DateTimeFilter<"Post"> | Date | string
     userId?: IntFilter<"Post"> | number
@@ -3848,6 +3878,7 @@ export namespace Prisma {
     content: string
     imgUrl: string
     imgCloudinaryUrl?: string | null
+    imgCloudinaryId?: string | null
     createdAt?: Date | string
     updatedAt?: Date | string
   }
@@ -3857,6 +3888,7 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     imgUrl?: StringFieldUpdateOperationsInput | string
     imgCloudinaryUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imgCloudinaryId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -3867,6 +3899,7 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     imgUrl?: StringFieldUpdateOperationsInput | string
     imgCloudinaryUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imgCloudinaryId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }
@@ -3877,6 +3910,7 @@ export namespace Prisma {
     content?: StringFieldUpdateOperationsInput | string
     imgUrl?: StringFieldUpdateOperationsInput | string
     imgCloudinaryUrl?: NullableStringFieldUpdateOperationsInput | string | null
+    imgCloudinaryId?: NullableStringFieldUpdateOperationsInput | string | null
     createdAt?: DateTimeFieldUpdateOperationsInput | Date | string
     updatedAt?: DateTimeFieldUpdateOperationsInput | Date | string
   }

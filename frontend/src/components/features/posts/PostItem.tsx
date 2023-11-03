@@ -2,7 +2,7 @@ import { useMutation } from '@apollo/client';
 
 // queries & mutations
 import { DELETE_POST_BY_ID } from '../../../graphql/mutations';
-// import { GET_POSTS_BY_ID } from '../../../graphql/queries';  // Import the query
+import { DELETE_CLOUDINARY_IMAGE_FILE } from '../../../graphql/mutations';
 
 import { Link } from 'react-router-dom';
 import Card from 'react-bootstrap/Card';
@@ -14,17 +14,23 @@ export type PostPropType = {
   content: string;
   imgUrl: string;
   imgCloudinaryUrl: string;
+  imgCloudinaryId: string;
 };
 
 type PostPropTypeComponent = {
   postProp: PostPropType;
 };
 
-// type PostsQueryCacheResult = {
-//   PostsByUser: PostPropType[];
-// };
-
 const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
+
+  // DELETE CLOUDINARY IMAGE FILE
+  const [deleteCloudinaryImageFile] = useMutation(DELETE_CLOUDINARY_IMAGE_FILE,);
+
+  // CLOUDINARY 画像を削除するための関数
+  const handleCloudinary_deleteImg = (publicId: string) => {
+    deleteCloudinaryImageFile({ variables: { publicId } });
+  };
+
 
   //! DELETE POST MUTATION
   // `useMutation` フックを使用して、投稿の削除を行うmutationをセットアップ
@@ -93,7 +99,9 @@ const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
           e.preventDefault();
           window.confirm('Are you sure you want to delete this post?') &&
             deletePostById();
-          // refetch(); // From parent component
+
+          //! Delete Cloudinary Image File that much with Post ID
+          handleCloudinary_deleteImg(postProp.imgCloudinaryId);
         }}
       >
         {loading ? 'Deleting...' : 'Delete'}

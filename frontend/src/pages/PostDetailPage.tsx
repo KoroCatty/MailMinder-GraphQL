@@ -17,6 +17,7 @@ import { useMutation } from "@apollo/client";
 // queries & mutations
 import { GET_POSTS_BY_ID } from "../graphql/queries";
 import { DELETE_POST_BY_ID } from "../graphql/mutations";
+import { DELETE_CLOUDINARY_IMAGE_FILE } from "../graphql/mutations";
 
 
 // Emotion CSS
@@ -178,6 +179,16 @@ const PostsDetailPage = () => {
     },
   });
 
+  // DELETE CLOUDINARY IMAGE FILE
+  const [deleteCloudinaryImageFile] = useMutation(DELETE_CLOUDINARY_IMAGE_FILE,);
+
+  // CLOUDINARY 画像を削除するための関数
+  const handleCloudinary_deleteImg = (publicId: string) => {
+    deleteCloudinaryImageFile({ variables: { publicId } });
+  };
+
+
+
   // useNavigate
   const navigate = useNavigate();
 
@@ -219,12 +230,6 @@ const PostsDetailPage = () => {
     updatedAt: string;
     imgCloudinaryUrl: string;
   };
-
-  // type PostsQueryCacheResult = {
-  //   PostsByUser: postProp[];
-  // };
-
-
 
   //! ============================================================
   //! JSX
@@ -336,6 +341,12 @@ const PostsDetailPage = () => {
             window.scrollTo({ top: 0, behavior: "smooth" });
             navigate("/postlist");
             // window.location.reload();//! 強制リロード
+
+            //! Delete Cloudinary Image File that much with Post ID
+            const cloudinaryId_muchWithPostId = data.PostsByUser.find((item: postProp) => Number(item.id) === Number(id));
+            if (cloudinaryId_muchWithPostId) {
+              handleCloudinary_deleteImg(cloudinaryId_muchWithPostId.imgCloudinaryId);
+            }
           }}
         >
           {deleteErr ? "Deleting..." : "Delete"}

@@ -122,6 +122,7 @@ exports.Prisma.PostScalarFieldEnum = {
   content: 'content',
   imgUrl: 'imgUrl',
   imgCloudinaryUrl: 'imgCloudinaryUrl',
+  imgCloudinaryId: 'imgCloudinaryId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   userId: 'userId'

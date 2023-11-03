@@ -274,6 +274,7 @@ const EditPostPage = () => {
     content: "",
     imgUrl: "",
     imgCloudinaryUrl: "",
+    imgCloudinaryId: "",
     src: "",
     createdAt: "",
     updatedAt: "",
@@ -286,6 +287,7 @@ const EditPostPage = () => {
     content: string;
     imgUrl: string;
     imgCloudinaryUrl: string;
+    imgCloudinaryId: string;
     createAt: string;
     updateAt: string;
   };
@@ -296,7 +298,7 @@ const EditPostPage = () => {
     content?: string;
     imgUrl?: string;
     imgCloudinaryUrl?: string;
-    // imgFile?: string;
+    imgCloudinaryId?: string;
     [key: string]: string | undefined; // This makes it indexable for dynamic keys
   }
 
@@ -430,8 +432,9 @@ const EditPostPage = () => {
     let imageUrlForDB: string | undefined = formData.imgUrl;
     // console.log(imageUrlForDB)
 
-// 初期化
-let cloudinaryUrl;
+    // 初期化
+    let cloudinaryUrl;
+    let cloudinaryId;
 
     //! 1. Upload the image to the server using AXIOS
     if (selectedLocalFile) {
@@ -446,9 +449,11 @@ let cloudinaryUrl;
 
         // CLOUDINARY Image URL (backendから返したもの)
         console.log(response.data.cloudinaryUrl)
+        console.log(response.data.cloudinary_id)
 
         // 初期化してた変数に値を入れる
         cloudinaryUrl = response.data.cloudinaryUrl;
+        cloudinaryId = response.data.cloudinary_id;
 
         // make this absolute path and get rid of double 'uploads/'
         imageUrlForDB = `${SERVER_URL}${response.data.url.replace('uploads/', '')}`;
@@ -473,6 +478,8 @@ let cloudinaryUrl;
         id: Number(idUrl),
         imgUrl: currentData.imgUrl,
         imgCloudinaryUrl: currentData.imgCloudinaryUrl,
+        // imgCloudinaryId: currentData.cloudinaryId,
+        imgCloudinaryId: currentData.imgCloudinaryId,
       },
     });
 
@@ -486,6 +493,7 @@ let cloudinaryUrl;
             content: currentData.content,
             imgUrl: imageUrlForDB || currentData.imgUrl, // Use selectedImage if it's available, else use currentData.imgUrl
             imgCloudinaryUrl: cloudinaryUrl,
+            imgCloudinaryId: cloudinaryId,
             updatedAt: new Date().toISOString(),
           },
         },

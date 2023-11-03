@@ -38,6 +38,7 @@ const typeDefs = gql`
     updatedAt: Date!
     user : User! # PostモデルにはUserモデルが含まれている
     imgCloudinaryUrl: String
+    imgCloudinaryId: String
   }
 
   #//! CREATE A USER
@@ -65,6 +66,7 @@ const typeDefs = gql`
     imgUrl: Upload
     # imgFile: Upload
     imgCloudinaryUrl: String
+    imgCloudinaryId: String
   }
 
   # //! UPDATE A POST INPUT
@@ -75,6 +77,7 @@ const typeDefs = gql`
     # imgUrl: Upload
     imgUrl: String
     imgCloudinaryUrl: String
+    imgCloudinaryId: String
     updatedAt: Date
   }
 
@@ -111,7 +114,8 @@ const typeDefs = gql`
     # LOGOUT USER
     logout: Boolean! # return a boolean
 
-    # uploadImgCloudinary(imgUrlCloudinary: String): Post
+    # DELETE A CLOUDINARY IMAGE FILE ON SERVER
+    deleteCloudinaryImage(publicId: String!): Boolean!
   }
 `;
 

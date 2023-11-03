@@ -216,7 +216,7 @@ interface FormDataProps {
 }
 
 const HomeForms = ({ refetch }: RefetchProps) => {
-  // HOOKS
+
   // For Selfie & Paste Image URL
   const [, setSelectedImage] = useState<string | null>(null);
   // console.log(selectedImage)
@@ -280,6 +280,7 @@ const HomeForms = ({ refetch }: RefetchProps) => {
 
     // 初期化
     let cloudinaryUrl;
+    let cloudinaryId;
 
     //! 1. Upload the image to the server using AXIOS
     if (selectedLocalFile) {
@@ -292,16 +293,24 @@ const HomeForms = ({ refetch }: RefetchProps) => {
         });
         // console.log(response.data.url); // /uploads/img-1697934272148.jpg
 
+          // CLOUDINARY ID (Backend から返したもの)
+        await console.log(response.data.cloudinary_id);
 
         //  CLOUDINARY URL  (Backend から返したもの)
         await console.log(response.data.cloudinaryUrl);
 
         // 初期化した変数に値を代入
         cloudinaryUrl = await response.data.cloudinaryUrl;
+        cloudinaryId = await response.data.cloudinary_id;
 
         // 値がない場合はエラー
         if (!cloudinaryUrl) {
           await console.error("Error: Cloudinary URL is missing ありません.😿");
+          return;
+        }
+
+        if (!cloudinaryId) {
+          await console.error("Error: Cloudinary ID is missing ありません.😿");
           return;
         }
 
@@ -339,6 +348,7 @@ const HomeForms = ({ refetch }: RefetchProps) => {
             content: formData.content,
             imgUrl: imageUrlForDB,
             imgCloudinaryUrl: cloudinaryUrl,
+            imgCloudinaryId: cloudinaryId,
           },
         },
       });

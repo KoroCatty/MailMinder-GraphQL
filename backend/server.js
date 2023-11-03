@@ -100,78 +100,12 @@ app.post('/uploads', uploadSingleImage, async (req, res) => {
       transformation: [{ width: 500, height: 500, crop: 'limit' }]
     });
 
-    // 画像のURLを取得 (From Cloudinary)
-    // console.log(result.secure_url);
-
-        // reqにresult.secure_urlを追加
-        // Expressのリクエストオブジェクト req にこの情報を追加
-        // これを context に渡し、resolver で使用できるようにする
-        // req.imgCloudinaryUrl = result.secure_url;
-
-        // // save to session 
-        // req.session.imgCloudinaryUrl = result.secure_url; 
-        // console.log(req.session.imgCloudinaryUrl + "🚀😾")
-        // res.send({ success: true });
-
-        // console.log(req.session)
-
-
-
-    // 画像のURLをデータベースに保存
-    // const savedImage = await prisma.post.create({
-    //   data: {
-    //     // title: "デフォルトのタイトル",    // 仮のタイトル
-    //     // content: "デフォルトのコンテンツ", // 仮のコンテンツ
-    //     // imgUrl: `/uploads/${req.file.filename}`, // ローカルの画像URL
-    //     // userId: 1, // 仮のユーザーID。実際のユーザーIDを設定する必要があります
-    //     imgCloudinaryUrl: result.secure_url, // Cloudinaryの画像URL
-    //   }
-    // });
-    // console.log(savedImage.cyan.underline);
-
-
-    //! DB SAVE
-    // GraphQL エンドポイントを呼び出して `result.secure_url` をDBに保存
-    // const response = await fetch(`http://localhost:5001/graphql`, {
-    //   method: 'POST',
-    //   headers: {
-    //     'Content-Type': 'application/json',
-    //     // 必要に応じて他のヘッダーや認証情報を追加
-    //   },
-    //   body: JSON.stringify({
-    //     query: `
-    //       mutation ($imgCloudinaryUrl: String!) {
-    //         uploadImage(imgCloudinaryUrl: $imgUrlCloudinary) {
-    //           id
-    //           imgCloudinaryUrl
-    //         }
-    //       }
-    //     `,
-    //     variables: {
-    //       imgUrlCloudinary: result.secure_url
-    //     }
-    //   })
-    // });
-
-    // const data = await response.json();
-
-    // if (data.errors) {
-    //   throw new Error(data.errors[0].message);
-    // }
-
-      // クライアントにスクリプトを送信してローカルストレージにデータを保存
-    // res.send(`
-    //   <script>
-    //     localStorage.setItem('cloudinaryImageUrl', '${result.secure_url}');
-    //     window.location.href = '/'; // オプション: メインページまたは他のページにリダイレクト
-    //   </script>
-    // `);
-
-
-// Response to FrontEnd
-    res.json({ 
+    // Cloudinary が返してくれるもの
+    // Response to FrontEnd (Frontendから POST でアクセスできるようにする)
+    res.json({
       url: `/uploads/${req.file.filename}`,// 画像のURLを返す(local)
-      cloudinaryUrl: result.secure_url // 画像のURLを返す(cloudinary)
+      cloudinaryUrl: result.secure_url, // 画像のURLを返す(cloudinary)
+      cloudinary_id: result.public_id // 画像のIDを返す(cloudinary)
     });
 
   } catch (error) {
@@ -193,7 +127,29 @@ const uploadsDirectory = path.join(__dirname, '/uploads');
 // '/uploads' エンドポイントを使用して、そのディレクトリ内の静的ファイルを提供
 // '/uploads'というパスのリクエストがあったときに次の express.static()ミドルウェアが動作
 app.use('/uploads', express.static(uploadsDirectory));
+
 //* ==============================================================
+//* CLOUDINARY IMAGE FILE DELETE (CLODINARY SERVER)
+//* ==============================================================
+// app.delete('/uploads:id', async (req, res) => {
+//   try {
+    // Delete image from cloudinary
+//     await cloudinary.uploader.destroy(req.body.cloudinary_id);
+//     res.json({ msg: 'Image deleted' });
+//   } catch (err) {
+//     console.log(err);
+//   }
+// });
+
+
+
+
+
+
+
+
+
+
 
 app.use(cors({
   origin: true,  // or true to allow any origin
@@ -211,13 +167,13 @@ if (process.env.NODE_ENV === 'production') {
 
   // if it doesn't recognize the route
   // Express が route を認識できない場合は、front-end の index.html ファイルを提供する
-    app.get('*', (req, res) => {
-      res.sendFile(path.resolve(__dirname, 'frontend', 'dist', 'index.html'));
-    });
-  } else {
-    app.get('/', (req, res) => {
-      res.send('API is running...');
-    });
+  app.get('*', (req, res) => {
+    res.sendFile(path.resolve(__dirname, 'frontend', 'dist', 'index.html'));
+  });
+} else {
+  app.get('/', (req, res) => {
+    res.send('API is running...');
+  });
 }
 
 //! ==============================================================

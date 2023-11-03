@@ -6,6 +6,16 @@ import bcrypt from 'bcryptjs';
 import Joi from 'joi'; // Validation
 import jwt from 'jsonwebtoken';
 
+// import cloudinaryConfig from './cloudinary.js'; 
+
+import cloudinary from 'cloudinary';
+          
+cloudinary.config({ 
+  cloud_name:process.env.CLOUDINARY_CLOUD_NAME,
+  api_key:process.env.CLOUDINARY_API_KEY,
+  api_secret:process.env.CLOUDINARY_API_SECRET
+});
+
 
 // プリズマクライエントのインスタンスを格納
 import { PrismaClient } from '../prisma/generated/client/index.js'
@@ -212,8 +222,6 @@ const resolvers = {
     //* ===============================================
     createPost: async (_, args, context) => {
       // await console.log(args) // typeDefsで定義済み
-      // await console.log(args.postNew.imgUrl + " -  Image URL 💻")
-       console.log(args.postNew.imgCloudinaryUrl + " -  Cloudinary URL 💻")
 
       // Joi Validation
       const schema = Joi.object({
@@ -227,6 +235,7 @@ const resolvers = {
           }),
         imgUrl: Joi.string(),
         imgCloudinaryUrl: Joi.string(),
+        imgCloudinaryId: Joi.string(),
       })
       // Joi Error Handling
       const { error } = schema.validate(args.postNew);
@@ -247,6 +256,7 @@ const resolvers = {
           content: args.postNew.content,
           imgUrl: args.postNew.imgUrl ? args.postNew.imgUrl : "/imgs/noImg.jpeg", // use the uploaded file URL or default
           imgCloudinaryUrl: args.postNew.imgCloudinaryUrl, // CLOUDINARY URL
+          imgCloudinaryId: args.postNew.imgCloudinaryId, // CLOUDINARY ID
           userId: context.userId
         }
       })
@@ -257,12 +267,14 @@ const resolvers = {
     //* DELETE A POST
     //* ===============================================
     deletePost: async (_, args, context) => {
-     await console.log(`👤 user ID: ${args.id} Deleted📨`)
+      await console.log(`👤 user ID: ${args.id} Deleted📨`)
 
       // ログインしてなかったらエラー(contextで先に確認できる)
       if (!context.userId) {
         throw new Error("You must be logged in (Contextにトークンがありません)😱");
       }
+
+      console.log(args.id + " - PostID 👆🏻")
 
       // post は prisma.schema で定義済みのモデル
       const deletedPost = await prisma.post.delete({
@@ -330,6 +342,7 @@ const resolvers = {
           }),
         imgUrl: Joi.string(),
         imgCloudinaryUrl: Joi.string(),
+        imgCloudinaryId: Joi.string(),
         createdAt: Joi.date(),
         updatedAt: Joi.date(),
       })
@@ -354,6 +367,7 @@ const resolvers = {
           content: args.postUpdate.content,
           imgUrl: args.postUpdate.imgUrl,
           imgCloudinaryUrl: args.postUpdate.imgCloudinaryUrl, // CLOUDINARY URL
+          imgCloudinaryId: args.postUpdate.imgCloudinaryId, // CLOUDINARY ID
           updatedAt: new Date().toISOString(), // 更新日時を追加
         }
       });
@@ -361,13 +375,17 @@ const resolvers = {
     },
 
     //* ===============================================
-    //* DELETE A POST IMAGE FILE
+    //* DELETE A POST's IMAGE FILE 
+    //* When Updated the Image (LOCAL - uploads folder)
     //* ===============================================
     deletePostImage: async (_, args, context) => {
       // ログインしてなかったらエラー(contextで先に確認できる)
       if (!context.userId) {
         throw new Error("You must be logged in (Contextにトークンがありません)😱");
       }
+
+      // console.log(args.imgCloudinaryId + " - Cloudinary ID -😻")
+      console.log(args)
 
       // postモデルから投稿を取得
       const post = await prisma.post.findUnique({
@@ -410,27 +428,18 @@ const resolvers = {
     },
 
     //* ===============================================
-    //* UPLOAD IMAGE CLOUDINARY
+    //* DELETE CLOUDINARY IMAGE FILE ON SERVER
     //* ===============================================
-    // uploadImgCloudinary: async (_, { imgCloudinaryUrl }, context) => {
-    //      // ログインしてなかったらエラー(contextで先に確認)
-    //      if (!context.userId) {
-    //       throw new Error("You must be logged in (Contextにトークンがありません)😱");
-    //     }
+    deleteCloudinaryImage: async (_, { publicId }) => {
+      try {
+        const result = await cloudinary.uploader.destroy(publicId);
+        return result.result === 'ok';
+      } catch (error) {
+        console.error(error + "🦾");
+        return false;
+      }
+    },
 
-    //     console.log(imgCloudinaryUrl + "👁️");
-  
-    //   // 画像のURLをDBに保存
-    //   const newPost = await prisma.post.create({
-    //     data: {
-    //       imgCloudinaryUrl: imgCloudinaryUrl,
-    //       // imgCloudinary_id: imgCloudinary_id,
-    //       userId: context.userId  // 認証されたユーザーのID
-    //     }
-    //   });
-
-    //   return newPost;
-    // },
 
   }
 }

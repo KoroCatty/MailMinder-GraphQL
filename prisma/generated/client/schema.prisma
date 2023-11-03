@@ -31,9 +31,10 @@ model User {
 model Post {
   id        Int      @id @default(autoincrement())
   title     String
-  content   String
+  content   String   @db.Text  //  65535文字まで可能
   imgUrl    String   @db.VarChar(15000) // 15000文字まで可能
-  imgCloudinaryUrl String? @db.Text //CLOUDINARY
+  imgCloudinaryUrl String? @db.Text //CLOUDINARY IMG URL
+  imgCloudinaryId String? //CLOUDINARY ID
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 

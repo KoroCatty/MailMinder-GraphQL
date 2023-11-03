@@ -13,6 +13,7 @@ export const GET_POSTS_BY_ID = gql`
       createdAt
       updatedAt
       imgCloudinaryUrl
+      imgCloudinaryId
     }
   }
 `;
@@ -28,6 +29,7 @@ export const GET_POSTS_BY_ID_LIMIT = gql`
       createdAt
       updatedAt
       imgCloudinaryUrl
+      imgCloudinaryId
     }
   }
 `;
