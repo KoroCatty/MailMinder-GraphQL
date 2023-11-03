@@ -115,7 +115,7 @@ const typeDefs = gql`
     logout: Boolean! # return a boolean
 
     # DELETE A CLOUDINARY IMAGE FILE ON SERVER
-    deleteCloudinaryImage(publicId: String!): Boolean!
+    deleteCloudinaryImage(publicId: String): Boolean
   }
 `;
 

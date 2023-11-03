@@ -87,7 +87,7 @@ export const DELETE_POST_IMAGE_FILE = gql`
 
 //! DELETE A CLOUDINARY IMAGE FILE ON SERVER
 export const DELETE_CLOUDINARY_IMAGE_FILE = gql`
-mutation deleteCloudinaryImage($publicId: String!) {
+mutation deleteCloudinaryImage($publicId: String) {
   deleteCloudinaryImage(publicId: $publicId)
 }
 `

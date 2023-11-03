@@ -22,6 +22,9 @@ import { useMutation } from "@apollo/client";
 import { GET_POSTS_BY_ID } from "../graphql/queries";
 import { UPDATE_POST_BY_ID } from "../graphql/mutations";
 import { DELETE_POST_IMAGE_FILE } from "../graphql/mutations";
+import { DELETE_CLOUDINARY_IMAGE_FILE } from "../graphql/mutations";
+
+
 
 // bootstrap
 import { Form } from "react-bootstrap";
@@ -253,18 +256,27 @@ const EditPostPage = () => {
   // Get local selected image value
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  //* GET POSTS BY ID (Apollo Client)
+  //* GET POSTS BY ID 
   const { data, refetch } = useQuery(GET_POSTS_BY_ID, {
     variables: {
       uid: Number(idUrl), // queries.ts で uid を定義している
     },
   });
 
+
   //* UPDATE POST BY ID 
   const [updatePostById] = useMutation(UPDATE_POST_BY_ID);
 
   //! DELETE POST IMAGE FILE 
   const [deletePostImage] = useMutation(DELETE_POST_IMAGE_FILE);
+
+  //! DELETE CLOUDINARY IMAGE FILE
+  const [deleteCloudinaryImageFile] = useMutation(DELETE_CLOUDINARY_IMAGE_FILE,);
+
+  // CLOUDINARY 画像を削除するための関数
+  const handleCloudinary_deleteImg = (publicId: string) => {
+    deleteCloudinaryImageFile({ variables: { publicId } });
+  };
 
 
   // Initialize with an empty array or a suitable default value.
@@ -499,11 +511,20 @@ const EditPostPage = () => {
         },
       });
 
+      // Success message
       if (response.data) {
         window.alert("Post updated successfully");
         console.log("Post updated successfully", response.data);
         await refetch();// Props で受け取った refetch を実行
         console.log("Refetched!");
+      }
+
+      // console.log(data.PostsByUser.imgCloudinaryId)
+
+      //! Delete Cloudinary Image File that much with Post ID
+      const cloudinaryId_muchWithPostId = data.PostsByUser.find((item: FormDataType) => Number(item.id) === Number(idUrl));
+      if (cloudinaryId_muchWithPostId) {
+        handleCloudinary_deleteImg(cloudinaryId_muchWithPostId.imgCloudinaryId);
       }
 
     } catch (error) {
