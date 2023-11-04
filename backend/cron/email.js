@@ -23,7 +23,7 @@ import nodemailer from 'nodemailer';
 import cron from 'node-cron';
 
 //! Send Email every 5 minutes
-// const sendEmail = cron.schedule('*/5 * * * *', async () => {
+const sendEmail = cron.schedule('*/5 * * * *', async () => {
 
 //! send email every 30 seconds
 // const sendEmail = cron.schedule('*/10 * * * * *', async () => {
@@ -34,7 +34,7 @@ import cron from 'node-cron';
 
 
 //! Send Email at 8:00 AM, 12:00 PM, and 5:00 PM JST every day (日本時間)
-const sendEmail = cron.schedule('0 23,3,8 * * *', async () => {
+// const sendEmail = cron.schedule('0 23,3,8 * * *', async () => {
   try {
     // email transport configuration
     const transporter = nodemailer.createTransport({
@@ -87,8 +87,6 @@ const sendEmail = cron.schedule('0 23,3,8 * * *', async () => {
       const htmlContent = userPosts.map((post, index) => {
         let imgTag;
 
-        console.log(post.imgCloudinaryUrl)
-
         const oldPath = post.imgUrl;
         const newPath = oldPath.substring('../../'.length); // 部分削除
 
@@ -125,12 +123,11 @@ const sendEmail = cron.schedule('0 23,3,8 * * *', async () => {
             </div>
           </div>
           `;
-      }).join('');
+      }).join('');// join('') は、配列の要素を文字列に変換する
 
       // ランダムで subject のあいさつを変える
       const greetings = ["Today's 5 posts😁", 'How are you?😃', "Check today's posts🫡", "Don't forget to check🥹"];
       const randomGreeting = greetings[Math.floor(Math.random() * greetings.length)];
-
 
       // E メールの内容を定義
       const mailContent = {

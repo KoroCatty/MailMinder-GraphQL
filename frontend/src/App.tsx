@@ -51,6 +51,13 @@ function App() {
     setIsLoggedIn(data?.isLoggedIn || false);
   }, [data]);
 
+  //! if user tried to access 'postdetails:id' from Email
+  useEffect(() => {
+    if (window.location.pathname.includes("postdetails")) {
+      sessionStorage.setItem("postPath", window.location.pathname);
+    }
+  }, []);
+
   if (loading) return <p>読み込み中</p>;
   if (error) return <p>Error: {error.message}</p>;
 

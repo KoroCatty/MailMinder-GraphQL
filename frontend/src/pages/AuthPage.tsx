@@ -89,6 +89,13 @@ const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
   useEffect(() => {
     if (isLoggedIn) {
       navigate("/");
+
+      // if there is a path in sessionStorage, go to that path
+      // if (sessionStorage.getItem("postPath")) {
+      //   navigate(sessionStorage.getItem("postPath")!);
+      // } else {
+      //   navigate("/");
+      // }
     }
   }, [isLoggedIn, navigate]);
 
@@ -107,7 +114,13 @@ const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
     onCompleted() {
       window.scrollTo(0, 0);
       setIsLoggedIn(true);  // Update the state 
-      navigate("/");
+
+      // if there is a path in sessionStorage, go to that path (Emailパス対応)
+      if (sessionStorage.getItem("postPath")) {
+        navigate(sessionStorage.getItem("postPath")!);
+      } else {
+        navigate("/");
+      }
     },
   });
 
