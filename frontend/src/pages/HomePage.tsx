@@ -32,6 +32,16 @@ const HomePageCss = css`
   ${min[3] + max[3]} {
   }
 
+  .homeContainer {
+
+    // Bootstrap Container adjustment
+    @media screen and (max-width: 999px) and (min-width: 768px) {
+      width: 96% !important;
+      max-width: 96% !important;
+      margin: 0 auto;
+    }
+  }
+
   .loginBtn {
     text-decoration: none;
 

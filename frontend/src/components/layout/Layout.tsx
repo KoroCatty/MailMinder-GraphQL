@@ -31,7 +31,7 @@ const Layout = ({ isLoggedIn, darkTheme }: PropsType) => {
     // 1201px 以上の場合
     @media screen and (min-width: 1201px) {
       margin-left: 16%; // header の幅分だけ右にずらす
-      padding: 40px 100px;
+      padding: 40px 60px;
     }
 
     // 1px〜479px

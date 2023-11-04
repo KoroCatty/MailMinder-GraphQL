@@ -7,7 +7,7 @@ import PostItem from "./PostItem";
 import { useQuery } from '@apollo/client';
 import { GET_POSTS_BY_ID } from '../../../graphql/queries';
 
-import { Row, Col } from 'react-bootstrap';
+import { Row } from 'react-bootstrap';
 
 // TYPES
 type PostPropType = {
@@ -17,12 +17,20 @@ type PostPropType = {
   imgUrl: string;
   imgCloudinaryUrl: string;
   imgCloudinaryId: string;
+  createdAt: string;
 };
 
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
 import { min, max } from "../../../utils/mediaQueries";
 const PostListCss = css`
+
+.eachCard {
+  border: 1px solid #ddd;
+/* max-height: 400px;
+min-height: 400px; */
+
+  }
 
   // 1px〜479px
   ${min[0] + max[0]} {
@@ -62,11 +70,11 @@ function PostsList() {
 
       <Row xs={1} md={2} className="g-4">
         {data.PostsByUser.map((item: PostPropType) => (
-          <Col key={item.id}>
+          <div className="eachCard col-6 col-md-3 sm-3" key={item.id}>
 
             {/* Component (Give a Prop) */}
             <PostItem postProp={item} />
-          </Col>
+          </div>
         ))}
       </Row>
 

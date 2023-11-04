@@ -68,6 +68,18 @@ const globalCss = css`
   .submitBtn {
     background-color: ${colorSchema.danger} !important;
   }
+
+  // Post card
+  .card {
+    background-color: ${colorSchema.darkLight} !important;
+    box-shadow: 1px 2px 4px rgba(186, 186, 186, 0.2) !important;
+
+    p {
+      color: ${colorSchema.fontLight} !important;
+
+    }
+  
+  }
 `;
 
 function ColorThemeGlobal() {
