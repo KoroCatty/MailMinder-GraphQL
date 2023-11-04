@@ -89,13 +89,6 @@ const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
   useEffect(() => {
     if (isLoggedIn) {
       navigate("/");
-
-      // if there is a path in sessionStorage, go to that path
-      // if (sessionStorage.getItem("postPath")) {
-      //   navigate(sessionStorage.getItem("postPath")!);
-      // } else {
-      //   navigate("/");
-      // }
     }
   }, [isLoggedIn, navigate]);
 

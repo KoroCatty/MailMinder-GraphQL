@@ -51,7 +51,7 @@ function App() {
     setIsLoggedIn(data?.isLoggedIn || false);
   }, [data]);
 
-  //! if user tried to access 'postdetails:id' from Email
+  //! if user tried to access 'postdetails:id' from Email, set SessionStorage
   useEffect(() => {
     if (window.location.pathname.includes("postdetails")) {
       sessionStorage.setItem("postPath", window.location.pathname);

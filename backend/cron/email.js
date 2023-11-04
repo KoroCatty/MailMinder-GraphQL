@@ -11,7 +11,6 @@
 import path from 'path';
 const __dirname = path.resolve();
 
-
 // プリズマのクライアントをインポート
 import { PrismaClient } from '../../prisma/generated/client/index.js'
 const prisma = new PrismaClient()
@@ -23,7 +22,7 @@ import nodemailer from 'nodemailer';
 import cron from 'node-cron';
 
 //! Send Email every 5 minutes
-const sendEmail = cron.schedule('*/5 * * * *', async () => {
+// const sendEmail = cron.schedule('*/5 * * * *', async () => {
 
 //! send email every 30 seconds
 // const sendEmail = cron.schedule('*/10 * * * * *', async () => {
@@ -34,7 +33,7 @@ const sendEmail = cron.schedule('*/5 * * * *', async () => {
 
 
 //! Send Email at 8:00 AM, 12:00 PM, and 5:00 PM JST every day (日本時間)
-// const sendEmail = cron.schedule('0 23,3,8 * * *', async () => {
+const sendEmail = cron.schedule('0 23,3,8 * * *', async () => {
   try {
     // email transport configuration
     const transporter = nodemailer.createTransport({
@@ -95,11 +94,6 @@ const sendEmail = cron.schedule('*/5 * * * *', async () => {
         // Eメール内に画像を埋め込む方法として、CIDを利用して画像を直接メール本文に埋め込む
         if (post.imgUrl.startsWith('/') || post.imgUrl.startsWith('.')) {
           const cidValue = `postimage${index}`;
-          // attachments.push({
-          //   filename: post.imgUrl,
-          //   path: `${__dirname}/uploads/${newPath}`,
-          //   cid: cidValue // cid は、画像をメール本文に埋め込むためのもの(upload した画像がEmail内で表示される様になる)
-          // });
 
           // src属性にcid:CIDの値を指定することで、添付された画像を参照 (必須)
           imgTag = `<img src="cid:${cidValue}" alt="Post Image" style="width: 300px; height: 200px;">`;
@@ -127,7 +121,7 @@ const sendEmail = cron.schedule('*/5 * * * *', async () => {
             </div>
           </div>
           `;
-      }).join('');// join('') は、配列の要素を文字列に変換する
+      }).join(''); // 配列の要素を文字列に変換する
 
       // ランダムで subject のあいさつを変える
       const greetings = ["Today's 5 posts😁", 'How are you?😃', "Check today's posts🫡", "Don't forget to check🥹"];
