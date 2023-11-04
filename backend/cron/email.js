@@ -23,7 +23,7 @@ import nodemailer from 'nodemailer';
 import cron from 'node-cron';
 
 //! Send Email every 5 minutes
-const sendEmail = cron.schedule('*/5 * * * *', async () => {
+// const sendEmail = cron.schedule('*/5 * * * *', async () => {
 
 //! send email every 30 seconds
 // const sendEmail = cron.schedule('*/10 * * * * *', async () => {
@@ -34,7 +34,7 @@ const sendEmail = cron.schedule('*/5 * * * *', async () => {
 
 
 //! Send Email at 8:00 AM, 12:00 PM, and 5:00 PM JST every day (日本時間)
-// const sendEmail = cron.schedule('0 23,3,8 * * *', async () => {
+const sendEmail = cron.schedule('0 23,3,8 * * *', async () => {
   try {
     // email transport configuration
     const transporter = nodemailer.createTransport({
@@ -116,7 +116,11 @@ const sendEmail = cron.schedule('*/5 * * * *', async () => {
         return `
           <div style="border-bottom: 1px solid #e0e0e0; padding: 10px 0;">
             <h2 style="font-size: 16px; margin: 0 0 10px;">Title: ${post.title}</h2>
-            <p style="margin: 0 0 10px;">Text: ${post.content}</p>
+            <p className="card-content">
+              ${post.content.replace(/\n/g, '').length > 60
+                ? post.content.replace(/\n/g, '').slice(0, 60) + "..."
+                : post.content.replace(/\n/g, '')}
+            </p>
             ${imgTag}
             <div style="margin-top: 10px;">
               <a href="https://remindapp.onrender.com/postdetails/${post.id}" style="color: #337ab7; text-decoration: none;">Click here to view the post</a>
