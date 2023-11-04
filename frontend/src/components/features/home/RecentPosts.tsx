@@ -33,13 +33,6 @@ import { min, max } from "../../../utils/mediaQueries";
 const recentPostsCss = css`
   padding: 3rem 0 10rem 0;
 
-    /* @media screen and (max-width: 999px) {
-      width: 1000px !important;
-      max-width: 1000px !important;
-      margin: 0 auto;
-    } */
-  
-
   .eachCard {
     margin-bottom: 1.5rem;
 

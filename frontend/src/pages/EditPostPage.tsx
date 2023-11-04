@@ -331,7 +331,7 @@ const EditPostPage = () => {
 
 
   //* useEffect
-  // DB からデータを取得
+  // DB から post id と同じ 投稿データを取得
   useEffect(() => {
     if (data && data.PostsByUser) {
       const idToFind = Number(idUrl); // 特定のID
@@ -621,13 +621,22 @@ const EditPostPage = () => {
               {/* SELFIE COMPONENT (Pass the function )*/}
               <Selfie selfieImage={selfieImage} />
 
-              {/*//* DISPLAY IMG  画像があれば表示 */}
+              {/*//* DISPLAY IMG  画像があれば表示 (Local or Cloudinary) */}
               <div className="imageWrap">
                 {!selectedImage && (
-                  <img src={currentData.imgUrl} alt="no Image" />
+                  <img src={currentData.imgUrl} 
+                  onError={(e) => {
+                    const imgElement = e.target as HTMLImageElement;
+                    if (imgElement.src !== currentData.imgCloudinaryUrl) {
+                      imgElement.src = currentData.imgCloudinaryUrl;
+                    }
+                  }}
+                  alt="no Image" />
                 )}
                 {selectedImage && (
-                  <img src={selectedImage} alt="chosen Image" />
+                  <img src={selectedImage}
+                  alt="chosen Image" 
+                  />
                 )}
               </div>
 

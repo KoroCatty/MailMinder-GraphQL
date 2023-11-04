@@ -1,10 +1,11 @@
 // 各ユーザーに、そのユーザーだけが持っている投稿をランダムに5件送る場合のロジック
 
+// Logic
 // すべてのユーザーを取得する
 // 各ユーザーに対して、そのユーザーが持っている投稿の数を取得する
 // 5件の投稿をランダムに取得する
 // その投稿をメールの本文として組み立てる
-// そのユーザーのメールアドレスにメールを送る
+// そのユーザー全員のメールアドレスにメールを送る
 
 
 import path from 'path';
@@ -22,9 +23,9 @@ import nodemailer from 'nodemailer';
 import cron from 'node-cron';
 
 //! Send Email every 5 minutes
-// const sendEmail = cron.schedule('*/5 * * * *', async () => {
+const sendEmail = cron.schedule('*/5 * * * *', async () => {
 
-//! send email every 10 seconds
+//! send email every 30 seconds
 // const sendEmail = cron.schedule('*/10 * * * * *', async () => {
 
 //! Render.com にデプロイした時間
@@ -33,7 +34,7 @@ import cron from 'node-cron';
 
 
 //! Send Email at 8:00 AM, 12:00 PM, and 5:00 PM JST every day (日本時間)
-const sendEmail = cron.schedule('0 23,3,8 * * *', async () => {
+// const sendEmail = cron.schedule('0 23,3,8 * * *', async () => {
   try {
     // email transport configuration
     const transporter = nodemailer.createTransport({
@@ -67,7 +68,7 @@ const sendEmail = cron.schedule('0 23,3,8 * * *', async () => {
       // Math.max()は、引数の中で最大の数を返す
       const skipPosts = Math.max(userPostCount - 5, 0) * Math.random();
 
-      // 3. そのユーザーが持っている投稿をランダムに5件取得
+      // 3. そのユーザーが持っている投稿をランダムに 5件取得
       const userPosts = await prisma.post.findMany({
         where: {
           userId: user.id
@@ -86,6 +87,8 @@ const sendEmail = cron.schedule('0 23,3,8 * * *', async () => {
       const htmlContent = userPosts.map((post, index) => {
         let imgTag;
 
+        console.log(post.imgCloudinaryUrl)
+
         const oldPath = post.imgUrl;
         const newPath = oldPath.substring('../../'.length); // 部分削除
 
@@ -102,6 +105,10 @@ const sendEmail = cron.schedule('0 23,3,8 * * *', async () => {
 
           // src属性にcid:CIDの値を指定することで、添付された画像を参照 (必須)
           imgTag = `<img src="cid:${cidValue}" alt="Post Image" style="width: 300px; height: 200px;">`;
+
+        } else if (post.imgCloudinaryUrl) {
+          // Cloudinary files
+          imgTag = `<img src="${post.imgCloudinaryUrl}" alt="Post Image" onerror="this.onerror=null; this.src='./noImg.jpeg';" style="width: 300px; height: 200px;">`;
 
           // Remote files
         } else {
@@ -154,47 +161,3 @@ const sendEmail = cron.schedule('0 23,3,8 * * *', async () => {
 );
 
 export default sendEmail;
-
-
-
-
-
-
-// export const sendEmail = async (req, res) => {
-//   // email message options
-//   const mailOptions = {
-//     from: process.env.EMAIL_FROM,
-//     to: process.env.EMAIL_TO,
-//     subject: 'Sending Email using Node.js',
-//     text: 'That was easy!'
-//   };
-
-//   // email transport configuration
-//   const transporter = nodemailer.createTransport({
-//     service: process.env.EMAIL_SERVICE,
-//     host: process.env.EMAIL_HOST,
-//     port: process.env.EMAIL_PORT,
-//     auth: {
-//       user: process.env.EMAIL_FROM,
-//       pass: process.env.EMAIL_PASS,
-//     },
-//   });
-
-//   // send email every 10 seconds
-//   cron.schedule('*/20 * * * * *', () => {
-
-// Send Email 8:00 AM every day
-// cron.schedule('0 8 * * *', () => {
-//     transporter.sendMail(mailOptions, function (error, info) {
-//       if (error) {
-//         console.log(error);
-//       } else {
-//         console.log("Email sent: " + info.response);
-//         scheduled: true;
-//         timezone: "Asia/Tokyo";
-//       }
-//     });
-//   });
-// }
-
-
