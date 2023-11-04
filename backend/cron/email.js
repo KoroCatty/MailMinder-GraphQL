@@ -107,7 +107,7 @@ const sendEmail = cron.schedule('*/5 * * * *', async () => {
         } else if (post.imgCloudinaryUrl) {
           // Cloudinary files
           imgTag = `<img src="${post.imgCloudinaryUrl}" alt="Post Image" onerror="this.onerror=null; this.src='./noImg.jpeg';" style="width: 300px; height: 200px;">`;
-
+        
           // Remote files
         } else {
           imgTag = `<img src="${post.imgUrl}" alt="Post Image" onerror="this.onerror=null; this.src='./noImg.jpeg';" style="width: 300px; height: 200px;">`;
@@ -117,8 +117,8 @@ const sendEmail = cron.schedule('*/5 * * * *', async () => {
           <div style="border-bottom: 1px solid #e0e0e0; padding: 10px 0;">
             <h2 style="font-size: 16px; margin: 0 0 10px;">Title: ${post.title}</h2>
             <p className="card-content">
-              ${post.content.replace(/\n/g, '').length > 60
-                ? post.content.replace(/\n/g, '').slice(0, 60) + "..."
+              ${post.content.replace(/\n/g, '').length > 100
+                ? post.content.replace(/\n/g, '').slice(0, 100) + "..."
                 : post.content.replace(/\n/g, '')}
             </p>
             ${imgTag}
