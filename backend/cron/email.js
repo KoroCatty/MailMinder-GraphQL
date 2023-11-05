@@ -22,7 +22,7 @@ import nodemailer from 'nodemailer';
 import cron from 'node-cron';
 
 //! Send Email every 3 minutes
-const sendEmail = cron.schedule('*/3 * * * *', async () => {
+// const sendEmail = cron.schedule('*/3 * * * *', async () => {
 
 //! send email every 10 seconds
 // const sendEmail = cron.schedule('*/10 * * * * *', async () => {
@@ -33,7 +33,7 @@ const sendEmail = cron.schedule('*/3 * * * *', async () => {
 
 
 //! Send Email at 8:00 AM, 12:00 PM, and 5:00 PM JST every day (日本時間)
-// const sendEmail = cron.schedule('0 23,3,8 * * *', async () => {
+const sendEmail = cron.schedule('0 23,3,8 * * *', async () => {
   try {
     // email transport configuration
     const transporter = nodemailer.createTransport({
@@ -88,6 +88,12 @@ const sendEmail = cron.schedule('*/3 * * * *', async () => {
         const oldPath = post.imgUrl;
         const newPath = oldPath.substring('../../'.length); // 部分削除
 
+        // Full Path (uplads folder & Remote image address URL) 
+        // post.imgUrl -> http://localhost:5001/uploads/img-1699163333891.jpg
+
+        // CLOUDINARY URL
+        // post.imgCloudinaryUrl
+
         // Local files
         // ローカルのパスが'/'または'.'で始まる場合、画像はローカルにある
         // Eメール内に画像を埋め込む方法として、CIDを利用して画像を直接メール本文に埋め込む
@@ -129,8 +135,8 @@ const sendEmail = cron.schedule('*/3 * * * *', async () => {
 
       let mailContent;
 
+      // E メールの内容を定義 (Demoユーザーにはメールを送らない)
       if (user.email !== 'demo@demo.com') {
-        // E メールの内容を定義
         mailContent = {
           from: process.env.EMAIL_FROM,
           to: user.email,
