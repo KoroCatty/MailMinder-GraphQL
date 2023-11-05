@@ -14,14 +14,6 @@ import { CommonBtn } from "../../common/CommonBtn";
 // bootstrap
 import { Form } from "react-bootstrap";
 
-// $( '.js-input' ).keyup(function() {
-//   if( $(this).val() ) {
-//      $(this).addClass('not-empty');
-//   } else {
-//      $(this).removeClass('not-empty');
-//   }
-// });
-
 // TYPES 
 interface RefetchProps {
   refetch: () => void;
@@ -246,6 +238,7 @@ const HomeForms = ({ refetch }: RefetchProps) => {
     <h1>Loading...</h1>;
   }
   if (error) {
+    alert(error.message);
     <h1>Error...</h1>;
   }
 

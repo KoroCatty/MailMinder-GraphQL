@@ -214,6 +214,11 @@ const PostsDetailPage = () => {
       }
     });
 
+    if (deleteErr) {
+      window.alert(deleteErr.message);
+    }
+
+
   //* types
   type postProp = {
     id: string;
@@ -231,7 +236,6 @@ const PostsDetailPage = () => {
   return (
     <main css={PostDetailPageStyle}>
       <Container>
-        {/* <h1 className="text-center m-5">Posts Detail Page</h1> */}
 
         {/* component */}
         <BackButton />
@@ -242,7 +246,6 @@ const PostsDetailPage = () => {
             (item: postProp) => Number(item.id) === Number(id)
           ).map((filteredItem: postProp) => (
             <div key={filteredItem.id} className="detailItem">
-
 
               {/*  CREATED & UPDATED DATE */}
               <div className="timeContainer">
@@ -279,7 +282,6 @@ const PostsDetailPage = () => {
                   </time>
                 </div>
               </div>
-
 
               {/* TITLE */}
               <h1>{filteredItem.title}</h1>
@@ -333,8 +335,10 @@ const PostsDetailPage = () => {
             window.confirm("Are you sure you want to delete this post?") &&
               deletePostById();
             window.scrollTo({ top: 0, behavior: "smooth" });
-            navigate("/postlist");
-            // window.location.reload();//! 強制リロード
+
+            setTimeout(() => {
+              navigate("/postlist");
+            }, 500);
 
             //! Delete Cloudinary Image File that much with Post ID
             const cloudinaryId_muchWithPostId = data.PostsByUser.find((item: postProp) => Number(item.id) === Number(id));

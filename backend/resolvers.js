@@ -9,11 +9,11 @@ import jwt from 'jsonwebtoken';
 // import cloudinaryConfig from './cloudinary.js'; 
 
 import cloudinary from 'cloudinary';
-          
-cloudinary.config({ 
-  cloud_name:process.env.CLOUDINARY_CLOUD_NAME,
-  api_key:process.env.CLOUDINARY_API_KEY,
-  api_secret:process.env.CLOUDINARY_API_SECRET
+
+cloudinary.config({
+  cloud_name: process.env.CLOUDINARY_CLOUD_NAME,
+  api_key: process.env.CLOUDINARY_API_KEY,
+  api_secret: process.env.CLOUDINARY_API_SECRET
 });
 
 
@@ -248,6 +248,11 @@ const resolvers = {
         throw new Error("You must be logged in (Contextにトークンがありません)😱");
       }
 
+      // DEMO LOGGED IN USER
+      if (context.userId === 25 || context.userId === 2) {
+        throw new Error("SORRY, DEMO USER CANNOT CREATE A POST🙏🏻");
+      }
+
       //! save to DB
       // post は prisma.schema で定義済みのモデル
       const newPost = await prisma.post.create({
@@ -272,6 +277,11 @@ const resolvers = {
       // ログインしてなかったらエラー(contextで先に確認できる)
       if (!context.userId) {
         throw new Error("You must be logged in (Contextにトークンがありません)😱");
+      }
+
+      // DEMO LOGGED IN USER
+      if (context.userId === 25 || context.userId === 2) {
+        throw new Error("SORRY, DEMO USER CANNOT DELETE A POST🙏🏻");
       }
 
       console.log(args.id + " - PostID 👆🏻")
@@ -357,6 +367,11 @@ const resolvers = {
         throw new Error("You must be logged in (Contextにトークンがありません)😱");
       }
 
+      // DEMO LOGGED IN USER
+      if (context.userId === 25 || context.userId === 2) {
+        throw new Error("SORRY, DEMO USER CANNOT UPDATE A POST🙏🏻");
+      }
+
       // post は prisma.schema で定義済みのモデル
       const updatedPost = await prisma.post.update({
         where: {
@@ -382,6 +397,11 @@ const resolvers = {
       // ログインしてなかったらエラー(contextで先に確認できる)
       if (!context.userId) {
         throw new Error("You must be logged in (Contextにトークンがありません)😱");
+      }
+
+      // DEMO LOGGED IN USER
+      if (context.userId === 25 || context.userId === 2) {
+        return;
       }
 
       // console.log(args.imgCloudinaryId + " - Cloudinary ID -😻")
@@ -430,12 +450,18 @@ const resolvers = {
     //* ===============================================
     //* DELETE CLOUDINARY IMAGE FILE ON SERVER
     //* ===============================================
-    deleteCloudinaryImage: async (_, { publicId }) => {
+    deleteCloudinaryImage: async (_, { publicId }, context) => {
+      // DEMO LOGGED IN USER
+      if (context.userId === 25 || context.userId === 2) {
+        return;
+      }
+
       try {
         const result = await cloudinary.uploader.destroy(publicId);
         return result.result === 'ok';
       } catch (error) {
-        console.error(error + "🦾");
+        console.error(error);
+        console.log("This public_id missing error is not a problem.")
         return false;
       }
     },

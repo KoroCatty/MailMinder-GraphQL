@@ -27,10 +27,7 @@ const PostListCss = css`
 
 .eachCard {
   border: 1px solid #ddd;
-/* max-height: 400px;
-min-height: 400px; */
-
-  }
+}
 
   // 1px〜479px
   ${min[0] + max[0]} {

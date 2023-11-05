@@ -136,6 +136,10 @@ const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
     },
   });
 
+  if (error) {
+    window.alert(error.message);
+  }
+
   const scrollTop = () => {
     window.scrollTo({
       top: 0,

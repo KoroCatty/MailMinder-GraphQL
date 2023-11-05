@@ -265,7 +265,10 @@ const EditPostPage = () => {
 
 
   //* UPDATE POST BY ID 
-  const [updatePostById] = useMutation(UPDATE_POST_BY_ID);
+  const [ updatePostById, {error} ] = useMutation(UPDATE_POST_BY_ID);
+  if (error) {
+    alert(error.message);
+  }
 
   //! DELETE POST IMAGE FILE 
   const [deletePostImage] = useMutation(DELETE_POST_IMAGE_FILE);
@@ -528,7 +531,7 @@ const EditPostPage = () => {
       }
 
     } catch (error) {
-      window.alert("Error updating post");
+      // window.alert("Error updating post");
       console.error("Error updating post - アップデートエラー:", error);
     }
   };
