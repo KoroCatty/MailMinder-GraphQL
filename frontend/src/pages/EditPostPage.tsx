@@ -24,8 +24,6 @@ import { UPDATE_POST_BY_ID } from "../graphql/mutations";
 import { DELETE_POST_IMAGE_FILE } from "../graphql/mutations";
 import { DELETE_CLOUDINARY_IMAGE_FILE } from "../graphql/mutations";
 
-
-
 // bootstrap
 import { Form } from "react-bootstrap";
 
@@ -253,6 +251,7 @@ const EditPostPage = () => {
   // useParam
   const { id: idUrl } = useParams<{ id: string }>();
 
+  // useRef
   // Get local selected image value
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -349,6 +348,7 @@ const EditPostPage = () => {
   // console.log(data)
   // console.log(currentData)
 
+
   //? ======================================================
   //? Title
   //? ======================================================
@@ -378,11 +378,8 @@ const EditPostPage = () => {
     const localImageUrl = URL.createObjectURL(file);
     console.log(localImageUrl)// blob:http://localhost:3000/9ad32e0f-6952-45c7-99c9-051430a562a9
 
-    // Update the display image
-    // setDisplayImg(localImageUrl);
-
     setSelectedImage(localImageUrl);
-    resetLocalFileSelectValue();
+    // resetLocalFileSelectValue();
 
     // e.target.value = '';
   }
@@ -493,7 +490,6 @@ const EditPostPage = () => {
         id: Number(idUrl),
         imgUrl: currentData.imgUrl,
         imgCloudinaryUrl: currentData.imgCloudinaryUrl,
-        // imgCloudinaryId: currentData.cloudinaryId,
         imgCloudinaryId: currentData.imgCloudinaryId,
       },
     });
@@ -522,9 +518,13 @@ const EditPostPage = () => {
         console.log("Refetched!");
       }
 
-      // console.log(data.PostsByUser.imgCloudinaryId)
 
       //! Delete Cloudinary Image File that much with Post ID
+      // if File or Img Address is not empty, don't delete CLOUDINARY IMG
+      if (fileInputRef.current && !fileInputRef.current.value && !selectedImage) {
+        console.log("Not Image File is chosen")
+        return;
+      }  
       const cloudinaryId_muchWithPostId = data.PostsByUser.find((item: FormDataType) => Number(item.id) === Number(idUrl));
       if (cloudinaryId_muchWithPostId) {
         handleCloudinary_deleteImg(cloudinaryId_muchWithPostId.imgCloudinaryId);
