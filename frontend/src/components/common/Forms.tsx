@@ -1,3 +1,5 @@
+import { useRef, useState, useEffect } from "react";
+
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
 import { min, max } from "../../utils/mediaQueries";
@@ -12,7 +14,7 @@ const formsCss = css`
   .input-text {
     display: block;
     width: 100%;
-    height: 36px;
+    min-height: 36px;
     border-width: 0 0 2px 0; 
     border-color: #a3a3a3;
     font-family: Lusitana, serif;
@@ -25,27 +27,33 @@ const formsCss = css`
     color: #454545;
     word-wrap: break-word;
     line-height: 1.2;
+    overflow: scroll;
 
     // 1px〜479px
     ${min[0] + max[0]} {
       height: 60px;
+      font-size: 1.4rem;
     }
 
     &:focus {
       outline: none;
     }
 
-    &:focus, // 複数セレクタに適用
-    &.aaa {
+    &:focus {
       + .label {
         // 現在の要素の直後の兄弟要素で、.labelクラスを持つ要素をターゲット
-        transform: translateY(-40px);
+        transform: translateY(-60px);
       }
       + .label.textArea {
         transform: translateY(-80px);
       }
     }
   }
+
+      /* 新しく追加するスタイル */
+    .input-text.has-text + .label {
+      transform: translateY(-60px);
+    }
 
   // TEXTAREA
   .input-textArea {
@@ -58,6 +66,7 @@ const formsCss = css`
     letter-spacing: 0.1rem;
     color: #454545;
     line-height: 1.2;
+    overflow: hidden;
 
     // 1px〜479px
     ${min[0] + max[0]} {
@@ -130,6 +139,32 @@ export const CommonForm: React.FC<CommonFormProps> = ({
   value,
   classNameProp,
 }) => {
+  // テキストが存在するかどうかで state を変え、クラスを付与
+  const [hasText, setHasText] = useState(false);
+  // テキストの存在をチェック
+  const inputRef = useRef<HTMLInputElement>(null);
+
+  // ページ読み込み時の監視
+  useEffect(() => {
+    if (inputRef.current && inputRef.current.value !== '' ) {
+      setHasText(true);
+    }
+  }, [value]); // Async で値が DB から入ってくるので、valueを監視
+
+  // onChangeハンドラー
+  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    onChange(e); // 既存のonChangeを呼び出す
+
+    // テキストの存在をチェック
+    if (e.target.value) {
+      setHasText(true);
+    } else {
+      setHasText(false);
+    }
+  };
+
+
+
   return (
     <div css={formsCss}>
       <section className="">
@@ -137,12 +172,17 @@ export const CommonForm: React.FC<CommonFormProps> = ({
           <div className="form-field">
             <input
               id="name"
-              className={`input-text js-input ${classNameProp}`}
+              // className={`input-text js-input ${classNameProp}`}
+              className={`input-text js-input ${classNameProp} ${hasText ? 'has-text' : ''}`}
               type={type}
               required
-              onChange={onChange}
+              onChange={(e) => {
+                onChange;
+                handleChange(e);
+              }}
               name={name}
               value={value}
+              ref={inputRef}
             />
 
             <label
@@ -153,21 +193,6 @@ export const CommonForm: React.FC<CommonFormProps> = ({
               {text}
             </label>
           </div>
-
-          {/* <div className="form-field col x-50">
-            <input id="email" className="input-text js-input" type="email" required />
-            <label className="label" htmlFor="email">E-mail</label>
-          </div> */}
-
-          {/* <div className="form-field col x-100">
-            <input id="message" className="input-text js-input" type="text" required />
-            <label className="label" htmlFor="message">Message</label>
-          </div> */}
-
-          {/* BUTTON */}
-          {/* <div className="form-field col x-100 align-center">
-            <input className="submit-btn" type="submit" value="Submit" />
-          </div> */}
         </div>
       </section>
     </div>
@@ -185,15 +210,54 @@ export const CommonTextarea: React.FC<CommonTextareaProps> = ({
   value,
   classNameProp,
 }) => {
+  // useRef
+  const textAreaRef = useRef<HTMLTextAreaElement>(null); // テキストエリアの参照を作成
+
+  // テキストが存在するかどうかで state を変え、クラスを付与
+  const [hasText, setHasText] = useState(false);
+
+    // ページ読み込み時の監視
+    useEffect(() => {
+      if (textAreaRef.current && textAreaRef.current.value !== '' ) {
+        setHasText(true);
+      }
+    }, [value]); // Async で値が DB から入ってくるので、valueを監視
+
+  // onChangeハンドラー
+  const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
+    onChange(e); // 既存のonChangeを呼び出す
+
+    // テキストの存在をチェック
+    if (e.target.value) {
+      setHasText(true);
+    } else {
+      setHasText(false);
+    }
+  };
+
+  //? 高さ自動調整 (テキストエリアの内容が変わるたびに呼び出される)
+  const handleInput = () => {
+    const textArea = textAreaRef.current;
+    if (textArea) {
+      textArea.style.height = 'auto'; // 高さを初期化
+      textArea.style.height = textArea.scrollHeight + 'px'; // 新しい高さを設定
+    }
+  }
+
   return (
     <div css={formsCss}>
       <section>
         <div>
           <div className={`form-field ${classNameProp}`}>
             <textarea
-              onChange={onChange}
+              onChange={(e) => {
+                onChange;
+                handleChange(e);
+              }}
+              onInput={handleInput}  // ここで高さを自動調整
+              ref={textAreaRef}      // ここで高さを自動調整
               name={name}
-              className="input-text input-textArea"
+              className={`input-text input-textArea ${hasText ? 'has-text' : ''}`}
               value={value}
               required
             />

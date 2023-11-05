@@ -20,11 +20,12 @@ type IsLoggedInPropsType = {
 import { css } from "@emotion/react";
 import { min, max } from "../utils/mediaQueries";
 const authPageCss = css`
-  min-height: 74vh;
+  /* min-height: 70vh; */
   text-align: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  margin: 4rem 0;
 
   h1 {
     font-size: 2.5rem;
@@ -72,15 +73,23 @@ const authPageCss = css`
       transition: all 0.3s ease-in-out;
     }
   }
+
+  .demoLogin {
+    cursor: pointer;
+    text-decoration: underline;
+    width: fit-content;
+    margin: 0 auto;
+  }
 `;
 
 //! ======================================================
 // const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
 const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
   // HOOKS
-  const [showLogin, setShowLogin] = useState(true); // true = login, false = signup
+  const [showLoginPage, setShowLoginPage] = useState(true); // true = login, false = signup
   const [formData, setFormData] = useState({});
 
+  // useRef
   const authForm = useRef<HTMLFormElement>(null);
 
   const navigate = useNavigate();
@@ -118,6 +127,20 @@ const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
   });
 
   //! ======================================================
+  //! DEMO ACCOUNT LOGIN
+  //! ======================================================
+const demoCredential = () => {
+        loginUser({
+          variables: {
+            userSignin: {
+              email: "demo@demo.com",
+              password: "1234",
+            }
+          },
+        });
+}
+
+  //! ======================================================
   //! When loading
   //! ======================================================
   if (loading || loginLoading) {
@@ -139,8 +162,9 @@ const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
   //! ======================================================
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // setShowLoginPage((preValue) => !preValue); // toggle login/signup
 
-    if (showLogin) {
+    if (showLoginPage) {
       // login
       loginUser({
         variables: {
@@ -155,16 +179,27 @@ const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
         },
       });
     }
+
+    // switch to Login forms (reset form data then,  show login forms)
+    if (!isLoggedIn) { // sign up しただけで、ログイン状態ではないので下記が実行
+      setFormData({}); // clear form data
+      authForm?.current?.reset(); // clear form inputs
+      setShowLoginPage(true);
+    }
   };
 
   return (
     <div css={authPageCss}>
-      {showLogin && <h1>LOGIN</h1>}
-      {!showLogin && <h1>SIGN UP</h1>}
+      {showLoginPage && <h1 style={{ marginTop: "2rem" }}>LOGIN</h1>}
+      {!showLoginPage && <h1>SIGN UP</h1>}
 
       <div>
         {/* サインアップ時 */}
-        {signupData && <h1>{signupData.signupUser.firstName}You Signed Up!</h1>}
+        {signupData && (
+          <>
+            <h1>{signupData.signupUser.firstName}You Signed Up!</h1>
+          </>
+        )}
 
         {/* ログイン時 */}
         {loginData && <h1>{loginData.signinUser.firstName}You Logged In!</h1>}
@@ -174,7 +209,7 @@ const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
         {loginError && <div>{loginError.message}</div>}
 
         <form onSubmit={handleSubmit} ref={authForm}>
-          {!showLogin && (
+          {!showLoginPage && (
             <>
               <input
                 name="firstName"
@@ -215,22 +250,25 @@ const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
           <br />
           <br />
 
+          {/* //! DEMO */}
+          <div onClick={demoCredential} className="demoLogin">DEMO LOGIN</div>
+
           {/* link */}
           <div
             onClick={() => {
-              setShowLogin((preValue) => !preValue); // toggle login/signup
+              setShowLoginPage((preValue) => !preValue); // toggle login/signup
               setFormData({}); // clear form data
               authForm?.current?.reset(); // clear form inputs
             }}
             className="authLink"
           >
-            {showLogin
+            {showLoginPage
               ? "Don't have an account? Sign up"
               : "Already have an account? Login"}
           </div>
 
           {/* BUTTON */}
-          <CommonBtn type="submit">{showLogin ? "Login" : "Sign Up"}</CommonBtn>
+          <CommonBtn type="submit">{showLoginPage ? "Login" : "Sign Up"}</CommonBtn>
         </form>
       </div>
     </div>

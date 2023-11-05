@@ -81,13 +81,6 @@ const PostDetailPageStyle = css`
     }
   }
 
-  /* time {
-    margin: 0;
-    padding: 0 0 0 0.7em;
-    border-left: 1px solid #ffffff;
-    
-  } */
-
   // TITLE
   h1 {
     font-size: 3rem;
@@ -156,6 +149,7 @@ const PostDetailPageStyle = css`
     p {
       margin: 0;
       padding: 0 0.4rem 0 2rem;
+      word-wrap: break-word;
     }
   }
 

@@ -10,7 +10,11 @@ const globalCss = css`
     background-color: ${colorSchema.dark};
     color: white;
   }
-  h2, h3, h4, h5, h6 {
+  h2,
+  h3,
+  h4,
+  h5,
+  h6 {
     color: white !important;
   }
 
@@ -42,28 +46,29 @@ const globalCss = css`
   }
 
   // left side menu
-.navbar {
-  background-color: ${colorSchema.darkLight} !important;
-  box-shadow: 0 4px 4px rgba(186, 186, 186, 0.5) !important;
-}
-
-// Hamburger Button
-.navbar-toggler {
-  color: white !important;
-  border-color: white !important;
-  background-color: ${colorSchema.lightDark} !important;
-
-  span {
-    color: white !important;
-    border-color: white !important;
+  .navbar {
+    background-color: ${colorSchema.darkLight} !important;
+    box-shadow: 0 4px 4px rgba(186, 186, 186, 0.5) !important;
   }
-}
+
+  // Hamburger Button
+  .navbar-toggler {
+    color: ${colorSchema.lightDark} !important;
+    border-color: ${colorSchema.lightDark} !important;
+    background-color: ${colorSchema.lightDark} !important;
+
+    span {
+      color: ${colorSchema.lightDark} !important;
+      border-color: ${colorSchema.lightDark} !important;
+    }
+  }
 
   // Recent Card
-  .card-title, .card-text {
-    color: ${colorSchema.font} !important;
+  .card-title,
+  .card-text {
+    color: ${colorSchema.lightDark} !important;
   }
-  
+
   // Big Submit Button
   .submitBtn {
     background-color: ${colorSchema.danger} !important;
@@ -76,9 +81,12 @@ const globalCss = css`
 
     p {
       color: ${colorSchema.fontLight} !important;
-
     }
-  
+  }
+
+  time {
+    color: ${colorSchema.fontLight} !important;
+    opacity: 0.8;
   }
 `;
 

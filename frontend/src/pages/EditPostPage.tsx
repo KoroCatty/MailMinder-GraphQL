@@ -102,9 +102,11 @@ const EditPostCss = css`
 
   // COMPONENT className Prop
   .formTitleProp {
+    margin-bottom: 6rem;
+
     // 1px〜479px
     ${min[0] + max[0]} {
-      margin-bottom: 8rem;
+      margin-bottom: 6rem;
     }
   }
 
@@ -146,7 +148,6 @@ const EditPostCss = css`
     }
   }
 
-
   // Select Image Form
   .imgChooseBtn {
     width: 60%;
@@ -170,7 +171,6 @@ const EditPostCss = css`
       box-shadow: 0 0 8px #ccc;
     }
   }
-
 
   //! UPDATE Button (Props に渡すCSS)
   .submitBtn {
@@ -606,7 +606,7 @@ const EditPostPage = () => {
                 onChange={handleTitleChange}
                 classNameProp="formTitleProp"
               />
-
+  
               {/* content */}
               <CommonTextarea
                 value={currentData.content}
@@ -624,18 +624,18 @@ const EditPostPage = () => {
               {/*//* DISPLAY IMG  画像があれば表示 (Local or Cloudinary) */}
               <div className="imageWrap">
                 {!selectedImage && (
-                  <img src={currentData.imgUrl} 
-                  onError={(e) => {
-                    const imgElement = e.target as HTMLImageElement;
-                    if (imgElement.src !== currentData.imgCloudinaryUrl) {
-                      imgElement.src = currentData.imgCloudinaryUrl;
-                    }
-                  }}
-                  alt="no Image" />
+                  <img src={currentData.imgUrl}
+                    onError={(e) => {
+                      const imgElement = e.target as HTMLImageElement;
+                      if (imgElement.src !== currentData.imgCloudinaryUrl) {
+                        imgElement.src = currentData.imgCloudinaryUrl;
+                      }
+                    }}
+                    alt="no Image" />
                 )}
                 {selectedImage && (
                   <img src={selectedImage}
-                  alt="chosen Image" 
+                    alt="chosen Image"
                   />
                 )}
               </div>
