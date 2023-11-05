@@ -21,10 +21,10 @@ import nodemailer from 'nodemailer';
 // node cron
 import cron from 'node-cron';
 
-//! Send Email every 5 minutes
-const sendEmail = cron.schedule('*/5 * * * *', async () => {
+//! Send Email every 3 minutes
+const sendEmail = cron.schedule('*/3 * * * *', async () => {
 
-//! send email every 30 seconds
+//! send email every 10 seconds
 // const sendEmail = cron.schedule('*/10 * * * * *', async () => {
 
 //! Render.com にデプロイした時間
@@ -62,7 +62,6 @@ const sendEmail = cron.schedule('*/5 * * * *', async () => {
 
       // スキップする投稿の数を計算
       // 5件以上の投稿がある場合、ランダムに5件を取得するために、スキップする投稿の数を計算
-      // 5件未満の投稿がある場合、0を返す
       // 例えば、ユーザーが3件の投稿を持っている場合、0〜2のランダムな数を返す
       // Math.max()は、引数の中で最大の数を返す
       const skipPosts = Math.max(userPostCount - 5, 0) * Math.random();
@@ -127,31 +126,35 @@ const sendEmail = cron.schedule('*/5 * * * *', async () => {
       const greetings = ["Today's 5 posts😁", 'How are you?😃', "Check today's posts🫡", "Don't forget to check🥹"];
       const randomGreeting = greetings[Math.floor(Math.random() * greetings.length)];
 
-      // E メールの内容を定義
-      const mailContent = {
-        from: process.env.EMAIL_FROM,
-        to: user.email,
-        subject: `Hi ${user.firstName}! ${randomGreeting} `,
-        html: htmlContent,
-        // attachments: attachments // 添付ファイルの配列
-      };
 
-      // 5. nodemailer を使用して E メールを送信
-      const info = await transporter.sendMail(mailContent);
-      console.log(`Email sent to ${user.email}: ${info.response}`.cyan.bold.underline);
+      let mailContent;
+
+      if (user.email !== 'demo@demo.com') {
+        // E メールの内容を定義
+        mailContent = {
+          from: process.env.EMAIL_FROM,
+          to: user.email,
+          subject: `Hi ${user.firstName}! ${randomGreeting} `,
+          html: htmlContent,
+          // attachments: attachments // 添付ファイルの配列
+        };
+    
+        const info = await transporter.sendMail(mailContent);
+        console.log(`Email sent to ${user.email}: ${info.response}`.cyan.bold.underline);
+      } else {
+        console.log(`Skipped sending email to demo user: ${user.email}`.cyan.bold.underline);
+      }
     }
-
-    // Success message
+    
     console.log('All emails sent successfully!'.red.bold);
-    // process.exit(0);
 
   } catch (error) {
     console.error("エラー Error sending email with post content:", error);
   }
 },
   {
-    scheduled: true, // 予定されたタスクを実行するかどうか
-    timezone: "UTC" // タイムゾーン
+    scheduled: true,
+    timezone: "UTC"
   }
 );
 
