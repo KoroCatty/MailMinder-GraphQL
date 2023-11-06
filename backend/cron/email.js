@@ -22,7 +22,7 @@ import nodemailer from 'nodemailer';
 import cron from 'node-cron';
 
 //! Send Email every 3 minutes
-const sendEmail = cron.schedule('*/3 * * * *', async () => {
+// const sendEmail = cron.schedule('*/3 * * * *', async () => {
 
 //! send email every 30 seconds
 // const sendEmail = cron.schedule('*/30 * * * * *', async () => {
@@ -33,7 +33,7 @@ const sendEmail = cron.schedule('*/3 * * * *', async () => {
 
 
   //! Send Email at 8:00 AM, 12:00 PM, and 5:00 PM JST every day (日本時間)
-  // const sendEmail = cron.schedule('0 23,3,8 * * *', async () => {
+  const sendEmail = cron.schedule('0 23,3,8 * * *', async () => {
   try {
     // email transport configuration
     const transporter = nodemailer.createTransport({
@@ -49,10 +49,14 @@ const sendEmail = cron.schedule('*/3 * * * *', async () => {
     // 1. Get all users by Prisma
     const allUsers = await prisma.user.findMany();
 
-    // 投稿をシャッフルする関数
+    // 投稿をシャッフル (与えられた配列の要素をランダムに並べ替える)
     function shuffleArray(array) {
+      // 配列の最後の要素（array.length - 1）から始めて、配列の先頭の次の要素まで、逆順にループを進める
       for (let i = array.length - 1; i > 0; i--) {
+        // 現在の要素のインデックス（i）およびそれより前の要素のインデックスの中から、ランダムにインデックス（j）を選択
         const j = Math.floor(Math.random() * (i + 1));
+        // 選択されたランダムなインデックスjの要素と現在の要素iを交換
+        // 左側の[array[i], array[j]]は変数の配列を表し、右側の[array[j], array[i]]は新しい値の配列を表す。これにより、array[i]とarray[j]の値が交換される
         [array[i], array[j]] = [array[j], array[i]];
       }
     }
@@ -77,7 +81,7 @@ const sendEmail = cron.schedule('*/3 * * * *', async () => {
       // 投稿の数をログに表示
       console.log(`User ${user.email} has ${userPosts.length} posts.`);
 
-      // 全ての投稿をシャッフル
+      // 全ての投稿をシャッフル関数に渡す
       shuffleArray(userPosts);
 
       // シャッフルされた投稿から最初の5件を取得
