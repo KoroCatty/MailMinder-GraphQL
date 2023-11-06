@@ -22,10 +22,10 @@ import nodemailer from 'nodemailer';
 import cron from 'node-cron';
 
 //! Send Email every 3 minutes
-// const sendEmail = cron.schedule('*/3 * * * *', async () => {
+const sendEmail = cron.schedule('*/3 * * * *', async () => {
 
-//! send email every 10 seconds
-// const sendEmail = cron.schedule('*/10 * * * * *', async () => {
+//! send email every 30 seconds
+// const sendEmail = cron.schedule('*/30 * * * * *', async () => {
 
 //! Render.com にデプロイした時間
 // //! Send Email at 8:00 AM, 12:00 PM, and 8:00 PM JST every day (日本時間)
@@ -33,7 +33,7 @@ import cron from 'node-cron';
 
 
 //! Send Email at 8:00 AM, 12:00 PM, and 5:00 PM JST every day (日本時間)
-const sendEmail = cron.schedule('0 23,3,8 * * *', async () => {
+// const sendEmail = cron.schedule('0 23,3,8 * * *', async () => {
   try {
     // email transport configuration
     const transporter = nodemailer.createTransport({
@@ -81,7 +81,7 @@ const sendEmail = cron.schedule('0 23,3,8 * * *', async () => {
       }
 
       // 4. E メールの本文を組み立てる
-      // const attachments = [];
+      const attachments = [];
       const htmlContent = userPosts.map((post, index) => {
         let imgTag;
 
@@ -89,19 +89,28 @@ const sendEmail = cron.schedule('0 23,3,8 * * *', async () => {
         const newPath = oldPath.substring('../../'.length); // 部分削除
 
         // Full Path (uplads folder & Remote image address URL) 
+        // console.log(post.imgUrl);
         // post.imgUrl -> http://localhost:5001/uploads/img-1699163333891.jpg
 
         // CLOUDINARY URL
+        // console.log(post.imgCloudinaryUrl);
         // post.imgCloudinaryUrl
 
         // Local files
         // ローカルのパスが'/'または'.'で始まる場合、画像はローカルにある
         // Eメール内に画像を埋め込む方法として、CIDを利用して画像を直接メール本文に埋め込む
         if (post.imgUrl.startsWith('/') || post.imgUrl.startsWith('.')) {
+          
           const cidValue = `postimage${index}`;
+          attachments.push({
+            filename: post.imgUrl,
+            path: `${__dirname}/uploads/${newPath}`,
+            cid: cidValue // cid は、画像をメール本文に埋め込むためのもの(upload した画像がEmail内で表示される様になる)
+          });
+          // console.log(cidValue); // postimage2 ... 
 
           // src属性にcid:CIDの値を指定することで、添付された画像を参照 (必須)
-          imgTag = `<img src="cid:${cidValue}" alt="Post Image" style="width: 300px; height: 200px;">`;
+          imgTag = `<img src="cid:${cidValue}"  alt="Post Image" style="width: 300px; height: 200px;">`;
 
         } else if (post.imgCloudinaryUrl) {
           // Cloudinary files
@@ -142,7 +151,7 @@ const sendEmail = cron.schedule('0 23,3,8 * * *', async () => {
           to: user.email,
           subject: `Hi ${user.firstName}! ${randomGreeting} `,
           html: htmlContent,
-          // attachments: attachments // 添付ファイルの配列
+          attachments: attachments // 添付ファイルの配列
         };
     
         const info = await transporter.sendMail(mailContent);

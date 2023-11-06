@@ -14,7 +14,6 @@ import { setContext } from "@apollo/client/link/context";
 import { createUploadLink } from 'apollo-upload-client'; 
 
 
-
 //! IMPORTANT (Switch required before push)
 // フロントエンドからバックエンドに接続
 const uploadLink = createUploadLink({
