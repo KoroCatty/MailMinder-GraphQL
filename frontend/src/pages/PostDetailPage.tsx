@@ -153,6 +153,13 @@ const PostDetailPageStyle = css`
     }
   }
 
+  // NO POST MESSAGE
+  .noPostMessage {
+    text-align: center;
+    font-size: 3rem;
+    margin: 2rem 0;
+  }
+
   // COMPONENT BACK BUTTON
   .backButton {
     text-align: left;
@@ -180,8 +187,6 @@ const PostsDetailPage = () => {
   const handleCloudinary_deleteImg = (publicId: string) => {
     deleteCloudinaryImageFile({ variables: { publicId } });
   };
-
-
 
   // useNavigate
   const navigate = useNavigate();
@@ -214,10 +219,9 @@ const PostsDetailPage = () => {
       }
     });
 
-    if (deleteErr) {
-      window.alert(deleteErr.message);
-    }
-
+  if (deleteErr) {
+    window.alert(deleteErr.message);
+  }
 
   //* types
   type postProp = {
@@ -230,6 +234,11 @@ const PostsDetailPage = () => {
     imgCloudinaryUrl: string;
   };
 
+  //  URL の id と DB の id を比較し一致するものを取得 
+  const filteredPosts = data?.PostsByUser.filter(
+    (item: postProp) => Number(item.id) === Number(id)
+  );
+
   //! ============================================================
   //! JSX
   //! ============================================================
@@ -240,11 +249,13 @@ const PostsDetailPage = () => {
         {/* component */}
         <BackButton />
 
-        {/* URL の id と DB の id を比較し一致するものを取得 */}
-        {data ? (
-          data?.PostsByUser.filter(
-            (item: postProp) => Number(item.id) === Number(id)
-          ).map((filteredItem: postProp) => (
+        {loading ? (
+          <p>Loading...🧐</p>
+        ) : error ? (
+          <p>Error: {error.message}</p>
+        ) : filteredPosts && filteredPosts.length > 0 ? (
+          filteredPosts.map((filteredItem: postProp) => (
+
             <div key={filteredItem.id} className="detailItem">
 
               {/*  CREATED & UPDATED DATE */}
@@ -312,44 +323,49 @@ const PostsDetailPage = () => {
               </div>
             </div>
           ))
-        ) : loading ? (
-          <p>Loading...</p>
-        ) : error ? (
-          <p>Error: {error.message}</p>
         ) : (
-          <p>No posts found.</p>
+          <h2 className="noPostMessage">No Post Found...</h2>
         )}
 
-        {/* EDIT BUTTON */}
-        <Link onClick={() => { window.scrollTo({ top: 0, behavior: "smooth" }) }} to={`/editpost/${id}`}>
-          <button className="btn btn-primary mb-4" style={{ width: "100%" }}>
-            Edit
-          </button>
-        </Link>
+        {/* 投稿がある場合のみ表示 */}
+        {filteredPosts && filteredPosts.length > 0 ? (
+          <>
+            {/* EDIT BUTTON */}
+            <Link onClick={() => { window.scrollTo({ top: 0, behavior: "smooth" }) }} to={`/editpost/${id}`}>
+              <button className="btn btn-primary mb-4" style={{ width: "100%" }}>
+                Edit
+              </button>
+            </Link>
 
-        {/* DELETE BUTTON */}
-        <button
-          className="btn btn-danger btn-sm"
-          onClick={(e) => {
-            e.preventDefault();
-            window.confirm("Are you sure you want to delete this post?") &&
-              deletePostById();
-            window.scrollTo({ top: 0, behavior: "smooth" });
+            {/* DELETE BUTTON */}
+            <button
+              className="btn btn-danger btn-sm"
+              onClick={(e) => {
+                e.preventDefault();
+                window.confirm("Are you sure you want to delete this post?") &&
+                  deletePostById();
+                window.scrollTo({ top: 0, behavior: "smooth" });
 
-            setTimeout(() => {
-              navigate("/postlist");
-            }, 500);
+                setTimeout(() => {
+                  navigate("/postlist");
+                }, 500);
 
-            //! Delete Cloudinary Image File that much with Post ID
-            const cloudinaryId_muchWithPostId = data.PostsByUser.find((item: postProp) => Number(item.id) === Number(id));
-            if (cloudinaryId_muchWithPostId) {
-              handleCloudinary_deleteImg(cloudinaryId_muchWithPostId.imgCloudinaryId);
-            }
-          }}
-        >
-          {deleteErr ? "Deleting..." : "Delete"}
-          {deleteLoading ? "Deleting..." : "Delete"}
-        </button>
+                //! Delete Cloudinary Image File that much with Post ID
+                const cloudinaryId_muchWithPostId = data.PostsByUser.find((item: postProp) => Number(item.id) === Number(id));
+                if (cloudinaryId_muchWithPostId) {
+                  handleCloudinary_deleteImg(cloudinaryId_muchWithPostId.imgCloudinaryId);
+                }
+              }}
+            >
+              {deleteLoading ? "Deleting..." : "Delete"}
+            </button>
+          </>
+        ) : (
+          null
+        )}
+
+
+
       </Container>
     </main>
   );

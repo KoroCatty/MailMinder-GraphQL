@@ -88,6 +88,18 @@ const globalCss = css`
     color: ${colorSchema.fontLight} !important;
     opacity: 0.8;
   }
+
+  // Not Found Page
+  .notFoundBackBtn {
+    background-color: ${colorSchema.dark} !important;
+    box-shadow: 0 0 12px rgba(255, 255, 255, 1) !important;
+    
+    &:hover {
+      color: ${colorSchema.danger} !important;
+      box-shadow: none !important;
+      transition: all 0.3s ease;
+    }
+  }
 `;
 
 function ColorThemeGlobal() {

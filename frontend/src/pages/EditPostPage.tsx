@@ -242,6 +242,13 @@ const EditPostCss = css`
       width: 100%;
     }
   }
+
+    // NO POST MESSAGE
+    .noPostMessage {
+    text-align: center;
+    font-size: 3rem;
+    margin: 2rem 0;
+  }
 `;
 
 //! ======================================================
@@ -264,7 +271,7 @@ const EditPostPage = () => {
 
 
   //* UPDATE POST BY ID 
-  const [ updatePostById, {error} ] = useMutation(UPDATE_POST_BY_ID);
+  const [updatePostById, { error }] = useMutation(UPDATE_POST_BY_ID);
   if (error) {
     alert(error.message);
   }
@@ -524,7 +531,7 @@ const EditPostPage = () => {
       if (fileInputRef.current && !fileInputRef.current.value && !selectedImage) {
         console.log("Not Image File is chosen")
         return;
-      }  
+      }
       const cloudinaryId_muchWithPostId = data.PostsByUser.find((item: FormDataType) => Number(item.id) === Number(idUrl));
       if (cloudinaryId_muchWithPostId) {
         handleCloudinary_deleteImg(cloudinaryId_muchWithPostId.imgCloudinaryId);
@@ -546,11 +553,11 @@ const EditPostPage = () => {
 
       <div className="container">
         <div className="row">
-          {data?.PostsByUser.length === 0 && (
-            <p className="text-center">No posts to display</p>
-          )}
 
-          {currentData && (
+          {/* If no exist the post, error message */}
+          {(!currentData || Object.keys(currentData).length === 0 || !currentData.id) ? (
+            <h2 className="noPostMessage">No Post Found...</h2>
+          ) : (
             <form onSubmit={handleSubmit} className="detailItem">
               <h1>USER ID: {currentData.id}</h1>
 
@@ -609,7 +616,7 @@ const EditPostPage = () => {
                 onChange={handleTitleChange}
                 classNameProp="formTitleProp"
               />
-  
+
               {/* content */}
               <CommonTextarea
                 value={currentData.content}
