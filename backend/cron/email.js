@@ -65,8 +65,6 @@ const sendEmail = cron.schedule('*/3 * * * *', async () => {
         where: {
           userId: user.id
         },
-        take: 5, // 5件の投稿を取得
-        
         select: {
           id: true,
           title: true,
