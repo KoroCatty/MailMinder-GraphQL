@@ -25,7 +25,7 @@ import crypto from 'crypto';
 import jwt from 'jsonwebtoken';
 
 //! SENDING EMAIL  (DO NOT DELETE)
-import './cron/email.js';
+// import './cron/email.js';
 
 // プリズマのクライアントをインポート (DB接続確認のため)
 import { PrismaClient } from '../prisma/generated/client/index.js'
