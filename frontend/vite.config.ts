@@ -37,7 +37,7 @@ export default defineConfig({
           // urlPattern: ({ url }) => {
           //   return url.pathname.startsWith('/localhost');
           // },
-          urlPattern: "/",
+          urlPattern: ({ url }) => url.origin === self.location.origin,
           handler: "CacheFirst" as const,
           options: {
             cacheName: "MailMinder-cache",
