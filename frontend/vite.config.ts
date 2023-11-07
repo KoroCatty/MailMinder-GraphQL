@@ -34,11 +34,11 @@ export default defineConfig({
       workbox: {
         // workbox options for generateSW
         runtimeCaching: [{
-          // urlPattern: ({ url }) => {
-          //   return url.pathname.startsWith('/localhost');
-          // },
-          urlPattern: ({ url }) => url.origin === self.location.origin,
-          handler: "CacheFirst" as const,
+          urlPattern: ({ url }) => {
+            return url.pathname.startsWith('/graphql');
+          },
+  
+           handler: "CacheFirst",
           options: {
             cacheName: "MailMinder-cache",
             expiration: {
