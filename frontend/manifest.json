@@ -1,6 +1,6 @@
 {
   "name": "MailMinder",
-  "short_name": "MyPWA",
+  "short_name": "MailMinder",
   "description": "Remind your things by Email",
   "start_url": "/",
   "display": "standalone",
