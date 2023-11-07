@@ -17,6 +17,7 @@ export default defineConfig({
     react(),
     VitePWA({
       injectRegister: "auto",
+      registerType: "autoUpdate",
       manifest: {
         name: "MailMinder",
         short_name: "MailMinder",
@@ -24,7 +25,8 @@ export default defineConfig({
         start_url: "/",
         display: "standalone",
         background_color: "black",
-        theme_color: "#fcfcfc",
+        // theme_color: "#fcfcfc",
+        theme_color: "rgba(0, 0, 0, 0)",
         orientation: "portrait-primary",
         icons: [
           {
@@ -41,11 +43,14 @@ export default defineConfig({
         ],
       },
       workbox: {
+        globPatterns: ["**/*.{js,css,ico,png,svg}"],
+        navigateFallback: null,
         // workbox options for generateSW
         runtimeCaching: [
           {
-            urlPattern: ({ url }) => url.origin === self.location.origin,
-            handler: 'NetworkFirst', // Try network first, then fallback to cache if offline
+            // urlPattern: ({ url }) => url.origin === self.location.origin,
+            urlPattern: /api\/urls\.unfurl$/,
+            handler: 'CacheFirst' as const,
             options: {
               cacheName: "MailMinder-cache",
               expiration: {
