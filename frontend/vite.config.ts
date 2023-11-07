@@ -17,6 +17,7 @@ export default defineConfig({
     react(),
     VitePWA({
       injectRegister: "auto",
+      registerType: "autoUpdate",
       manifest: {
         name: "MailMinder",
         short_name: "MailMinder",
@@ -41,12 +42,12 @@ export default defineConfig({
         ],
       },
       workbox: {
-        globPatterns: ["**/*.{js,css,ico,png,svg}"],
+        // globPatterns: ["**/*.{js,css,ico,png,svg}"],
         // navigateFallback: null,
         // workbox options for generateSW
         runtimeCaching: [
           {
-            urlPattern: "https://https://remindapp.onrender.com/.*",
+            urlPattern: "/",
             handler: 'CacheFirst' as const,
             options: {
               cacheName: "MailMinder-cache",
