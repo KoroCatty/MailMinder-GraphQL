@@ -30,7 +30,9 @@ const ASSETS_TO_CACHE = [
   // './index.html'
 ];
 
+// Service worker Install (Once downloaded, you can't see it again)
 self.addEventListener('install', (event) => {
+  console.log("Service worker has been installed")
   // Perform install steps
   event.waitUntil(
     caches.open(CACHE_NAME)
@@ -41,6 +43,7 @@ self.addEventListener('install', (event) => {
   );
 });
 
+// Activate Service Worker
 self.addEventListener('fetch', (event) => {
   event.respondWith(
     caches.match(event.request)
@@ -54,6 +57,7 @@ self.addEventListener('fetch', (event) => {
   );
 });
 
+// Activate Event (古いキャッシュを削除)
 self.addEventListener('activate', (event) => {
   const cacheWhitelist = [CACHE_NAME];
 
@@ -68,4 +72,5 @@ self.addEventListener('activate', (event) => {
       );
     })
   );
-});
+}
+);
