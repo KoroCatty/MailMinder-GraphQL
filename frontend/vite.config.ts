@@ -19,12 +19,12 @@ export default defineConfig({
       manifest: {
         icons: [
           {
-            src: "/imgs/logo.jpg",
+            src: "/logo.jpg",
             sizes: "192x192",
             type: "image/png",
           },
           {
-            src: "/imgs/logo.jpg",
+            src: "/logo.jpg",
             sizes: "512x512",
             type: "image/png",
             purpose: "any maskable",
@@ -37,7 +37,7 @@ export default defineConfig({
           // urlPattern: ({ url }) => {
           //   return url.pathname.startsWith('/localhost');
           // },
-          urlPattern: "https://remindapp.onrender.com/",
+          urlPattern: "/",
           handler: "CacheFirst" as const,
           options: {
             cacheName: "MailMinder-cache",
