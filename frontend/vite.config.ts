@@ -42,12 +42,12 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,ico,png,svg}"],
-        navigateFallback: null,
+        // navigateFallback: null,
         // workbox options for generateSW
         runtimeCaching: [
           {
-            urlPattern: ({ url }) => url.origin === self.location.origin,
-            handler: 'NetworkFirst', // Try network first, then fallback to cache if offline
+            urlPattern: "https://https://remindapp.onrender.com/.*",
+            handler: 'CacheFirst' as const,
             options: {
               cacheName: "MailMinder-cache",
               expiration: {
@@ -57,7 +57,7 @@ export default defineConfig({
               cacheableResponse: {
                 statuses: [0, 200],
               },
-              networkTimeoutSeconds: 5, // after 5s, if the network response hasn't arrived, use the cache
+              // networkTimeoutSeconds: 5, // after 5s, if the network response hasn't arrived, use the cache
             },
           },
         ],
