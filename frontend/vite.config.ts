@@ -60,7 +60,7 @@ export default defineConfig({
               cacheableResponse: {
                 statuses: [0, 200],
               },
-              networkTimeoutSeconds: 5, // after 5s, if the network response hasn't arrived, use the cache
+              // networkTimeoutSeconds: 5, // after 5s, if the network response hasn't arrived, use the cache
             },
           },
         ],
