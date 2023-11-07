@@ -42,15 +42,12 @@ export default defineConfig({
         ],
       },
       workbox: {
-        // globPatterns: ["**/*.{js,css,ico,png,svg}"],
-        // navigateFallback: null,
+        globPatterns: ["**/*.{js,css,ico,png,svg}"],
+        navigateFallback: null,
         // workbox options for generateSW
         runtimeCaching: [
           {
-            // urlPattern: ({ url }) => url.origin === self.location.origin,
-            urlPattern: ({ url }) => {
-              return url.pathname.startsWith("/api");
-            },
+            urlPattern: ({ url }) => url.origin === self.location.origin,
             handler: "CacheFirst" as const,
             options: {
               cacheName: "MailMinder-cache",
