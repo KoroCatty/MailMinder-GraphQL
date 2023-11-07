@@ -49,7 +49,7 @@ export default defineConfig({
         runtimeCaching: [
           {
             // urlPattern: ({ url }) => url.origin === self.location.origin,
-            urlPattern: /api\/urls\.unfurl$/,
+            urlPattern: /\/api\/.*\/*.json/,
             handler: 'CacheFirst' as const,
             options: {
               cacheName: "MailMinder-cache",
