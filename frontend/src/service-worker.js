@@ -24,10 +24,10 @@
 const CACHE_NAME = 'v1';
 const ASSETS_TO_CACHE = [
   './',  // root path for the app
-  './assets/index-4c06471d.js',
-  './assets/index-c858ac5c.css',
-  './logo.jpg',
-  './index.html'
+  // './assets/index-4c06471d.js',
+  // './assets/index-c858ac5c.css',
+  // './logo.jpg',
+  // './index.html'
 ];
 
 self.addEventListener('install', (event) => {
