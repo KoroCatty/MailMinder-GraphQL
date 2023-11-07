@@ -24,8 +24,7 @@ export default defineConfig({
         start_url: "/",
         display: "standalone",
         background_color: "black",
-        // theme_color: "#fcfcfc",
-        theme_color: "rgba(0, 0, 0, 0)",
+        theme_color: "#fcfcfc",
         orientation: "portrait-primary",
         icons: [
           {
@@ -43,13 +42,12 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,ico,png,svg}"],
-        navigateFallback: 'index.html', // Fallback to index.html for navigation requests (single-page apps)
+        navigateFallback: null,
         // workbox options for generateSW
         runtimeCaching: [
           {
             urlPattern: ({ url }) => url.origin === self.location.origin,
             handler: 'NetworkFirst', // Try network first, then fallback to cache if offline
-  
             options: {
               cacheName: "MailMinder-cache",
               expiration: {
@@ -59,7 +57,7 @@ export default defineConfig({
               cacheableResponse: {
                 statuses: [0, 200],
               },
-              // networkTimeoutSeconds: 5, // after 5s, if the network response hasn't arrived, use the cache
+              networkTimeoutSeconds: 5, // after 5s, if the network response hasn't arrived, use the cache
             },
           },
         ],
