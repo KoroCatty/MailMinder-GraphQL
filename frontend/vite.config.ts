@@ -17,19 +17,19 @@ export default defineConfig({
     VitePWA({
       injectRegister: 'auto',
       manifest: {
-        // icons: [
-        //   {
-        //     src: "/logo.jpg",
-        //     sizes: "192x192",
-        //     type: "image/png",
-        //   },
-        //   {
-        //     src: "/logo.jpg",
-        //     sizes: "512x512",
-        //     type: "image/png",
-        //     purpose: "any maskable",
-        //   },
-        // ],
+        icons: [
+          {
+            src: "/imgs/logo.jpg",
+            sizes: "192x192",
+            type: "image/png",
+          },
+          {
+            src: "/imgs/logo.jpg",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any maskable",
+          },
+        ],
       },
       workbox: {
         // workbox options for generateSW
