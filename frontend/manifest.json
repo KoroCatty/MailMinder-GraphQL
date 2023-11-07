@@ -2,7 +2,7 @@
   "name": "MailMinder",
   "short_name": "MailMinder",
   "description": "Remind your things by Email",
-  "start_url": "/",
+  "start_url": "https://remindapp.onrender.com/",
   "display": "standalone",
   "background_color": "black",
   "theme_color": "#fcfcfc",
