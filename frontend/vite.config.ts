@@ -37,7 +37,7 @@ export default defineConfig({
           // urlPattern: ({ url }) => {
           //   return url.pathname.startsWith('/localhost');
           // },
-          urlPattern: "https://remindapp.onrender.com/.*",
+          urlPattern: "https://remindapp.onrender.com/",
           handler: "CacheFirst" as const,
           options: {
             cacheName: "MailMinder-cache",
