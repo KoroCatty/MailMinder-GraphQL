@@ -43,12 +43,13 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,ico,png,svg}"],
-        navigateFallback: null,
+        navigateFallback: 'index.html', // Fallback to index.html for navigation requests (single-page apps)
         // workbox options for generateSW
         runtimeCaching: [
           {
             urlPattern: ({ url }) => url.origin === self.location.origin,
-            handler: "CacheFirst" as const,
+            handler: 'NetworkFirst', // Try network first, then fallback to cache if offline
+  
             options: {
               cacheName: "MailMinder-cache",
               expiration: {
