@@ -4,8 +4,8 @@
   "description": "Remind your things by Email",
   "start_url": "/",
   "display": "standalone",
-  "background_color": "blue",
-  "theme_color": "yellow",
+  "background_color": "black",
+  "theme_color": "#fcfcfc",
   "orientation": "portrait-primary",
   "icons": [
     {
