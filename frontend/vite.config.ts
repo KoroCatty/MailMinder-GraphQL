@@ -16,8 +16,8 @@ export default defineConfig({
   plugins: [
     react(),
     VitePWA({
-      // injectRegister: "auto",
-      // registerType: "autoUpdate",
+      injectRegister: "auto",
+      registerType: "autoUpdate",
       manifest: {
         name: "MailMinder",
         short_name: "MailMinder",
@@ -47,23 +47,23 @@ export default defineConfig({
         // globPatterns: ["**/*.{js,css,ico,png,svg}"],
         // navigateFallback: null,
         // workbox options for generateSW
-        // runtimeCaching: [
-        //   {
-        //     urlPattern: "/",
-        //     handler: "CacheFirst" as const,
-        //     options: {
-        //       cacheName: "MailMinder-cache",
-        //       expiration: {
-        //         maxEntries: 100,
-        //         maxAgeSeconds: 60 * 60 * 24 * 7, // 7日間
-        //       },
-        //       cacheableResponse: {
-        //         statuses: [0, 200],
-        //       },
-        //       // networkTimeoutSeconds: 5, // after 5s, if the network response hasn't arrived, use the cache
-        //     },
-        //   },
-        // ],
+        runtimeCaching: [
+          {
+            urlPattern: "/",
+            handler: "CacheFirst" as const,
+            options: {
+              cacheName: "MailMinder-cache",
+              expiration: {
+                maxEntries: 100,
+                maxAgeSeconds: 60 * 60 * 24 * 7, // 7日間
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
+              },
+              // networkTimeoutSeconds: 5, // after 5s, if the network response hasn't arrived, use the cache
+            },
+          },
+        ],
       },
       // add this to cache all the
       // static assets in the public folder
