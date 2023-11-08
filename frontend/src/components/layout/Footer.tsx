@@ -1,4 +1,3 @@
-import { useState } from "react";
 // Emotion
 import { css } from "@emotion/react";
 import { min, max } from "../../utils/mediaQueries";
@@ -13,6 +12,12 @@ import { Link } from "react-router-dom";
 // go to top
 function goTop() {
   window.scroll({ top: 0, behavior: 'smooth' });
+}
+
+// TYPE
+type IsLoggedInPropsType = {
+  isLoggedIn: boolean;
+  // setIsLoggedIn: (isLoggedIn: boolean) => void;
 }
 
 const FooterCSS = css`
@@ -150,10 +155,7 @@ const FooterCSS = css`
   }
 `;
 
-function Footer() {
-  // Login Check 
-  const [loggedIn] = useState(localStorage.getItem("token_GraphQL") ? true : false);
-
+function Footer({ isLoggedIn }: IsLoggedInPropsType) {
   return (
     <footer css={FooterCSS}>
       <div className="footer">
@@ -166,9 +168,6 @@ function Footer() {
                 <a target="blank" href="https://github.com/TechnoEmpire">
                   <AiFillGithub style={{ color: "white", fontSize: "2rem" }} />
                 </a>
-                {/* <a target="blank" href="https://icons8.com" className="">
-                      <img src={Twitter} alt="" />
-                    </a> */}
               </div>
 
               <h3 className="footer__logo">KAZ-DEV</h3>
@@ -177,10 +176,10 @@ function Footer() {
                 Reseved. <br className="breakLineSP" />{" "}
               </p>
             </Col>
-
             <Col>
 
-              {loggedIn ? (
+              {/* LOGIN CHECK */}
+              {isLoggedIn ? (
                 <div className="footer__links">
                   <Link to="/" onClick={goTop}>
                     HOME
@@ -194,9 +193,6 @@ function Footer() {
                   <Link to="/contact" onClick={goTop}>
                     CONTACT
                   </Link>
-                  {/* <Link to="/privacy" onClick={ChangePageTop}>
-                  PRIVACY POLICY
-                </Link> */}
                 </div>
               ) : (
                 <div className="footer__links">
@@ -206,17 +202,8 @@ function Footer() {
                   <Link to="/contact" onClick={goTop}>
                     CONTACT
                   </Link>
-                  {/* <Link to="/privacy" onClick={ChangePageTop}>
-      PRIVACY POLICY
-    </Link> */}
                 </div>
               )}
-
-
-
-
-
-
             </Col>
           </Row>
         </Container>

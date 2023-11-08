@@ -14,18 +14,14 @@ import { CommonBtn } from "../../common/CommonBtn";
 // bootstrap
 import { Form } from "react-bootstrap";
 
-// $( '.js-input' ).keyup(function() {
-//   if( $(this).val() ) {
-//      $(this).addClass('not-empty');
-//   } else {
-//      $(this).removeClass('not-empty');
-//   }
-// });
+// TYPES 
+interface RefetchProps {
+  refetch: () => void;
+}
 
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
 import { min, max } from "../../../utils/mediaQueries";
-
 const homeFormsStyles = css`
   position: relative;
   margin-top: 18rem;
@@ -207,15 +203,15 @@ interface FormDataProps {
   title?: string;
   content?: string;
   imgUrl?: string;
-  imgFile?: string;
+  imgCloudinaryUrl?: string;
   [key: string]: string | undefined; // This makes it indexable for dynamic keys
 }
 
-const HomeForms = () => {
-  // HOOKS
+const HomeForms = ({ refetch }: RefetchProps) => {
+
   // For Selfie & Paste Image URL
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  console.log(selectedImage)
+  const [, setSelectedImage] = useState<string | null>(null);
+  // console.log(selectedImage)
 
   const [formData, setFormData] = useState<FormDataProps>({});
 
@@ -242,6 +238,7 @@ const HomeForms = () => {
     <h1>Loading...</h1>;
   }
   if (error) {
+    alert(error.message);
     <h1>Error...</h1>;
   }
 
@@ -254,12 +251,14 @@ const HomeForms = () => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value, // name attribute
+      // imgCloudinaryUrl : formData.imgCloudinaryUrl,
+
     });
   };
   // console.log(formData);
 
   //! ======================================================
-  //! FORM SUBMITTED!!
+  //! FORM SUBMIT !!
   //! ======================================================
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -272,6 +271,10 @@ const HomeForms = () => {
     // Define a variable for asyncronous data to save DB
     let imageUrlForDB: string | undefined = formData.imgUrl;
 
+    // 初期化
+    let cloudinaryUrl;
+    let cloudinaryId;
+
     //! 1. Upload the image to the server using AXIOS
     if (selectedLocalFile) {
       const formData = new FormData();
@@ -283,20 +286,50 @@ const HomeForms = () => {
         });
         // console.log(response.data.url); // /uploads/img-1697934272148.jpg
 
+          // CLOUDINARY ID (Backend から返したもの)
+        await console.log(response.data.cloudinary_id);
+
+        //  CLOUDINARY URL  (Backend から返したもの)
+        await console.log(response.data.cloudinaryUrl);
+
+        // 初期化した変数に値を代入
+        cloudinaryUrl = await response.data.cloudinaryUrl;
+        cloudinaryId = await response.data.cloudinary_id;
+
+        // 値がない場合はエラー
+        if (!cloudinaryUrl) {
+          await console.error("Error: Cloudinary URL is missing ありません.😿");
+          return;
+        }
+
+        if (!cloudinaryId) {
+          await console.error("Error: Cloudinary ID is missing ありません.😿");
+          return;
+        }
+
         // make tis absolute path and get rid of double 'uploads/'
         imageUrlForDB = `${SERVER_URL}${response.data.url.replace('uploads/', '')}`;
+
         // get rid of double '//' in a server (Local is fine)
         imageUrlForDB = imageUrlForDB.replace('uploads//', 'uploads/');
         setFormData((prevFormData) => ({
           ...prevFormData,
-          imgUrl: imageUrlForDB
+          // これらを追加
+          imgUrl: imageUrlForDB,
         }));
 
       } catch (error) {
         console.error("Error uploading the file:", error);
         return;
+
+      } finally {
+        // reset local selected file in useState
+        // setSelectedLocalFile(null);
+        // reset selected image input value
+        // resetLocalFileSelectValue();
       }
     }
+
 
     //! 1. Save post to the database using Apollo Client's mutation.
     try {
@@ -307,9 +340,15 @@ const HomeForms = () => {
             title: formData.title,
             content: formData.content,
             imgUrl: imageUrlForDB,
+            imgCloudinaryUrl: cloudinaryUrl,
+            imgCloudinaryId: cloudinaryId,
           },
         },
       });
+      window.alert("Reminder added Successfully!");
+      refetch(); // Props で受け取った refetch を実行
+      await refetch();
+      console.log("Refetched!");
     } catch (error) {
       console.error("Error saving post to database🫡:", error);
       return;
@@ -318,7 +357,7 @@ const HomeForms = () => {
 
 
   //* ===================================================
-  //* When Choose image from local file (画像を選択した時に発火する関数)
+  //* Choose image from local file (画像を選択した時に発火する関数)
   //* ===================================================
   const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0];
@@ -329,6 +368,7 @@ const HomeForms = () => {
 
     // Create a local URL for the file to display it in an img tag
     const localImageUrl = URL.createObjectURL(file);
+    // console.log(localImageUrl) // blob:http://localhost:3000/9ad32e0f-6952-45c7-99c9-051430a562a9
 
     // Update the display image
     setDisplayImg(localImageUrl);
@@ -392,7 +432,6 @@ const HomeForms = () => {
       <TitleLarge title="YOUR REMINDER" />
 
       <form onSubmit={handleSubmit}>
-        {/* <form onSubmit={handleFormSubmit}> */}
         <br />
         <br />
         <TitleSmall title="TEXTS" />
@@ -416,6 +455,7 @@ const HomeForms = () => {
           onChange={(e) => handleChange(e)}
           text="MESSAGE"
           name="content"
+          required
         />
 
         {/* COMPONENT */}
@@ -462,8 +502,6 @@ const HomeForms = () => {
           <span className="w-100">Create Post</span>
         </CommonBtn>
       </form>
-
-
 
     </section>
   );

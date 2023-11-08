@@ -217,6 +217,13 @@ we need to add "type": "module" in package.json
       ### joi validation
          npm install joi
 
+      ### cookie-parser
+         npm install cookie-parser
+
+      ### cloudinary
+         npm install cloudinary 
+
+      
       
          
 

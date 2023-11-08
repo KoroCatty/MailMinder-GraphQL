@@ -1,9 +1,13 @@
 // components
-import BackButton from "../components/common/BackButton";
+// import BackButton from "../components/common/BackButton";
 
+import { Link } from "react-router-dom";
 // components
-import Header from "../components/layout/Header";
-import Footer from "../components/layout/Footer";
+// import Header from "../components/layout/Header";
+// import Footer from "../components/layout/Footer";
+
+// Image (import することで URL によって動的にパスが変わるのを防ぐ)
+import notFoundHeroImage from "/imgs/hero_404.jpg";
 
 // Color schema
 import colorSchema from "../utils/colorSchema";
@@ -32,7 +36,7 @@ const notFoundCss = css`
 
       @media screen and (max-width: 1201px) {
         width: 90%;
-      text-align: center;
+        text-align: center;
       }
 
       &__title {
@@ -101,29 +105,27 @@ const notFoundCss = css`
     left: 50%;
     transform: translate(-50%, 0);
 
+    background-color: ${colorSchema.light};
+    color: ${colorSchema.secondary};
+    padding: 1rem 4rem;
+    border: none;
+    font-size: 1.5rem;
+
     // 1201px 以上の場合
     @media screen and (min-width: 1201px) {
       left: 59%;
     }
 
-    button {
-      background-color: ${colorSchema.light};
-      color: ${colorSchema.secondary};
-      padding: 1rem 4rem;
-      border: none;
-      font-size: 1.5rem;
+    // 1px〜479px
+    ${min[0] + max[0]} {
+      padding: 0.5rem 2rem;
+      font-size: 1rem;
+    }
 
-      // 1px〜479px
-      ${min[0] + max[0]} {
-        padding: 0.5rem 2rem;
-        font-size: 1rem;
-      }
-
-      &:hover {
-        background-color: ${colorSchema.secondary};
-        color: ${colorSchema.light};
-        transition: all 0.3s ease;
-      }
+    &:hover {
+      background-color: ${colorSchema.darkLight};
+      color: ${colorSchema.lightDark};
+      transition: all 0.3s ease;
     }
   }
 `;
@@ -131,13 +133,13 @@ const notFoundCss = css`
 const NotFound = () => {
   return (
     <>
-      <Header />
+      {/* <Header /> */}
 
       <main css={notFoundCss}>
         <section>
           <div className="notFoundHeroWrap">
             <img
-              src="./imgs/hero_404.jpg"
+              src={notFoundHeroImage}
               alt="notFoundHeroImage"
               className="notFoundHeroWrap__img"
             />
@@ -148,10 +150,12 @@ const NotFound = () => {
         </section>
 
         {/* Give a Prop as a string  */}
-        <BackButton classNameProp="notFoundBackBtn" />
+        <Link to="/" className="notFoundBackBtn">
+          Go Back
+        </Link>
       </main>
 
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };

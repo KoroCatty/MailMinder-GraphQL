@@ -1,5 +1,7 @@
 import { useParams } from "react-router-dom";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
+
+import axios from "axios";
 
 // COMPONENTS
 import BackButton from "../components/common/BackButton";
@@ -16,8 +18,11 @@ import colorSchema from "../utils/colorSchema";
 import { useQuery } from "@apollo/client";
 import { useMutation } from "@apollo/client";
 
+// mutations & queries
 import { GET_POSTS_BY_ID } from "../graphql/queries";
 import { UPDATE_POST_BY_ID } from "../graphql/mutations";
+import { DELETE_POST_IMAGE_FILE } from "../graphql/mutations";
+import { DELETE_CLOUDINARY_IMAGE_FILE } from "../graphql/mutations";
 
 // bootstrap
 import { Form } from "react-bootstrap";
@@ -95,9 +100,11 @@ const EditPostCss = css`
 
   // COMPONENT className Prop
   .formTitleProp {
+    margin-bottom: 6rem;
+
     // 1px〜479px
     ${min[0] + max[0]} {
-      margin-bottom: 8rem;
+      margin-bottom: 6rem;
     }
   }
 
@@ -139,7 +146,6 @@ const EditPostCss = css`
     }
   }
 
-
   // Select Image Form
   .imgChooseBtn {
     width: 60%;
@@ -163,7 +169,6 @@ const EditPostCss = css`
       box-shadow: 0 0 8px #ccc;
     }
   }
-
 
   //! UPDATE Button (Props に渡すCSS)
   .submitBtn {
@@ -237,6 +242,13 @@ const EditPostCss = css`
       width: 100%;
     }
   }
+
+    // NO POST MESSAGE
+    .noPostMessage {
+    text-align: center;
+    font-size: 3rem;
+    margin: 2rem 0;
+  }
 `;
 
 //! ======================================================
@@ -246,15 +258,35 @@ const EditPostPage = () => {
   // useParam
   const { id: idUrl } = useParams<{ id: string }>();
 
-  //* GET POSTS BY ID (Apollo Client)
-  const { data } = useQuery(GET_POSTS_BY_ID, {
+  // useRef
+  // Get local selected image value
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  //* GET POSTS BY ID 
+  const { data, refetch } = useQuery(GET_POSTS_BY_ID, {
     variables: {
       uid: Number(idUrl), // queries.ts で uid を定義している
     },
   });
 
-  //* UPDATE POST BY ID (Apollo Client)
-  const [updatePostById] = useMutation(UPDATE_POST_BY_ID);
+
+  //* UPDATE POST BY ID 
+  const [updatePostById, { error }] = useMutation(UPDATE_POST_BY_ID);
+  if (error) {
+    alert(error.message);
+  }
+
+  //! DELETE POST IMAGE FILE 
+  const [deletePostImage] = useMutation(DELETE_POST_IMAGE_FILE);
+
+  //! DELETE CLOUDINARY IMAGE FILE
+  const [deleteCloudinaryImageFile] = useMutation(DELETE_CLOUDINARY_IMAGE_FILE,);
+
+  // CLOUDINARY 画像を削除するための関数
+  const handleCloudinary_deleteImg = (publicId: string) => {
+    deleteCloudinaryImageFile({ variables: { publicId } });
+  };
+
 
   // Initialize with an empty array or a suitable default value.
   const [currentData, setCurrentData] = useState({
@@ -262,16 +294,11 @@ const EditPostPage = () => {
     title: "",
     content: "",
     imgUrl: "",
+    imgCloudinaryUrl: "",
+    imgCloudinaryId: "",
     src: "",
     createdAt: "",
     updatedAt: "",
-    // user: {
-    //   id: 0,
-    //   name: "",
-    //   email: "",
-    //   createdAt: "",
-    //   updatedAt: "",
-    // }
   });
 
   // TYPES (data.PostsByUser)
@@ -280,15 +307,40 @@ const EditPostPage = () => {
     title: string;
     content: string;
     imgUrl: string;
+    imgCloudinaryUrl: string;
+    imgCloudinaryId: string;
     createAt: string;
     updateAt: string;
   };
 
+  //? TYPES (For Form Data)
+  interface FormDataProps {
+    title?: string;
+    content?: string;
+    imgUrl?: string;
+    imgCloudinaryUrl?: string;
+    imgCloudinaryId?: string;
+    [key: string]: string | undefined; // This makes it indexable for dynamic keys
+  }
+
   //* useState
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-  const [formData, setFormData] = useState({});
+
+  const [formData, setFormData] = useState<FormDataProps>({});
+
+  // local selected image
+  const [selectedLocalFile, setSelectedLocalFile] = useState<File | null>(null);
+
+  // Reset the local selected image input value
+  const resetLocalFileSelectValue = () => {
+    if (fileInputRef.current) {
+      fileInputRef.current.value = "";
+    }
+  };
+
 
   //* useEffect
+  // DB から post id と同じ 投稿データを取得
   useEffect(() => {
     if (data && data.PostsByUser) {
       const idToFind = Number(idUrl); // 特定のID
@@ -302,6 +354,7 @@ const EditPostPage = () => {
 
   // console.log(data)
   // console.log(currentData)
+
 
   //? ======================================================
   //? Title
@@ -321,18 +374,22 @@ const EditPostPage = () => {
   //* ===================================================
   //* Choose Image from local file 画像を選択した時に発火する関数
   //* ===================================================
-  const chooseImage = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleImageUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files && e.target.files[0];
-    if (file) {
-      setSelectedImage(URL.createObjectURL(file));
+    if (!file) return;
 
-      // FormDataを更新
-      setFormData({
-        ...formData,
-        imgFile: file, // これが重要です！
-      });
-    }
-  };
+    // Set the selected file to state for later use in handleSubmit
+    setSelectedLocalFile(file);
+
+    // Create a local URL for the file to display it in an img tag
+    const localImageUrl = URL.createObjectURL(file);
+    console.log(localImageUrl)// blob:http://localhost:3000/9ad32e0f-6952-45c7-99c9-051430a562a9
+
+    setSelectedImage(localImageUrl);
+    // resetLocalFileSelectValue();
+
+    // e.target.value = '';
+  }
 
   //* ===================================================
   //* Paste Image URL
@@ -344,13 +401,22 @@ const EditPostPage = () => {
       ...formData,
       imgUrl: imageUrl,
     });
+
+    // reset local selected file in useState
+    setSelectedLocalFile(null);
+
+    // reset selected image input value
+    resetLocalFileSelectValue();
+
+    // display image
+    //  setDisplayImg(imageUrl);
   };
 
   //* ===================================================
   //*  Selfie Image
   //* ===================================================
   const selfieImage = (image64: string | null) => {
-    // Check if image64 (or selectedImage if you prefer) is not null before reading its length
+    // Check if image64 is not null before reading its length
     if (image64 && image64.length > 10000) {
       setSelectedImage(image64);
       // Handle error - maybe return a user-friendly error message
@@ -358,38 +424,121 @@ const EditPostPage = () => {
         ...formData,
         imgUrl: image64,
       });
+      // reset selected image value
+      resetLocalFileSelectValue();
+
+      // reset local selected file in useState
+      setSelectedLocalFile(null);
+
+      // setDisplayImg(image64);
     } else {
       console.log("Too Big");
       window.alert("Too Big");
-      // Proceed with saving to the database
-      // ...your code to save the image to the database
     }
   };
-  //? ================================================
-  //? Submit (UPDATE BUTTON)
-  //? ================================================
-  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
-    e.preventDefault(); // prevent default form submission
 
+  //! ================================================
+  //! FORM SUBMIT !! (UPDATE BUTTON)
+  //! ================================================
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+
+    // SERVER URL 
+    const SERVER_URL = import.meta.env.VITE_PUBLIC_SERVER_URL || 'http://localhost:5001/uploads';
+    //  console.log(SERVER_URL + "🫡") // http://localhost:5001/uploads
+
+    // Define a variable for asyncronous data to save DB
+    let imageUrlForDB: string | undefined = formData.imgUrl;
+    // console.log(imageUrlForDB)
+
+    // 初期化
+    let cloudinaryUrl;
+    let cloudinaryId;
+
+    //! 1. Upload the image to the server using AXIOS
+    if (selectedLocalFile) {
+      const formData = new FormData();
+      formData.append('img', selectedLocalFile);
+
+      try {
+        const response = await axios.post(SERVER_URL, formData, {
+          headers: { 'Content-Type': 'multipart/form-data' },
+        });
+        console.log(response.data.url); // /uploads/img-1697934272148.jpg
+
+        // CLOUDINARY Image URL (backendから返したもの)
+        console.log(response.data.cloudinaryUrl)
+        console.log(response.data.cloudinary_id)
+
+        // 初期化してた変数に値を入れる
+        cloudinaryUrl = response.data.cloudinaryUrl;
+        cloudinaryId = response.data.cloudinary_id;
+
+        // make this absolute path and get rid of double 'uploads/'
+        imageUrlForDB = `${SERVER_URL}${response.data.url.replace('uploads/', '')}`;
+
+        // get rid of double '//' in a server (Local is fine)
+        imageUrlForDB = imageUrlForDB.replace('uploads//', 'uploads/');
+
+        setFormData((prevFormData) => ({
+          ...prevFormData, // shallow copy
+          imgUrl: imageUrlForDB, // add or update the imgUrl property
+        }));
+
+      } catch (error) {
+        console.error("Error uploading the file:", error);
+        return;
+      }
+    }
+
+    // Delete Image File
+    deletePostImage({
+      variables: {
+        id: Number(idUrl),
+        imgUrl: currentData.imgUrl,
+        imgCloudinaryUrl: currentData.imgCloudinaryUrl,
+        imgCloudinaryId: currentData.imgCloudinaryId,
+      },
+    });
+
+    //! 2. Update the post in the database
     try {
       const response = await updatePostById({
         variables: {
           updatePostId: currentData.id, // ここで指定したIDのデータを更新する
-          postUpdate: {
+          postUpdate: { // typeDefs.jsで定義
             title: currentData.title,
             content: currentData.content,
-            imgUrl: selectedImage || currentData.imgUrl, // Use selectedImage if it's available, else use currentData.imgUrl
+            imgUrl: imageUrlForDB || currentData.imgUrl, // Use selectedImage if it's available, else use currentData.imgUrl
+            imgCloudinaryUrl: cloudinaryUrl,
+            imgCloudinaryId: cloudinaryId,
             updatedAt: new Date().toISOString(),
           },
         },
       });
 
+      // Success message
       if (response.data) {
-        // Handle success. Maybe redirect user or show success message.
+        window.alert("Post updated successfully");
         console.log("Post updated successfully", response.data);
+        await refetch();// Props で受け取った refetch を実行
+        console.log("Refetched!");
       }
+
+
+      //! Delete Cloudinary Image File that much with Post ID
+      // if File or Img Address is not empty, don't delete CLOUDINARY IMG
+      if (fileInputRef.current && !fileInputRef.current.value && !selectedImage) {
+        console.log("Not Image File is chosen")
+        return;
+      }
+      const cloudinaryId_muchWithPostId = data.PostsByUser.find((item: FormDataType) => Number(item.id) === Number(idUrl));
+      if (cloudinaryId_muchWithPostId) {
+        handleCloudinary_deleteImg(cloudinaryId_muchWithPostId.imgCloudinaryId);
+      }
+
     } catch (error) {
-      // Handle error. Maybe show error message to user.
+      // window.alert("Error updating post");
       console.error("Error updating post - アップデートエラー:", error);
     }
   };
@@ -404,11 +553,11 @@ const EditPostPage = () => {
 
       <div className="container">
         <div className="row">
-          {data?.PostsByUser.length === 0 && (
-            <p className="text-center">No posts to display</p>
-          )}
 
-          {currentData && (
+          {/* If no exist the post, error message */}
+          {(!currentData || Object.keys(currentData).length === 0 || !currentData.id) ? (
+            <h2 className="noPostMessage">No Post Found...</h2>
+          ) : (
             <form onSubmit={handleSubmit} className="detailItem">
               <h1>USER ID: {currentData.id}</h1>
 
@@ -482,13 +631,22 @@ const EditPostPage = () => {
               {/* SELFIE COMPONENT (Pass the function )*/}
               <Selfie selfieImage={selfieImage} />
 
-              {/*//* DISPLAY IMG  画像があれば表示 */}
+              {/*//* DISPLAY IMG  画像があれば表示 (Local or Cloudinary) */}
               <div className="imageWrap">
                 {!selectedImage && (
-                  <img src={currentData.imgUrl} alt="no Image" />
+                  <img src={currentData.imgUrl}
+                    onError={(e) => {
+                      const imgElement = e.target as HTMLImageElement;
+                      if (imgElement.src !== currentData.imgCloudinaryUrl) {
+                        imgElement.src = currentData.imgCloudinaryUrl;
+                      }
+                    }}
+                    alt="no Image" />
                 )}
                 {selectedImage && (
-                  <img src={selectedImage} alt="chosen Image" />
+                  <img src={selectedImage}
+                    alt="chosen Image"
+                  />
                 )}
               </div>
 
@@ -496,13 +654,13 @@ const EditPostPage = () => {
               <Form.Group controlId="formFileLg">
                 <h3>From Your Local File</h3>
                 <Form.Control
+                  ref={fileInputRef}
                   className="imgChooseBtn"
                   type="file"
                   size="lg"
                   accept="image/*" // 画像ファイルのみを選択できるようにする
-                  // onChange={handleImageChange}
-                  onChange={chooseImage}
-                  name="image"
+                  onChange={handleImageUpload}
+                  name="img"
                 />
               </Form.Group>
 

@@ -26,12 +26,12 @@ const BackButton: React.FC<BackButtonProps> = ({ classNameProp }) => {
   const navigate = useNavigate();
 
   const handleGoBack = () => {
-    navigate(-1);
     window.scrollTo({
       top: 0,
       left: 0,
       behavior: 'smooth'
     });
+    navigate(-1);
   };
 
   return (

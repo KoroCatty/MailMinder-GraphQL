@@ -11,7 +11,6 @@ function PrivacyPolicy() {
     max-width: 800px;
     margin: 0 auto 60px auto;
     padding: 60px 28px;
-    border: 1px solid white;
 
     // 1px〜480px
     ${min[0] + max[0]} {

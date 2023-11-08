@@ -2,12 +2,25 @@ import { useState } from "react";
 
 // Emotion
 import { css } from "@emotion/react";
+import { min, max } from "../../../utils/mediaQueries";
 
 const settingAvatarStyles = css`
   display: flex;
   /* text-align: center; */
   justify-content: space-between;
   align-items: center;
+
+  // 1px〜479px
+  ${min[0] + max[0]} {
+    flex-direction: column-reverse;
+    margin-bottom: 4rem;
+  }
+
+  // 480px〜767px
+  ${min[1] + max[1]} {
+    flex-direction: column-reverse;
+    margin-bottom: 4rem;
+  }
 
   input {
     display: block;
@@ -28,6 +41,11 @@ const settingAvatarStyles = css`
     border-radius: 4px;
     background-color: #fff;
     cursor: pointer;
+
+      // 1px〜479px
+  ${min[0] + max[0]} {
+    margin: 0 auto;
+  }
   }
   
   img {

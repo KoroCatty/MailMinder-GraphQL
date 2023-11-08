@@ -121,6 +121,8 @@ exports.Prisma.PostScalarFieldEnum = {
   title: 'title',
   content: 'content',
   imgUrl: 'imgUrl',
+  imgCloudinaryUrl: 'imgCloudinaryUrl',
+  imgCloudinaryId: 'imgCloudinaryId',
   createdAt: 'createdAt',
   updatedAt: 'updatedAt',
   userId: 'userId'
@@ -129,6 +131,11 @@ exports.Prisma.PostScalarFieldEnum = {
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
+};
+
+exports.Prisma.NullsOrder = {
+  first: 'first',
+  last: 'last'
 };
 
 

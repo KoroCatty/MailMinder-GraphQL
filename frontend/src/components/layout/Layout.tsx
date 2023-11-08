@@ -1,10 +1,9 @@
 import { Outlet } from "react-router-dom";
-import { useState } from "react";
 import { useLocation } from "react-router-dom";
 
 // component for layout
-import Header from "./Header";
-import Footer from "./Footer";
+// import Header from "./Header";
+// import Footer from "./Footer";
 import Hero from "../common/Hero";
 import ContactHero from "../features/contact/ContactHero";
 
@@ -12,27 +11,27 @@ import ContactHero from "../features/contact/ContactHero";
 import { css } from "@emotion/react";
 import { min, max } from "../../utils/mediaQueries";
 
+// TYPE
+type PropsType = {
+  isLoggedIn: boolean;
+  darkTheme: boolean;
+};
+
 //! ================================================
-const Layout = () => {
+const Layout = ({ isLoggedIn, darkTheme }: PropsType) => {
   const location = useLocation();
   // console.log(location.pathname); // ex) /about
 
-  // Login Check 
-  const [loggedIn] = useState(localStorage.getItem("token_GraphQL") ? true : false);
-
-
   //? Emotion CSS (Responsive Design)
   const LayoutCss = css`
-    // '/postlist' パスの場合のみ背景画像を適用
-    ${location.pathname === "/postlist" &&
-    `
-        background-image: url('./imgs/marbleBg.jpg');
-      `}
+    // when the URL -> /postlist & darkTheme is false
+    ${location.pathname === "/postlist" && !darkTheme &&
+      ` background-image: url("./imgs/marbleBg.jpg");`}
 
     // 1201px 以上の場合
     @media screen and (min-width: 1201px) {
       margin-left: 16%; // header の幅分だけ右にずらす
-      padding: 40px 100px;
+      padding: 40px 60px;
     }
 
     // 1px〜479px
@@ -50,26 +49,21 @@ const Layout = () => {
   `;
   return (
     <>
-      <Header />
+      {/* <Header isLoggedIn={isLoggedIn} /> */}
 
       {/* Only Logged in, show Hero */}
-      {loggedIn &&
-        (
-          location.pathname === "/postlist" ? <Hero />
-            : null
-        )
-      }
+      {isLoggedIn && (location.pathname === "/postlist" ? <Hero /> : null)}
 
       {/* Always show Hero in those pages */}
-      { location.pathname === "/contact" ? <ContactHero /> : null}
-      { location.pathname === "/" ? <Hero /> : null}
+      {location.pathname === "/contact" ? <ContactHero /> : null}
+      {location.pathname === "/" ? <Hero /> : null}
 
       <div css={LayoutCss}>
         {/* この Outlet が Layout で囲ってる全てのコンポーネントを監視 Outlet を使い、ネストされたルートをレンダリングする */}
         <Outlet />
       </div>
 
-      <Footer />
+      {/* <Footer /> */}
     </>
   );
 };

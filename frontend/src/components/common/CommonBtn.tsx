@@ -11,7 +11,7 @@ type Props = {
 
 // Emotion CSS (Responsive Design)
 const commonBtnCss = css`
-    background-color: rgba(39, 39, 39, 0.9);
+    background-color: rgba(0, 0, 0, 0.9);
     color: #ffffff;
     text-shadow: 1px 1px 6px black;
     font-size: 1.2rem;

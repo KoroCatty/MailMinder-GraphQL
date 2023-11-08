@@ -8,7 +8,8 @@ import { css } from "@emotion/react";
 import { min, max } from "../utils/mediaQueries";
 const settingPageCss = css`
   position: relative;
-  height: 80vh;
+  /* height: 80vh; */
+  
 
   &:before {
     content: "";
@@ -26,9 +27,11 @@ const settingPageCss = css`
   
     // 1px〜479px
     ${min[0] + max[0]} {
+      height: auto;
     }
     // 480px〜767px
     ${min[1] + max[1]} {
+      height: auto;
     }
     // 768px〜989px
     ${min[2] + max[2]} {
@@ -46,7 +49,7 @@ const Settings = () => {
   return (
     <main css={settingPageCss}>
       <Container>
-        <h1 className="text-center">Settings</h1>
+        <h1 className="text-center">Settings (Coming Soon)</h1>
         <SettingsForms />
         <EmailToggle />
         <SettingsAvatar />

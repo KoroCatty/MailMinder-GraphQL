@@ -1,4 +1,5 @@
 import React from 'react';
+
 import ReactDOM from 'react-dom/client';//（ブラウザ向けのReactレンダラ）
 import App from './App.tsx';
 import './index.css';
@@ -12,11 +13,12 @@ import { setContext } from "@apollo/client/link/context";
 // ファイルアップロードをサポートするApolloリンクを作成するための関数をインポート
 import { createUploadLink } from 'apollo-upload-client'; 
 
+
 //! IMPORTANT (Switch required before push)
-// フロントエンドからバックエンドに接続するためのリンクを作成
-// これが front から uri で指定している backend の url にアクセスする
+// フロントエンドからバックエンドに接続
 const uploadLink = createUploadLink({
-  // uri: 'http://localhost:5001'              //!DEVELOPMENT
+  credentials: 'include',  //* allow cookies to be sent from Frontend to Backend
+  // uri: 'http://localhost:5001',             //!DEVELOPMENT
   uri: 'https://remindapp.onrender.com/' //! PRODUCTION
 });
 
@@ -38,6 +40,7 @@ const client = new ApolloClient({
   link: authLink.concat(uploadLink), // authLinkとuploadLinkを結合
   cache: new InMemoryCache(), // InMemoryCacheとは、メモリ上にデータをキャッシュする方法
 });
+
 
 // ReactアプリケーションをDOMにレンダリング
 ReactDOM.createRoot(document.getElementById('root')!).render(

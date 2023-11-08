@@ -17,19 +17,8 @@ import { useMutation } from "@apollo/client";
 // queries & mutations
 import { GET_POSTS_BY_ID } from "../graphql/queries";
 import { DELETE_POST_BY_ID } from "../graphql/mutations";
+import { DELETE_CLOUDINARY_IMAGE_FILE } from "../graphql/mutations";
 
-//* types
-type postProp = {
-  id: string;
-  title: string;
-  content: string;
-  imgUrl: string;
-  createdAt: string;
-  updatedAt: string;
-};
-type PostsQueryCacheResult = {
-  PostsByUser: postProp[];
-};
 
 // Emotion CSS
 import { css } from "@emotion/react";
@@ -91,13 +80,6 @@ const PostDetailPageStyle = css`
       background-color: ${colorSchema.success};
     }
   }
-
-  /* time {
-    margin: 0;
-    padding: 0 0 0 0.7em;
-    border-left: 1px solid #ffffff;
-    
-  } */
 
   // TITLE
   h1 {
@@ -167,7 +149,15 @@ const PostDetailPageStyle = css`
     p {
       margin: 0;
       padding: 0 0.4rem 0 2rem;
+      word-wrap: break-word;
     }
+  }
+
+  // NO POST MESSAGE
+  .noPostMessage {
+    text-align: center;
+    font-size: 3rem;
+    margin: 2rem 0;
   }
 
   // COMPONENT BACK BUTTON
@@ -190,37 +180,50 @@ const PostsDetailPage = () => {
     },
   });
 
+  // DELETE CLOUDINARY IMAGE FILE
+  const [deleteCloudinaryImageFile] = useMutation(DELETE_CLOUDINARY_IMAGE_FILE,);
+
+  // CLOUDINARY 画像を削除するための関数
+  const handleCloudinary_deleteImg = (publicId: string) => {
+    deleteCloudinaryImageFile({ variables: { publicId } });
+  };
+
   // useNavigate
   const navigate = useNavigate();
 
-  // DELETE POST MUTATION
+  //! DELETE POST MUTATION
+  // `useMutation` フックを使用して、投稿の削除を行うmutationをセットアップ
   const [deletePostById, { error: deleteErr, loading: deleteLoading }] =
     useMutation(DELETE_POST_BY_ID, {
       variables: {
         id: id,
       },
-      // refetchQueries: ['GET_POSTS_BY_ID'],
-      // awaitRefetchQueries: true, // refetchQueriesを実行する前にmutationを完了させる
 
+      // キャッシュを更新するための関数
       update(cache, { data: { deletePost } }) {
-        const data = cache.readQuery<PostsQueryCacheResult>({
-          query: GET_POSTS_BY_ID,
-        });
-        if (!data) return;
-
-        const { PostsByUser } = data;
-        cache.writeQuery({
-          query: GET_POSTS_BY_ID,
-          data: {
-            PostsByUser: PostsByUser.filter(
-              (post) => post.id !== deletePost.id
-            ),
-          },
-        });
-      },
+        // キャッシュの中の特定のフィールドを変更
+        cache.modify({
+          fields: {
+            // `PostsByUser` フィールドを変更
+            PostsByUser(existingPostsByUser = []) {
+              // 削除した投稿をキャッシュから削除
+              cache.evict({ id: cache.identify(deletePost) });
+              // 削除した投稿を除外して、更新後の投稿リストを返す
+              return existingPostsByUser.filter(
+                // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                (postRef: any) => postRef.__ref !== deletePost.__ref
+              );
+            }
+          }
+        })
+      }
     });
 
-  //* TYPES
+  if (deleteErr) {
+    window.alert(deleteErr.message);
+  }
+
+  //* types
   type postProp = {
     id: string;
     title: string;
@@ -228,7 +231,13 @@ const PostsDetailPage = () => {
     imgUrl: string;
     createdAt: string;
     updatedAt: string;
+    imgCloudinaryUrl: string;
   };
+
+  //  URL の id と DB の id を比較し一致するものを取得 
+  const filteredPosts = data?.PostsByUser.filter(
+    (item: postProp) => Number(item.id) === Number(id)
+  );
 
   //! ============================================================
   //! JSX
@@ -236,20 +245,20 @@ const PostsDetailPage = () => {
   return (
     <main css={PostDetailPageStyle}>
       <Container>
-        {/* <h1 className="text-center m-5">Posts Detail Page</h1> */}
 
         {/* component */}
         <BackButton />
 
-        {/* URL の id と DB の id を比較し一致するものを取得 */}
-        {data ? (
-          data?.PostsByUser.filter(
-            (item: postProp) => Number(item.id) === Number(id)
-          ).map((filteredItem: postProp) => (
-            <div key={filteredItem.id} className="detailItem">
- 
+        {loading ? (
+          <p>Loading...🧐</p>
+        ) : error ? (
+          <p>Error: {error.message}</p>
+        ) : filteredPosts && filteredPosts.length > 0 ? (
+          filteredPosts.map((filteredItem: postProp) => (
 
-                {/*  CREATED & UPDATED DATE */}
+            <div key={filteredItem.id} className="detailItem">
+
+              {/*  CREATED & UPDATED DATE */}
               <div className="timeContainer">
                 <div className="created">
                   <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24">
@@ -285,11 +294,16 @@ const PostsDetailPage = () => {
                 </div>
               </div>
 
-
               {/* TITLE */}
               <h1>{filteredItem.title}</h1>
               <img
                 src={filteredItem.imgUrl}
+                onError={(e) => {
+                  const imgElement = e.target as HTMLImageElement;
+                  if (imgElement.src !== filteredItem.imgCloudinaryUrl) {
+                    imgElement.src = filteredItem.imgCloudinaryUrl;
+                  }
+                }}
                 alt={`post image ${id}`}
                 className="mx-auto d-block"
               />
@@ -309,36 +323,49 @@ const PostsDetailPage = () => {
               </div>
             </div>
           ))
-        ) : loading ? (
-          <p>Loading...</p>
-        ) : error ? (
-          <p>Error: {error.message}</p>
         ) : (
-          <p>No posts found.</p>
+          <h2 className="noPostMessage">No Post Found...</h2>
         )}
 
-        {/* EDIT BUTTON */}
-        <Link onClick={()=>{window.scrollTo({top:0, behavior:"smooth"})}} to={`/editpost/${id}`}>
-          <button className="btn btn-primary mb-4" style={{ width: "100%" }}>
-            Edit
-          </button>
-        </Link>
+        {/* 投稿がある場合のみ表示 */}
+        {filteredPosts && filteredPosts.length > 0 ? (
+          <>
+            {/* EDIT BUTTON */}
+            <Link onClick={() => { window.scrollTo({ top: 0, behavior: "smooth" }) }} to={`/editpost/${id}`}>
+              <button className="btn btn-primary mb-4" style={{ width: "100%" }}>
+                Edit
+              </button>
+            </Link>
 
-        {/* DELETE BUTTON */}
-        <button
-          className="btn btn-danger btn-sm"
-          onClick={(e) => {
-            e.preventDefault();
-            window.confirm("Are you sure you want to delete this post?") &&
-              deletePostById();
-            navigate("/postlist");
-            window.scrollTo({top:0, behavior:"smooth"});
-            // window.location.reload();//! 強制リロード
-          }}
-        >
-          {deleteErr ? "Deleting..." : "Delete"}
-          {deleteLoading ? "Deleting..." : "Delete"}
-        </button>
+            {/* DELETE BUTTON */}
+            <button
+              className="btn btn-danger btn-sm"
+              onClick={(e) => {
+                e.preventDefault();
+                window.confirm("Are you sure you want to delete this post?") &&
+                  deletePostById();
+                window.scrollTo({ top: 0, behavior: "smooth" });
+
+                setTimeout(() => {
+                  navigate("/postlist");
+                }, 500);
+
+                //! Delete Cloudinary Image File that much with Post ID
+                const cloudinaryId_muchWithPostId = data.PostsByUser.find((item: postProp) => Number(item.id) === Number(id));
+                if (cloudinaryId_muchWithPostId) {
+                  handleCloudinary_deleteImg(cloudinaryId_muchWithPostId.imgCloudinaryId);
+                }
+              }}
+            >
+              {deleteLoading ? "Deleting..." : "Delete"}
+            </button>
+          </>
+        ) : (
+          null
+        )}
+
+
+
       </Container>
     </main>
   );

@@ -11,10 +11,10 @@ const googleSearchStyles = css`
   display: flex;
   align-items: flex-end;
 
-          // 1px〜479px
-          ${min[0] + max[0]} {
-            margin: 1rem 0 6rem 0;
-        }
+  // 1px〜479px
+  ${min[0] + max[0]} {
+    margin: 1rem 0 6rem 0;
+  }
 
   input {
     display: block;
@@ -51,7 +51,7 @@ const googleSearchStyles = css`
     }
   }
 
-  button {
+  .searchBtn {
     display: flex;
     justify-content: center;
     align-items: center;
@@ -108,7 +108,6 @@ const GoogleSearch = () => {
   };
 
   const handleSearch = () => {
-
     // No search term, do nothing
     if (!searchTerm) return;
 
@@ -130,16 +129,16 @@ const GoogleSearch = () => {
 
   return (
     <div css={googleSearchStyles}>
-        <label>
-          {/* <small>Get Image URL</small> */}
-          <input
-            type="text"
-            value={searchTerm}
-            onChange={handleInputChange}
-            placeholder="Search Image"
-          />
-        </label>
-        <button onClick={handleSearch}></button>
+      <label>
+        {/* <small>Get Image URL</small> */}
+        <input
+          type="text"
+          value={searchTerm}
+          onChange={handleInputChange}
+          placeholder="Search Image"
+        />
+      </label>
+      <div onClick={handleSearch} className="searchBtn"></div>
     </div>
   );
 };

@@ -1,4 +1,4 @@
-import { useState, useRef } from "react";
+import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 // components
@@ -10,21 +10,22 @@ import { useMutation } from "@apollo/client";
 // mutation queries
 import { SIGNUP_USER } from "../graphql/mutations";
 import { LOGIN_USER } from "../graphql/mutations";
-
-// TYPES
-type AuthPageProps = {
-  setLoggedIn: React.Dispatch<React.SetStateAction<boolean>>;
-};
+// TYPE
+type IsLoggedInPropsType = {
+  isLoggedIn: boolean;
+  setIsLoggedIn: (isLoggedIn: boolean) => void;
+}
 
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
 import { min, max } from "../utils/mediaQueries";
 const authPageCss = css`
-  min-height: 74vh;
+  /* min-height: 70vh; */
   text-align: center;
   display: flex;
   flex-direction: column;
   justify-content: center;
+  margin: 4rem 0;
 
   h1 {
     font-size: 2.5rem;
@@ -72,17 +73,34 @@ const authPageCss = css`
       transition: all 0.3s ease-in-out;
     }
   }
+
+  .demoLogin {
+    cursor: pointer;
+    text-decoration: underline;
+    width: fit-content;
+    margin: 0 auto;
+  }
 `;
 
 //! ======================================================
-const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
+// const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
+const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
   // HOOKS
-  const [showLogin, setShowLogin] = useState(true); // true = login, false = signup
+  const [showLoginPage, setShowLoginPage] = useState(true); // true = login, false = signup
   const [formData, setFormData] = useState({});
 
+  // useRef
   const authForm = useRef<HTMLFormElement>(null);
 
   const navigate = useNavigate();
+
+  // ログインしてたらホームに飛ばす
+  useEffect(() => {
+    if (isLoggedIn) {
+      navigate("/");
+    }
+  }, [isLoggedIn, navigate]);
+
 
   // Mutations (Sign Up)
   const [signupUser, { data: signupData, loading, error }] =
@@ -93,14 +111,34 @@ const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
     loginUser,
     { data: loginData, loading: loginLoading, error: loginError },
   ] = useMutation(LOGIN_USER, {
-    onCompleted(data) {
-      // mutaion.ts で定義したものを取得しローカルに保存
-      localStorage.setItem("token_GraphQL", data.signinUser.token);
-      navigate("/");
-      setLoggedIn(true);
-      window.location.reload();
+    // onCompleted は mutation が完了した後に実行される
+    // onCompleted(data) {
+    onCompleted() {
+      window.scrollTo(0, 0);
+      setIsLoggedIn(true);  // Update the state 
+
+      // if there is a path in sessionStorage, go to that path (Emailパス対応)
+      if (sessionStorage.getItem("postPath")) {
+        navigate(sessionStorage.getItem("postPath")!);
+      } else {
+        navigate("/");
+      }
     },
   });
+
+  //! ======================================================
+  //! DEMO ACCOUNT LOGIN
+  //! ======================================================
+const demoCredential = () => {
+        loginUser({
+          variables: {
+            userSignin: {
+              email: "demo@demo.com",
+              password: "1234",
+            }
+          },
+        });
+}
 
   //! ======================================================
   //! When loading
@@ -124,8 +162,9 @@ const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
   //! ======================================================
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    // setShowLoginPage((preValue) => !preValue); // toggle login/signup
 
-    if (showLogin) {
+    if (showLoginPage) {
       // login
       loginUser({
         variables: {
@@ -135,23 +174,32 @@ const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
     } else {
       // Signup
       signupUser({
-        // mutation.ts で定義したもの
         variables: {
-          // お決まり
           userNew: formData, // mutation.ts で定義したもの
         },
       });
+    }
+
+    // switch to Login forms (reset form data then,  show login forms)
+    if (!isLoggedIn) { // sign up しただけで、ログイン状態ではないので下記が実行
+      setFormData({}); // clear form data
+      authForm?.current?.reset(); // clear form inputs
+      setShowLoginPage(true);
     }
   };
 
   return (
     <div css={authPageCss}>
-      {showLogin && <h1>LOGIN</h1>}
-      {!showLogin && <h1>SIGN UP</h1>}
+      {showLoginPage && <h1 style={{ marginTop: "2rem" }}>LOGIN</h1>}
+      {!showLoginPage && <h1>SIGN UP</h1>}
 
       <div>
         {/* サインアップ時 */}
-        {signupData && <h1>{signupData.signupUser.firstName}You Signed Up!</h1>}
+        {signupData && (
+          <>
+            <h1>{signupData.signupUser.firstName}You Signed Up!</h1>
+          </>
+        )}
 
         {/* ログイン時 */}
         {loginData && <h1>{loginData.signinUser.firstName}You Logged In!</h1>}
@@ -161,7 +209,7 @@ const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
         {loginError && <div>{loginError.message}</div>}
 
         <form onSubmit={handleSubmit} ref={authForm}>
-          {!showLogin && (
+          {!showLoginPage && (
             <>
               <input
                 name="firstName"
@@ -202,22 +250,25 @@ const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
           <br />
           <br />
 
+          {/* //! DEMO */}
+          <div onClick={demoCredential} className="demoLogin">DEMO LOGIN</div>
+
           {/* link */}
           <div
             onClick={() => {
-              setShowLogin((preValue) => !preValue); // toggle login/signup
+              setShowLoginPage((preValue) => !preValue); // toggle login/signup
               setFormData({}); // clear form data
               authForm?.current?.reset(); // clear form inputs
             }}
             className="authLink"
           >
-            {showLogin
+            {showLoginPage
               ? "Don't have an account? Sign up"
               : "Already have an account? Login"}
           </div>
 
           {/* BUTTON */}
-          <CommonBtn type="submit">{showLogin ? "Login" : "Sign Up"}</CommonBtn>
+          <CommonBtn type="submit">{showLoginPage ? "Login" : "Sign Up"}</CommonBtn>
         </form>
       </div>
     </div>

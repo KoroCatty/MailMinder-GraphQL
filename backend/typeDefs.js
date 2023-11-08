@@ -1,6 +1,5 @@
 import { gql } from 'graphql-tag';
 
-
 //! ==========================================================
 //! Schema
 //! ==========================================================
@@ -9,7 +8,7 @@ const typeDefs = gql`
   scalar Upload 
 
   type Token {
-    token: String!
+    token: String
   }
 
 # QUERY
@@ -17,6 +16,7 @@ const typeDefs = gql`
     users: [User!]! # return an array
     PostsByUser(id: ID!): [Post!]! # resolverで定義した名前を使う
     PostsByUserLimit(id: ID!, limit: Int!): [Post!]! # limit を使ったresolver関数
+    isLoggedIn: Boolean! # login しているかどうか
   }
 
 #//!  実際にクライエントに返すデータの型(これを使い回す)
@@ -37,6 +37,8 @@ const typeDefs = gql`
     createdAt: Date!
     updatedAt: Date!
     user : User! # PostモデルにはUserモデルが含まれている
+    imgCloudinaryUrl: String
+    imgCloudinaryId: String
   }
 
   #//! CREATE A USER
@@ -62,7 +64,9 @@ const typeDefs = gql`
     # imgUrl: String
     # imgUrl: File
     imgUrl: Upload
-    imgFile: Upload
+    # imgFile: Upload
+    imgCloudinaryUrl: String
+    imgCloudinaryId: String
   }
 
   # //! UPDATE A POST INPUT
@@ -70,8 +74,10 @@ const typeDefs = gql`
     title: String!
     content: String!
     # expecting a file upload. If you're sending a URL or base64 string instead of a file, this could be causing the issue.
-    imgUrl: Upload
-    # imgUrl: String
+    # imgUrl: Upload
+    imgUrl: String
+    imgCloudinaryUrl: String
+    imgCloudinaryId: String
     updatedAt: Date
   }
 
@@ -90,7 +96,7 @@ const typeDefs = gql`
     signupUser(userNew: UserInput!): User! # return a single user (配列じゃない)
 
     # SIGNIN USER
-    signinUser(userSignin: UserSigninInput!): Token! #トークンを返す
+    signinUser(userSignin: UserSigninInput!): Token #トークンを返す
 
     # CREATE A POST
     createPost(postNew: PostInput!): Post! # これが playground で出現
@@ -101,6 +107,15 @@ const typeDefs = gql`
     # UPDATE A POST
     # The mutation expects an id and a postUpdate object of type PostUpdateInput. This PostUpdateInput has fields title, content, imgUrl, and updatedAt.
     updatePost(id: ID!, postUpdate: PostUpdateInput!): Post!
+
+    # DELETE A POST IMAGE FILE
+    deletePostImage(id: ID!): Post!
+
+    # LOGOUT USER
+    logout: Boolean! # return a boolean
+
+    # DELETE A CLOUDINARY IMAGE FILE ON SERVER
+    deleteCloudinaryImage(publicId: String): Boolean
   }
 `;
 

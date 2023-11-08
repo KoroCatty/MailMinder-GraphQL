@@ -1,9 +1,23 @@
-import { useState } from "react";
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
 
+// components
+import ToggleThemeBtn from "../common/ToggleThemeBtn";
+
 // Bootstrap
 import { Navbar, Nav, Container } from "react-bootstrap";
+
+// Apollo client
+import { useApolloClient } from '@apollo/client';// Main.tsx で wrapしたもの
+import { LOGOUT_MUTATION } from "../../graphql/mutations"
+
+// TYPE
+type PropsType = {
+  isLoggedIn: boolean;
+  setIsLoggedIn: (isLoggedIn: boolean) => void;
+  darkTheme: boolean;
+  setDarkTheme: (themeUpdater: (prevTheme: boolean) => boolean) => void;
+}
 
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
@@ -102,13 +116,13 @@ const headerCss = css`
     }
   }
 
-  /* Logout Btn & User Icon */
+  /* Logout Btn & User Icon & Toggle Btn */
   .navRight {
     @media screen and (min-width: 989px) {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 1rem;
+      gap: 2rem;
     }
 
     @media screen and (min-width: 1201px) {
@@ -125,6 +139,10 @@ const headerCss = css`
       padding: 12px 16px;
       transition: all 0.3s ease-in-out;
       border-radius: 4px;
+      
+      @media screen and (max-width: 992px) {
+        margin: 2rem 0;
+      }
 
       &:hover {
         background-color: white;
@@ -151,26 +169,55 @@ const headerCss = css`
   ${min[3] + max[3]} {
     background-color: yellow;
   } */
+
+  //! Control the Theme Toggle Button
+  .ToggleThemeBtn__PC {
+    display: none;
+
+    @media screen and (min-width: 1201px) {
+      display: block;
+    }
+  }
+
+  .ToggleThemeBtn__SP {
+    display: block;
+
+    @media screen and (max-width: 992px) {
+      margin: 2rem 0;
+    }
+
+    @media screen and (min-width: 1201px) {
+      display: none;
+    }
+  }
 `;
 
-
-//! ==============================================
-function Header() {
+//! =================================================================
+function Header({ isLoggedIn, setIsLoggedIn, darkTheme, setDarkTheme }: PropsType) {
 
   const navigate = useNavigate();
+  const client = useApolloClient();  // main.tsx で wrapしたもの
 
-  // ログインチェック (ローカルストレージ)
-  const [loggedIn, setLoggedIn] = useState(
-    localStorage.getItem("token_GraphQL") ? true : false
-  );
-  // console.log(loggedIn)
-
+  // Scroll to Top
   const toTop = () => {
     window.scrollTo({
       top: 0,
       left: 0,
       behavior: 'smooth'
     });
+  };
+
+  //! ログアウト処理
+  const logout = async () => {
+    try {
+      const { data } = await client.mutate({ mutation: LOGOUT_MUTATION });
+      if (data.logout) {
+        setIsLoggedIn(false);  // Update the state 
+        navigate('/login');
+      }
+    } catch (error) {
+      console.error('ログアウト中にエラーが発生しました:', error);
+    }
   };
 
   return (
@@ -184,7 +231,7 @@ function Header() {
 
           <Navbar.Collapse id="basic-navbar-nav">
             <Nav>
-              {loggedIn ? (
+              {isLoggedIn ? (
                 <>
                   <Nav.Link as={Link} to="/" onClick={() => toTop()}>
                     Home
@@ -200,38 +247,19 @@ function Header() {
                   </Nav.Link>
                 </>
               ) : (
-                // <Nav.Link as={Link} to="/Login">Login</Nav.Link>
                 ""
               )}
             </Nav>
 
-            {/* //! LOGOUT / LOGIN */}
-            <div className="navRight">
-              {loggedIn ? (
-                <button
-                  className="navRight__logoutBtn"
-                  onClick={() => {
-                    localStorage.removeItem("token_GraphQL");
-                    setLoggedIn(false);
-                    navigate("/login");
-                    window.location.reload();
-                  }}
-                >
-                  LOGOUT
-                </button>
-              ) : (
-                <>
-                  <Nav.Link as={Link} to="/Login">
-                    Login
-                  </Nav.Link>
-                  <Nav.Link as={Link} to="/contact" onClick={() => toTop()} >
-                    Contact
-                  </Nav.Link>
-                </>
-              )}
 
-              {/* avatar Icon */}
-              {loggedIn ? (
+            <div className="navRight">
+              {/* //! TOGGLE BUTTON */}
+              <div className="ToggleThemeBtn__SP">
+                <ToggleThemeBtn darkTheme={darkTheme} setDarkTheme={setDarkTheme} />
+              </div>
+
+              {/*//!  Avatar Icon */}
+              {isLoggedIn ? (
                 <Nav.Link as={Link} to="/settings">
                   <img
                     src="https://picsum.photos/200"
@@ -243,8 +271,36 @@ function Header() {
               ) : (
                 ""
               )}
+
+              {/* //! LOGOUT / LOGIN */}
+              {isLoggedIn ? (
+                <button
+                  className="navRight__logoutBtn"
+                  onClick={() => {
+                    logout(); // ログアウト処理
+                  }}
+                >
+                  LOGOUT
+                </button>
+              ) : (
+                // ログインしていない場合
+                <>
+                  <Nav.Link as={Link} to="/Login">
+                    Login
+                  </Nav.Link>
+                  <Nav.Link as={Link} to="/contact" onClick={() => toTop()} >
+                    Contact
+                  </Nav.Link>
+                </>
+              )}
             </div>
           </Navbar.Collapse>
+
+          {/* //! TOGGLE BUTTON */}
+          <div className="ToggleThemeBtn__PC">
+            <ToggleThemeBtn darkTheme={darkTheme} setDarkTheme={setDarkTheme} />
+          </div>
+
         </Container>
       </Navbar>
     </>

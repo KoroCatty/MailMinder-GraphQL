@@ -48,12 +48,13 @@ table {
 	border-spacing: 0;
 }
 /* rest of app styles */
+/* ----------------------------------- */
 
 body {
-  /* color: white ; */
-  /* background-color: #242424 ; */
-  background-color: #ffffff;
-
-
+	background-color: white;
+	color: black;
 }
-
+	
+a {
+	text-decoration: none;
+}

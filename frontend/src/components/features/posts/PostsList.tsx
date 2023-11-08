@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 // components
 import BackButton from "../../common/BackButton";
 import PostItem from "./PostItem";
@@ -6,7 +7,7 @@ import PostItem from "./PostItem";
 import { useQuery } from '@apollo/client';
 import { GET_POSTS_BY_ID } from '../../../graphql/queries';
 
-import { Row, Col } from 'react-bootstrap';
+import { Row } from 'react-bootstrap';
 
 // TYPES
 type PostPropType = {
@@ -14,12 +15,19 @@ type PostPropType = {
   title: string;
   content: string;
   imgUrl: string;
+  imgCloudinaryUrl: string;
+  imgCloudinaryId: string;
+  createdAt: string;
 };
 
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
 import { min, max } from "../../../utils/mediaQueries";
 const PostListCss = css`
+
+.eachCard {
+  border: 1px solid #ddd;
+}
 
   // 1px〜479px
   ${min[0] + max[0]} {
@@ -35,16 +43,19 @@ const PostListCss = css`
   }
 `;
 
-
-
 //! ============================================================
 function PostsList() {
   // GET All POSTS by User ID
-  const { data, loading, error } = useQuery(GET_POSTS_BY_ID, {
+  const { data, loading, error, refetch } = useQuery(GET_POSTS_BY_ID, {
     variables: {
-      uid: 1
+      uid: Number(), // backend (resolver) で id を指定しているので、空にする
     },
   });
+
+  // refetch posts
+  useEffect(() => {
+    refetch({ uid: Number() })
+  }, [ refetch ]);
 
   if (loading) return <p>Loading...</p>;
   if (error) return <p>Error: {error.message}</p>;
@@ -56,12 +67,11 @@ function PostsList() {
 
       <Row xs={1} md={2} className="g-4">
         {data.PostsByUser.map((item: PostPropType) => (
-          <Col key={item.id}>
+          <div className="eachCard col-6 col-md-3 sm-3" key={item.id}>
 
             {/* Component (Give a Prop) */}
             <PostItem postProp={item} />
-
-          </Col>
+          </div>
         ))}
       </Row>
 

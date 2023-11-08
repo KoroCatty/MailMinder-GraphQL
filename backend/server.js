@@ -1,3 +1,4 @@
+
 import colors from 'colors';
 import { ApolloServer } from '@apollo/server';
 
@@ -7,9 +8,11 @@ import path from 'path';
 // StandAloneServer -> Express server に変更するために必要なモジュール
 import { expressMiddleware } from '@apollo/server/express4';
 import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+
 import http from 'http';
 import cors from 'cors';
 import bodyParser from 'body-parser';
+import cookieParser from 'cookie-parser';
 
 // Schema and Resolvers
 import typeDefs from './typeDefs.js';
@@ -21,31 +24,40 @@ import crypto from 'crypto';
 // Token
 import jwt from 'jsonwebtoken';
 
-//! Sending Email Function (DO NOT DELETE)
-import sendEmail from './cron/email.js';
+//! SENDING EMAIL  (DO NOT DELETE)
+import './cron/email.js';
 
 // プリズマのクライアントをインポート (DB接続確認のため)
 import { PrismaClient } from '../prisma/generated/client/index.js'
 const prisma = new PrismaClient()
 
+// CLOUDINARY
+import cloudinaryConfig from './cloudinary.js';
+
 // Initialize express
 const app = express();
-app.use(cors('*'));
+
+app.use(cors({
+  origin: true,     //! allow any origin
+  credentials: true //! allow cookies
+}));
+
+app.use(cookieParser());
 
 //* ==============================================================
-//* UPLOAD IMAGE multer & express
+//* UPLOAD IMAGE to Both uploads folder & Cloudinary 
 //* ==============================================================
 import multer from "multer";
 
 // which storage/server  we want to use  (cb = callback)
-const storage = multer.diskStorage({
+const LocalStorage = multer.diskStorage({
   destination(req, file, cb) {
     // null is for error | 画像は root の uploads からサーバーに保存される
     cb(null, "uploads/");
   },
   //! Create a file name
-  // fieldname = image なので image-163123123.jpg というファイル名になる
   filename(req, file, cb) {
+    // fieldname = image なので image-163123123.jpg というファイル名になる
     cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
   },
 });
@@ -73,17 +85,34 @@ function fileFilter(req, file, cb) {
   }
 }
 // multerの設定を適用して、アップロード機能を初期化
-const upload = multer({ storage, fileFilter });
+const upload = multer({ storage: LocalStorage, fileFilter });
 
 // 'img' という名前の単一の画像をアップロードするためのミドルウェアを設定
 const uploadSingleImage = upload.single('img');
 
 // 画像をアップロードするためのエンドポイントを追加
-app.post('/uploads', uploadSingleImage, (req, res) => {
-  // res.json({ file: req.file }); // Return file path after upload
-  res.json({ url: `/uploads/${req.file.filename}` });
-});
+app.post('/uploads', uploadSingleImage, async (req, res) => {
+  try {
+    // Cloudinaryの設定
+    const result = await cloudinaryConfig.uploader.upload(req.file.path, {
+      folder: 'My Folder',
+      allowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
+      transformation: [{ width: 500, height: 500, crop: 'limit' }]
+    });
 
+    // Cloudinary が返してくれるもの
+    // Response to FrontEnd (Frontendから POST でアクセスできるようにする)
+    res.json({
+      url: `/uploads/${req.file.filename}`,// 画像のURLを返す(local)
+      cloudinaryUrl: result.secure_url, // 画像のURLを返す(cloudinary)
+      cloudinary_id: result.public_id // 画像のIDを返す(cloudinary)
+    });
+
+  } catch (error) {
+    res.status(500).send({ error: error.message });
+    // res.status(500).send({ error: 'Failed to upload image.' });
+  }
+});
 
 //* uploads Folder 公開ディレクトリを指定
 //* Create a uploads folder in the root directory
@@ -98,9 +127,34 @@ const uploadsDirectory = path.join(__dirname, '/uploads');
 // '/uploads' エンドポイントを使用して、そのディレクトリ内の静的ファイルを提供
 // '/uploads'というパスのリクエストがあったときに次の express.static()ミドルウェアが動作
 app.use('/uploads', express.static(uploadsDirectory));
-//* ==============================================================
 
-app.use(cors('*'));
+//* ==============================================================
+//* CLOUDINARY IMAGE FILE DELETE (CLODINARY SERVER)
+//* ==============================================================
+// app.delete('/uploads:id', async (req, res) => {
+//   try {
+    // Delete image from cloudinary
+//     await cloudinary.uploader.destroy(req.body.cloudinary_id);
+//     res.json({ msg: 'Image deleted' });
+//   } catch (err) {
+//     console.log(err);
+//   }
+// });
+
+
+
+
+
+
+
+
+
+
+
+app.use(cors({
+  origin: true,  // or true to allow any origin
+  credentials: true
+}));
 
 //? ==============================================================
 //? Deploy Settings
@@ -121,35 +175,37 @@ if (process.env.NODE_ENV === 'production') {
     res.send('API is running...');
   });
 }
-//? ==============================================================
 
 //! ==============================================================
-//! Middleware (swap StandAloneServer for Express deployment)
+//! Apollo Server
 //! ==============================================================
 // Our httpServer handles incoming requests to our Express app.
-// Below, we tell Apollo Server to "drain" this httpServer,
-// enabling our servers to shut down gracefully.
+// tell Apollo Server to "drain" this httpServer,
 const httpServer = http.createServer(app);
-
 const PORT = process.env.PORT || 5001;
 
 const server = new ApolloServer({
   typeDefs: typeDefs,
   resolvers: resolvers,
+  // context: ({ req, res }) => ({ req, res }),
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })], // Added
   cors: {
-    origin: '*',  // or true to allow any origin
-    credentials: true 
+    origin: true,  // or true to allow any origin
+    credentials: true
   }
 })
-
 // Ensure we wait for our server to start
 await server.start();
 
-
 app.use(
   '/',
-  cors('*'),
+  cors(
+    {
+      origin: true,
+      credentials: true,
+    }
+  ),
+
 
   // 50mb is the limit that `startStandaloneServer` 
   bodyParser.json({ limit: '50mb' }),
@@ -158,21 +214,25 @@ app.use(
   expressMiddleware(server, {
 
     // ログイン用 context を使い、resolver.js内の、各リクエストで使用できるようにする
-    context: async ({ req }) => {
+    // As i used HttpOnly, req, res are needed 
+    context: async ({ req, res }) => {
+      //! Token from HttpOnly Cookie 
+      const token = req.cookies.jwt_httpOnly;
 
-      // destructure from req
-      const { authorization } = req.headers;
+      // 最初はトークンがないので、userId は null に設定
+      let userId = null;
 
-      // トークンがあれば、トークンを検証し、userId を返す
-      if (authorization) {
+      if (token) {
         try {
-          const { userId } = await jwt.verify(authorization, process.env.JWT_SECRET);
-          return { userId };
+          // トークンを検証
+          const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
+          userId = decodedToken.userId;
+
         } catch (error) {
-          console.error("トークン Verification Error", error); // JWTの検証中のエラーをログに出力
-          return {};
+          console.error("トークン Verification Error 😢", error);
         }
       }
+      return { userId, req, res }; // resolvers で context として使用可能
     },
     options: {
       //Maximum upload file size set at 10 MB
@@ -190,7 +250,7 @@ console.log(`🚀 Server ready at http://localhost:${PORT}`.cyan.underline);
 //* ==============================================================
 //* MySQL DB CONNECTION CHECK (接続確認)
 //* ==============================================================
-async function testConnection() {
+async function connectDB() {
   try {
     await prisma.$connect();
     console.log("connected to MySQL! - DB接続成功💾".yellow.underline);
@@ -200,39 +260,4 @@ async function testConnection() {
     await prisma.$disconnect();
   }
 }
-testConnection();
-
-
-
-//* This is for Development (StandAloneServer)
-//* ==============================================================
-// Define the startServer function
-// async function startServer() {
-
-//   // second optional argument is an object for configuring your server's options
-//   const { url } = await startStandaloneServer(server, {
-//     // req は この standaloneServer からのもの
-//     context: async ({ req }) => {
-
-//       // destructure from req
-//       const { authorization } = req.headers;
-
-//       // トークンがあれば、トークンを検証し、userId を返す
-//       if (authorization) {
-//         try {
-//           const { userId } = await jwt.verify(authorization, process.env.JWT_SECRET);
-//           return { userId };
-//         } catch (error) {
-//           console.error("トークン Verification Error", error); // JWTの検証中のエラーをログに出力
-//           return {}; 
-//         }
-//       }
-//     },
-//     listen: { port: PORT },
-//   });
-//   console.log(`🚀 Server ready at ${url}`);
-
-// }
-// startServer();
-
-
+connectDB();
