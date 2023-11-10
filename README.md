@@ -159,6 +159,8 @@ we need to add "type": "module" in package.json
 
       * npm i dotenv (To access to .env file which is above the frontend directory) 
 
+      ### pwa for VITE
+         npm install vite-plugin-pwa
 
 
 
@@ -223,7 +225,7 @@ we need to add "type": "module" in package.json
       ### cloudinary
          npm install cloudinary 
 
-      
+
       
          
 
@@ -271,6 +273,7 @@ npm i dotenv
 npm i graphql-ws @graphql-tools/schema
 
 npm i express
+
 
 
 
