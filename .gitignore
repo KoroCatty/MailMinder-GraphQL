@@ -36,6 +36,7 @@ dist-ssr
 *.sw?
 
 remindYou.sql
+MailMinder.sql
 
 # deploy時に必要 なので igonre しないこと ↓↓
 # prisma/generated 
