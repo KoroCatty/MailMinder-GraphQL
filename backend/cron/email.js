@@ -118,13 +118,13 @@ import cron from 'node-cron';
         });
         // console.log(`${__dirname}/uploads/compressed-${newPath}`)///uploads/compressed-noImg.jpeg
     
-        imgTag = `<img src="cid:${cidValue}"  alt="Post Image" style="width: 400px; height: 200px;">`;
+        imgTag = `<img src="cid:${cidValue}"  alt="Post Image" style="width: 300px; height: 200px;">`;
     
       // Remote files or if no other image is available
       } else {
         // ここでリモートの画像URLが存在するか、もしくはデフォルト画像を使用する
         const defaultImgPath = './compressed-imgs/noImg.jpeg';
-        imgTag = `<img src="${post.imgUrl || defaultImgPath}" alt="Post Image" onerror="this.onerror=null; this.src='${defaultImgPath}';" style="width: 100px; height: 200px;">`;
+        imgTag = `<img src="${post.imgUrl || defaultImgPath}" alt="Post Image" onerror="this.onerror=null; this.src='${defaultImgPath}';" style="width: 300px; height: 200px;">`;
       }
     
       return `
