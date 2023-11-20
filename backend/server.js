@@ -1,9 +1,9 @@
-
 import colors from 'colors';
 import { ApolloServer } from '@apollo/server';
 
 import express from 'express';
 import path from 'path';
+import fs from 'fs'; // ファイル操作を可能にするモジュール
 
 // StandAloneServer -> Express server に変更するために必要なモジュール
 import { expressMiddleware } from '@apollo/server/express4';
@@ -34,6 +34,9 @@ const prisma = new PrismaClient()
 // CLOUDINARY
 import cloudinaryConfig from './cloudinary.js';
 
+// Sharp (Image compressor)
+import sharp from 'sharp';
+
 // Initialize express
 const app = express();
 
@@ -49,7 +52,7 @@ app.use(cookieParser());
 //* ==============================================================
 import multer from "multer";
 
-// which storage/server  we want to use  (cb = callback)
+// 画像ファイルの保存先を指定 (cb = callback)
 const LocalStorage = multer.diskStorage({
   destination(req, file, cb) {
     // null is for error | 画像は root の uploads からサーバーに保存される
@@ -67,9 +70,9 @@ const LocalStorage = multer.diskStorage({
 function fileFilter(req, file, cb) {
 
   // 受け入れられるファイルの拡張子を正規表現で定義
-  const filetypes = /jpe?g|png|webp/;
+  const filetypes = /jpe?g|png|gif|webp/;
   // 受け入れられるMIMEタイプ（ファイルの種類）を正規表現で定義
-  const mimetypes = /image\/jpe?g|image\/png|image\/webp/;
+  const mimetypes = /image\/jpe?g|image\/png|image\/gif|image\/webp/;
 
   // アップロードされたファイルの拡張子が受け入れられるものかテスト
   const extname = filetypes.test(path.extname(file.originalname).toLowerCase());
@@ -93,24 +96,38 @@ const uploadSingleImage = upload.single('img');
 // 画像をアップロードするためのエンドポイントを追加
 app.post('/uploads', uploadSingleImage, async (req, res) => {
   try {
+    // 画像を圧縮 (圧縮した画像のファイル名を生成 (接頭辞を付与)
+    const compressedFilename = `compressed-${req.file.filename}`;
+    const compressedFilePath = path.join('uploads/', compressedFilename);
+    console.log(compressedFilename) // compressed-img-1700445713500.png
+
+    // 画像を圧縮して、uploadsフォルダに保存
+    await sharp(req.file.path)
+      .resize(800, 800) // サイズの変更
+      .jpeg({ quality: 40 }) // 画像の品質を50%にし、jpeg 形式に変換
+      .toFile(compressedFilePath); // 圧縮された画像をファイルに保存
+
     // Cloudinaryの設定
-    const result = await cloudinaryConfig.uploader.upload(req.file.path, {
+    const result = await cloudinaryConfig.uploader.upload(compressedFilePath, {
       folder: 'My Folder',
-      allowedFormats: ['jpg', 'jpeg', 'png', 'webp'],
-      transformation: [{ width: 500, height: 500, crop: 'limit' }]
+      allowedFormats: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
+      transformation: [{ width: 800, height: 800, crop: 'limit' }]
     });
 
     // Cloudinary が返してくれるもの
     // Response to FrontEnd (Frontendから POST でアクセスできるようにする)
     res.json({
-      url: `/uploads/${req.file.filename}`,// 画像のURLを返す(local)
+      url: `/uploads/${compressedFilename}`,// 圧縮された画像のURL(local)
       cloudinaryUrl: result.secure_url, // 画像のURLを返す(cloudinary)
       cloudinary_id: result.public_id // 画像のIDを返す(cloudinary)
     });
+    
+    // 圧縮前の元の画像を削除 (unlinkSync は非同期ではない)
+    fs.unlinkSync(req.file.path);
+    console.log("画像を Cloudinary & uploads にアップロードしました🎉".green.underline);
 
   } catch (error) {
     res.status(500).send({ error: error.message });
-    // res.status(500).send({ error: 'Failed to upload image.' });
   }
 });
 
@@ -133,7 +150,7 @@ app.use('/uploads', express.static(uploadsDirectory));
 //* ==============================================================
 // app.delete('/uploads:id', async (req, res) => {
 //   try {
-    // Delete image from cloudinary
+// Delete image from cloudinary
 //     await cloudinary.uploader.destroy(req.body.cloudinary_id);
 //     res.json({ msg: 'Image deleted' });
 //   } catch (err) {
@@ -197,14 +214,11 @@ const server = new ApolloServer({
 // Ensure we wait for our server to start
 await server.start();
 
-app.use(
-  '/',
-  cors(
-    {
-      origin: true,
-      credentials: true,
-    }
-  ),
+app.use('/', cors({
+  origin: true,
+  credentials: true,
+}
+),
 
 
   // 50mb is the limit that `startStandaloneServer` 
@@ -248,7 +262,7 @@ console.log(`🚀 Server ready at http://localhost:${PORT}`.cyan.underline);
 
 
 //* ==============================================================
-//* MySQL DB CONNECTION CHECK (接続確認)
+//* MySQL DB CONNECTION 
 //* ==============================================================
 async function connectDB() {
   try {

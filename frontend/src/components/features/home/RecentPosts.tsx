@@ -121,7 +121,6 @@ const RecentPosts = (limitPostsProps: LimitPostsPropsType) => {
 
   return (
     <div css={recentPostsCss}>
-      {/* // TODO Fix this later */}
       {data && loading ? <h1>Loading...</h1> : ""}
       {data && error ? <h1>Error...</h1> : ""}
 

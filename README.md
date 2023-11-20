@@ -225,6 +225,8 @@ we need to add "type": "module" in package.json
       ### cloudinary
          npm install cloudinary 
 
+      ### sharp (image compressor)
+         npm install sharp
 
       
          
