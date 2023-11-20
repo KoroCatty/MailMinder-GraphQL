@@ -25,7 +25,7 @@ import cron from 'node-cron';
 // const sendEmail = cron.schedule('*/3 * * * *', async () => {
 
 //! send email every 30 seconds
-// const sendEmail = cron.schedule('*/30 * * * * *', async () => {
+const sendEmail = cron.schedule('*/30 * * * * *', async () => {
 
   //! Render.com にデプロイした時間
   // //! Send Email at 8:00 AM, 12:00 PM, and 8:00 PM JST every day (日本時間)
@@ -33,7 +33,7 @@ import cron from 'node-cron';
 
 
   //! Send Email at 8:00 AM, 12:00 PM, and 5:00 PM JST every day (日本時間)
-  const sendEmail = cron.schedule('0 23,3,8 * * *', async () => {
+  // const sendEmail = cron.schedule('0 23,3,8 * * *', async () => {
   try {
     // email transport configuration
     const transporter = nodemailer.createTransport({
@@ -93,64 +93,54 @@ import cron from 'node-cron';
         continue; // このユーザーの投稿がない場合、次のユーザーに移動
       }
 
-    
-
 
     // 4. E メールの本文を組み立てる
     const attachments = [];
     const htmlContent = selectedPosts.map((post, index) => {
       let imgTag;
-
+    
       const oldPath = post.imgUrl;
       const newPath = oldPath.substring('../../'.length); // 部分削除
 
-      // Full Path (uplads folder & Remote image address URL) 
-      // console.log(post.imgUrl);
-      // post.imgUrl -> http://localhost:5001/uploads/img-1699163333891.jpg
-
-      // CLOUDINARY URL
-      // console.log(post.imgCloudinaryUrl);
-      // post.imgCloudinaryUrl
-
-      // Local files
-      // ローカルのパスが'/'または'.'で始まる場合、画像はローカルにある
-      // Eメール内に画像を埋め込む方法として、CIDを利用して画像を直接メール本文に埋め込む
-      if (post.imgUrl.startsWith('/') || post.imgUrl.startsWith('.')) {
-
+      // console.log(newPath) 
+    
+      // Cloudinary files
+      if (post.imgCloudinaryUrl) {
+        imgTag = `<img src="${post.imgCloudinaryUrl}" alt="Post Image"  style="width: 300px; height: 200px;">`;
+    
+      // Local files (uploaded img or noImg.jpeg)
+      } else if (post.imgUrl.startsWith('/') || post.imgUrl.startsWith('.')) {
         const cidValue = `postimage${index}`;
         attachments.push({
           filename: post.imgUrl,
-          path: `${__dirname}/uploads/${newPath}`,
-          cid: cidValue // cid は、画像をメール本文に埋め込むためのもの(upload した画像がEmail内で表示される様になる)
+          path: `${__dirname}/uploads/compressed-${newPath}`,
+          cid: cidValue // cid は、画像をメール本文に埋め込むためのもの
         });
-        // console.log(cidValue); // postimage2 ... 
-
-        // src属性にcid:CIDの値を指定することで、添付された画像を参照 (必須)
-        imgTag = `<img src="cid:${cidValue}"  alt="Post Image" style="width: 300px; height: 200px;">`;
-
-      } else if (post.imgCloudinaryUrl) {
-        // Cloudinary files
-        imgTag = `<img src="${post.imgCloudinaryUrl}" alt="Post Image" onerror="this.onerror=null; this.src='./noImg.jpeg';" style="width: 300px; height: 200px;">`;
-
-        // Remote files
+        // console.log(`${__dirname}/uploads/compressed-${newPath}`)///uploads/compressed-noImg.jpeg
+    
+        imgTag = `<img src="cid:${cidValue}"  alt="Post Image" style="width: 400px; height: 200px;">`;
+    
+      // Remote files or if no other image is available
       } else {
-        imgTag = `<img src="${post.imgUrl}" alt="Post Image" onerror="this.onerror=null; this.src='./noImg.jpeg';" style="width: 300px; height: 200px;">`;
+        // ここでリモートの画像URLが存在するか、もしくはデフォルト画像を使用する
+        const defaultImgPath = './compressed-imgs/noImg.jpeg';
+        imgTag = `<img src="${post.imgUrl || defaultImgPath}" alt="Post Image" onerror="this.onerror=null; this.src='${defaultImgPath}';" style="width: 100px; height: 200px;">`;
       }
-
+    
       return `
-          <div style="border-bottom: 1px solid #e0e0e0; padding: 10px 0;">
-            <h2 style="font-size: 16px; margin: 0 0 10px;">Title: ${post.title}</h2>
-            <p className="card-content">
-              ${post.content.replace(/\n/g, '').length > 100
-          ? post.content.replace(/\n/g, '').slice(0, 100) + "..."
-          : post.content.replace(/\n/g, '')}
-            </p>
-            ${imgTag}
-            <div style="margin-top: 10px;">
-              <a href="https://remindapp.onrender.com/postdetails/${post.id}" style="color: #337ab7; text-decoration: none;">Click here to view the post</a>
-            </div>
+        <div style="border-bottom: 1px solid #e0e0e0; padding: 10px 0;">
+          <h2 style="font-size: 16px; margin: 0 0 10px;">Title: ${post.title}</h2>
+          <p className="card-content">
+            ${post.content.replace(/\n/g, '').length > 100
+        ? post.content.replace(/\n/g, '').slice(0, 100) + "..."
+        : post.content.replace(/\n/g, '')}
+          </p>
+          ${imgTag}
+          <div style="margin-top: 10px;">
+            <a href="https://remindapp.onrender.com/postdetails/${post.id}" style="color: #337ab7; text-decoration: none;">Click here to view the post</a>
           </div>
-          `;
+        </div>
+        `;
     }).join(''); // 配列の要素を文字列に変換する
 
     // ランダムで subject のあいさつを変える

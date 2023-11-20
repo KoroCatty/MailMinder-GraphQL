@@ -3,7 +3,7 @@ import { ApolloServer } from '@apollo/server';
 
 import express from 'express';
 import path from 'path';
-import fs from 'fs'; // ファイル操作を可能にするモジュール
+// import fs from 'fs'; // ファイル操作を可能にするモジュール
 
 // StandAloneServer -> Express server に変更するために必要なモジュール
 import { expressMiddleware } from '@apollo/server/express4';
@@ -123,7 +123,9 @@ app.post('/uploads', uploadSingleImage, async (req, res) => {
     });
     
     // 圧縮前の元の画像を削除 (unlinkSync は非同期ではない)
-    fs.unlinkSync(req.file.path);
+    // しかし Email 送信用に、元の画像を残しておく
+    // fs.unlinkSync(req.file.path);
+
     console.log("画像を Cloudinary & uploads にアップロードしました🎉".green.underline);
 
   } catch (error) {
