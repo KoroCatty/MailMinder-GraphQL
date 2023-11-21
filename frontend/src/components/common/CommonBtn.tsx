@@ -7,6 +7,7 @@ type Props = {
   children: React.ReactNode;
   type: "button" | "submit" | "reset" | undefined;
   className? : string;
+  disabled?: boolean;
 };
 
 // Emotion CSS (Responsive Design)
@@ -39,7 +40,7 @@ const commonBtnCss = css`
 //! ===============================================================
 //! Regular
 //! ===============================================================
-export const CommonBtn: React.FC<Props> = ({ children, className }) => {
+export const CommonBtn: React.FC<Props> = ({ children, className, disabled }) => {
   //HOOKS
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
@@ -78,8 +79,7 @@ export const CommonBtn: React.FC<Props> = ({ children, className }) => {
   }, []);
 
   return (
-
-      <button className={className} ref={buttonRef} css={commonBtnCss}>{children}</button>
+      <button className={className} ref={buttonRef} css={commonBtnCss} disabled={disabled}>{children}</button>
 
   );
 };
