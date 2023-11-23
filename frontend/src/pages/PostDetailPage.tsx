@@ -209,7 +209,7 @@ const PostsDetailPage = () => {
               // 削除した投稿をキャッシュから削除
               cache.evict({ id: cache.identify(deletePost) });
               // 削除した投稿を除外して、更新後の投稿リストを返す
-              return existingPostsByUser.filter(
+              return existingPostsByUser.items.filter(
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
                 (postRef: any) => postRef.__ref !== deletePost.__ref
               );
@@ -235,7 +235,7 @@ const PostsDetailPage = () => {
   };
 
   //  URL の id と DB の id を比較し一致するものを取得 
-  const filteredPosts = data?.PostsByUser.filter(
+  const filteredPosts = data?.PostsByUser.items.filter(
     (item: postProp) => Number(item.id) === Number(id)
   );
 
@@ -351,7 +351,7 @@ const PostsDetailPage = () => {
                 }, 500);
 
                 //! Delete Cloudinary Image File that much with Post ID
-                const cloudinaryId_muchWithPostId = data.PostsByUser.find((item: postProp) => Number(item.id) === Number(id));
+                const cloudinaryId_muchWithPostId = data.PostsByUser.items.find((item: postProp) => Number(item.id) === Number(id));
                 if (cloudinaryId_muchWithPostId) {
                   handleCloudinary_deleteImg(cloudinaryId_muchWithPostId.imgCloudinaryId);
                 }

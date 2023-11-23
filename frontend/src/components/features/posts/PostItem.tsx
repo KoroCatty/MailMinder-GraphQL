@@ -126,7 +126,7 @@ const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
             // 削除した投稿をキャッシュから削除
             cache.evict({ id: cache.identify(deletePost) });
             // 削除した投稿を除外して、更新後の投稿リストを返す
-            return existingPostsByUser.filter(
+            return existingPostsByUser.items.filter(
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
               (postRef: any) => postRef.__ref !== deletePost.__ref
             );

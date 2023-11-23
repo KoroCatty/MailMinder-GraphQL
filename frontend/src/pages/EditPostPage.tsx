@@ -352,7 +352,7 @@ const EditPostPage = () => {
   useEffect(() => {
     if (data && data.PostsByUser) {
       const idToFind = Number(idUrl); // 特定のID
-      const filteredData = data?.PostsByUser.filter(
+      const filteredData = data?.PostsByUser.items.filter(
         (item: FormDataType) => Number(item.id) === idToFind
       );
 
@@ -543,7 +543,7 @@ const EditPostPage = () => {
         console.log("Not Image File is chosen")
         return;
       }
-      const cloudinaryId_muchWithPostId = data.PostsByUser.find((item: FormDataType) => Number(item.id) === Number(idUrl));
+      const cloudinaryId_muchWithPostId = data.PostsByUser.items.find((item: FormDataType) => Number(item.id) === Number(idUrl));
       if (cloudinaryId_muchWithPostId) {
         handleCloudinary_deleteImg(cloudinaryId_muchWithPostId.imgCloudinaryId);
       }

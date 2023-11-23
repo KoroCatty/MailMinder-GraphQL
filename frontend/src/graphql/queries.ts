@@ -1,11 +1,12 @@
 
 import { gql } from '@apollo/client';
 
-//! GET POSTS BY ID
+//! GET POSTS BY ID (pagination 実装)
 export const GET_POSTS_BY_ID = gql`
-  query getPostsById($uid: ID!) { # getPostsById の命名は何でもok
-    PostsByUser(id: $uid) { # resolver で定義した名前
+  query getPostsById($uid: ID!, $first: Int, $skip: Int ) { # getPostsById の命名は何でもok
+    PostsByUser(id: $uid, first: $first, skip: $skip) { # resolver で定義した名前
     # 以下はフロント側で使えるように定義(consoleで確認可能になる)
+      items {
       id
       title
       content
@@ -15,6 +16,8 @@ export const GET_POSTS_BY_ID = gql`
       imgCloudinaryUrl
       imgCloudinaryId
     }
+    totalCount
+   }
   }
 `;
 
