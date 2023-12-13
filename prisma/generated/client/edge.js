@@ -133,7 +133,7 @@ const config = {
       "value": "prisma-client-js"
     },
     "output": {
-      "value": "/Users/kazuyakojima/Downloads/School-diploma/Full-Stack-Dan/A/MailMinder-GraphQL/prisma/generated/client",
+      "value": "/Users/kazuyakojima/Documents/Programming/Full-Stack/GraphQL/MailMinder-GraphQL/prisma/generated/client",
       "fromEnvVar": null
     },
     "config": {
@@ -170,6 +170,7 @@ const config = {
     "db"
   ],
   "activeProvider": "mysql",
+  "postinstall": true,
   "inlineDatasources": {
     "db": {
       "url": {
@@ -179,7 +180,8 @@ const config = {
     }
   },
   "inlineSchema": "Ly8gRXZlcnkgdGltZSB5b3UgY2hhbmdlIHRoaXMgZmlsZSwgdXBkYXRlIE15U1FMIERCIGJ5CgovLyBucHggcHJpc21hIGRiIHB1c2gKCmdlbmVyYXRvciBjbGllbnQgewogIHByb3ZpZGVyID0gInByaXNtYS1jbGllbnQtanMiIC8vSmF2YVNjcmlwdCDjgYrjgojjgbMgVHlwZVNjcmlwdCDjgafli5XkvZzjgZnjgosKICBvdXRwdXQgICA9ICIuL2dlbmVyYXRlZC9jbGllbnQiCiAgbG9nICAgICA9IFsicXVlcnkiLCAiaW5mbyIsICJ3YXJuIiwgImVycm9yIl0KICBiaW5hcnlUYXJnZXRzID0gWyJuYXRpdmUiLCAiZGViaWFuLW9wZW5zc2wtMS4xLngiXS8vIERlcGxveSB0byBSZW5kZXIuY29tCn0KCmRhdGFzb3VyY2UgZGIgewogIHByb3ZpZGVyID0gIm15c3FsIgogIHVybCAgICAgID0gZW52KCJEQVRBQkFTRV9VUkwiKQp9Cgptb2RlbCBVc2VyIHsKICBpZCAgICAgICAgSW50ICAgICAgQGlkIEBkZWZhdWx0KGF1dG9pbmNyZW1lbnQoKSkKICBmaXJzdE5hbWUgU3RyaW5nCiAgbGFzdE5hbWUgIFN0cmluZwogIGVtYWlsICAgICBTdHJpbmcgICBAdW5pcXVlCiAgcGFzc3dvcmQgIFN0cmluZwogIGNyZWF0ZWRBdCBEYXRlVGltZSBAZGVmYXVsdChub3coKSkKCiAgLy8gUG9zdCBUYWJsZSDjgajjga7plqLkv4LmgKcKICBwb3N0cyBQb3N0W10gLy8gMeWvvuWkmuOBrumWouS/guOBquOBruOBp+mFjeWIlyAoYSB1c2VyIGNhbiBoYXZlIG1hbnkgcG9zdHMpCn0KCgovLyAx5a++5aSa44Gu44Oq44Os44O844K344On44Oz44K344OD44OX44Gu5YW45Z6L55qE44Gq5pa55rOV44Gv44CBIuWkmiIg44Gu5YG077yI44GT44Gu5aC05ZCI44GvIFBvc3TvvInjgasgIFVzZXLjgbjjga7lj4LnhafvvIjlpJbpg6jjgq3jg7zvvInjgpLmjIHjgZ/jgZvjgovjgILjgarjga7jgacgVXNlciB0YWJsZSDjgavjga/jgIBwb3N0SWQg44Go44Os44Kz44O844OJ44Gv5L2c44KJ44Gq44GECm1vZGVsIFBvc3QgewogIGlkICAgICAgICBJbnQgICAgICBAaWQgQGRlZmF1bHQoYXV0b2luY3JlbWVudCgpKQogIHRpdGxlICAgICBTdHJpbmcKICBjb250ZW50ICAgU3RyaW5nICAgQGRiLlRleHQgIC8vICA2NTUzNeaWh+Wtl+OBvuOBp+WPr+iDvQogIGltZ1VybCAgICBTdHJpbmcgICBAZGIuVmFyQ2hhcigxNTAwMCkgLy8gMTUwMDDmloflrZfjgb7jgaflj6/og70KICBpbWdDbG91ZGluYXJ5VXJsIFN0cmluZz8gQGRiLlRleHQgLy9DTE9VRElOQVJZIElNRyBVUkwKICBpbWdDbG91ZGluYXJ5SWQgU3RyaW5nPyAvL0NMT1VESU5BUlkgSUQKICBjcmVhdGVkQXQgRGF0ZVRpbWUgQGRlZmF1bHQobm93KCkpCiAgdXBkYXRlZEF0IERhdGVUaW1lIEB1cGRhdGVkQXQKCi8vIDHlr77lpJrjga7plqLkv4Ljgarjga7jgafjgIFQb3N0IHRhYmxlIOOBqyB1c2VySWQg44KS6L+95Yqg44GZ44KLCiAgdXNlcklkIEludAogIHVzZXIgICBVc2VyIEByZWxhdGlvbihmaWVsZHM6IFt1c2VySWRdLCByZWZlcmVuY2VzOiBbaWRdKQp9Cgo=",
-  "inlineSchemaHash": "341bc1a2eef5903d095277c8c72853c4057be8126faebd8d43f7c220bce53f9a"
+  "inlineSchemaHash": "341bc1a2eef5903d095277c8c72853c4057be8126faebd8d43f7c220bce53f9a",
+  "noEngine": false
 }
 config.dirname = '/'
 
