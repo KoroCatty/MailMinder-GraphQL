@@ -12,8 +12,8 @@ The application is deployed on Render.com. Fully responsive design, mobile frien
 ## Features
 - User Authentication (Register, Login, Logout)
 - User can add, edit, delete and review their own vocabulary cards (CRUD)
-- User can be reminded by email to review their cards 10 AM every day
-- User can see the random 5 cards from the list of their own vocabulary cards 
+- User can be reminded by email to review their cards at 10 AM every day
+- User can see the random 5 cards in the Email from the list of their own vocabulary cards 
 - Forms are validated by react-hook-form and zod (Frontend)
 - Forms are validated by Joi (Backend)
 - User login data is stored in MySQL (Prisma ORM)
@@ -29,7 +29,7 @@ The application is deployed on Render.com. Fully responsive design, mobile frien
 ![Structure](./structure.jpg)
 
 <!-- Image -->
-## Structure
+## Sitemap
 ![Sitemap](./sitemap.jpg)
 
 
