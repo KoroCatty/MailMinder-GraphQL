@@ -1,7 +1,8 @@
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 // components
 import BackButton from "../../common/BackButton";
 import PostItem from "./PostItem";
+import PaginationBar from "../../common/PaginationBar";
 
 // Apollo Client
 import { useQuery } from '@apollo/client';
@@ -45,35 +46,73 @@ const PostListCss = css`
 
 //! ============================================================
 function PostsList() {
-  // GET All POSTS by User ID
+
+  const POSTS_PER_PAGE = 12;
+
+  // pagination
+  // 第二引数はoffsetで、何件目から取得するかを指定する
+  const [currentPage, setCurrentPage] = useState(1);
+
+  // GET All POSTS by User ID (pagination 実装)
   const { data, loading, error, refetch } = useQuery(GET_POSTS_BY_ID, {
     variables: {
       uid: Number(), // backend (resolver) で id を指定しているので、空にする
+      first: POSTS_PER_PAGE, // Post表示数。この数値を backend に渡す
+      skip: (currentPage - 1) * 12, // 何件目から取得するかを指定。 この数値を backend に渡す
     },
+    fetchPolicy: "cache-first"
   });
+
+  // Total number of pages (ex. 50 / 20 = 2.5 => 3 pages)
+  // Total number of pages を計算する前にデータの存在をチェック
+  const totalCount = data?.PostsByUser?.totalCount;
+  const totalPages = totalCount ? Math.ceil(totalCount / POSTS_PER_PAGE) : 0;
 
   // refetch posts
   useEffect(() => {
     refetch({ uid: Number() })
-  }, [ refetch ]);
+  }, [refetch]);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>Error: {error.message}</p>;
-  if (!data || !data.PostsByUser || data.PostsByUser.length === 0) return <p>No posts found.</p>;
 
   return (
     <div css={PostListCss}>
       <BackButton />
 
-      <Row xs={1} md={2} className="g-4">
-        {data.PostsByUser.map((item: PostPropType) => (
-          <div className="eachCard col-6 col-md-3 sm-3" key={item.id}>
+      {/* Pagination */}
+      {/* <div>
+        <button
+          onClick={() => {
+            setCurrentPage(currentPage - 1);
+          }
+          }
+          disabled={currentPage === 1}
+        >Previous</button>
+        <span> {`${currentPage} of ${totalPages}`}</span>
+        <button
+          onClick={() => setCurrentPage(currentPage + 1)}
+          disabled={currentPage === totalPages || totalPages === 0}
+        >Next</button>
+      </div> */}
 
-            {/* Component (Give a Prop) */}
-            <PostItem postProp={item} />
-          </div>
-        ))}
-      </Row>
+
+      <PaginationBar currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+
+      {/* 1.loading  2.error 3.post existence  */}
+      {loading ? <p>Loading...</p> :
+        error ? <p>Error: {error.message}</p> :
+          !data || !data.PostsByUser || data.PostsByUser.length === 0 ? <p>No posts found.</p> :
+            (
+              <Row xs={1} md={2} className="g-4">
+                {data.PostsByUser.items.map((item: PostPropType) => (
+                  <div className="eachCard col-6 col-md-3 sm-3" key={item.id}>
+
+                    {/* Component (Give a Prop) */}
+                    <PostItem postProp={item} />
+                  </div>
+                ))}
+              </Row>
+
+            )}
 
     </div>
   );

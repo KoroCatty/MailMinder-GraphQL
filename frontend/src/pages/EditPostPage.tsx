@@ -221,6 +221,12 @@ const EditPostCss = css`
     }
   }
 
+    // 送信中のボタンのスタイル (loadingState が true の時)
+    .submitBtn.loading {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
   //! Paste Image URL Form
   .pasteImgUrl {
     padding: 1rem 1rem;
@@ -271,10 +277,12 @@ const EditPostPage = () => {
 
 
   //* UPDATE POST BY ID 
-  const [updatePostById, { error }] = useMutation(UPDATE_POST_BY_ID);
+  const [updatePostById, { loading, error }] = useMutation(UPDATE_POST_BY_ID);
   if (error) {
     alert(error.message);
   }
+  // Button loading state
+  const [loadingState, setLoadingState] = useState<boolean>(loading);
 
   //! DELETE POST IMAGE FILE 
   const [deletePostImage] = useMutation(DELETE_POST_IMAGE_FILE);
@@ -344,7 +352,7 @@ const EditPostPage = () => {
   useEffect(() => {
     if (data && data.PostsByUser) {
       const idToFind = Number(idUrl); // 特定のID
-      const filteredData = data?.PostsByUser.filter(
+      const filteredData = data?.PostsByUser.items.filter(
         (item: FormDataType) => Number(item.id) === idToFind
       );
 
@@ -442,6 +450,7 @@ const EditPostPage = () => {
   //! ================================================
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoadingState(true); // 送信処理開始時に送信ボタンの loadingをtrueに設定
 
     // SERVER URL 
     const SERVER_URL = import.meta.env.VITE_PUBLIC_SERVER_URL || 'http://localhost:5001/uploads';
@@ -487,6 +496,7 @@ const EditPostPage = () => {
 
       } catch (error) {
         console.error("Error uploading the file:", error);
+        setLoadingState(false); // 処理が完了したらloadingをfalseに設定
         return;
       }
     }
@@ -523,6 +533,7 @@ const EditPostPage = () => {
         console.log("Post updated successfully", response.data);
         await refetch();// Props で受け取った refetch を実行
         console.log("Refetched!");
+        setLoadingState(false); // 処理が完了したらloadingをfalseに設定
       }
 
 
@@ -532,7 +543,7 @@ const EditPostPage = () => {
         console.log("Not Image File is chosen")
         return;
       }
-      const cloudinaryId_muchWithPostId = data.PostsByUser.find((item: FormDataType) => Number(item.id) === Number(idUrl));
+      const cloudinaryId_muchWithPostId = data.PostsByUser.items.find((item: FormDataType) => Number(item.id) === Number(idUrl));
       if (cloudinaryId_muchWithPostId) {
         handleCloudinary_deleteImg(cloudinaryId_muchWithPostId.imgCloudinaryId);
       }
@@ -540,7 +551,9 @@ const EditPostPage = () => {
     } catch (error) {
       // window.alert("Error updating post");
       console.error("Error updating post - アップデートエラー:", error);
+      setLoadingState(false); // 処理が完了したらloadingをfalseに設定
     }
+    setLoadingState(false); // 処理が完了したらloadingをfalseに設定
   };
 
   //! ======================================================
@@ -677,8 +690,13 @@ const EditPostPage = () => {
               <GoogleSearch />
 
               {/* Button COMPONENT*/}
-              <CommonBtn type="submit" className="submitBtn">
-                <span className="w-100">UPDATE</span>
+              {/* Button COMPONENT*/}
+              <CommonBtn
+                type="submit"
+                className={`submitBtn` + (loadingState ? " loading" : "")}
+                disabled={loadingState}
+              >
+                <span className="w-100"> {loadingState ? "Updating..." : "Update Post"}</span>
               </CommonBtn>
             </form>
           )}

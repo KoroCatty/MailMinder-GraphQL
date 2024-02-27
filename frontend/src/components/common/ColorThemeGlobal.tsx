@@ -100,6 +100,18 @@ const globalCss = css`
       transition: all 0.3s ease;
     }
   }
+
+  // Pagination
+  .pagination-ellipsis {
+    color: ${colorSchema.fontLight} !important;
+  }
+
+  .pagination-link {
+    &.is-current {
+      background-color: #c84343 !important;
+      color: #f1f1f1 !important;
+    }
+  }
 `;
 
 function ColorThemeGlobal() {

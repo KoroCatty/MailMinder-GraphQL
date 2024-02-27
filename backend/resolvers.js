@@ -70,20 +70,32 @@ const resolvers = {
     //* GET ALL POSTS BY USER ID
     //* -----------------------------------------------
     PostsByUser: async (_, args, context) => {
-      console.log(context.userId + "👤 user ID") // ログイン者のID
-      // console.log(context)
-
       // Error means you are not allowed to do this
       if (!context.userId) throw Error("You must be logged in 😱")
 
+      // items と totalCount の両方のフィールドを持つオブジェクトを返す必要がある (2回に分けて取得)
+
       // 自分の投稿を全て取得 (postはPostモデル in typeDefs.js)
       const posts = await prisma.post.findMany({
+        take: args.first, // 取得する投稿の数
+        skip: args.skip, // スキップする投稿の数
+        totalCount: args.totalCount, // 全ての投稿の数
         orderBy: { updatedAt: "desc" }, // 更新された順（または新しく作成された順）に並べる
         where: {
           userId: context.userId // 自分の投稿を取得(ログイン者)
         },
       });
-      return posts;
+
+      // 全投稿数をDBから取得
+      const totalCount = await prisma.post.count({
+        where: { userId: context.userId },
+      });
+
+      // items と totalCount を含むオブジェクトを返す
+      return {
+        items: posts,
+        totalCount: totalCount
+      };
     },
 
     //* -----------------------------------------------

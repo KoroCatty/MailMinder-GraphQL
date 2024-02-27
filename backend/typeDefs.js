@@ -14,7 +14,7 @@ const typeDefs = gql`
 # QUERY
   type Query {
     users: [User!]! # return an array
-    PostsByUser(id: ID!): [Post!]! # resolverで定義した名前を使う
+    PostsByUser(id: ID!, first: Int, skip:Int): PostTotalCount #(pagination & total数を実装)
     PostsByUserLimit(id: ID!, limit: Int!): [Post!]! # limit を使ったresolver関数
     isLoggedIn: Boolean! # login しているかどうか
   }
@@ -39,6 +39,11 @@ const typeDefs = gql`
     user : User! # PostモデルにはUserモデルが含まれている
     imgCloudinaryUrl: String
     imgCloudinaryId: String
+  }
+
+  type PostTotalCount {
+    items: [Post!]! # 上の Post オブジェクトを、items という配列に格納 (Postが nestされるので注意)
+    totalCount: Int 
   }
 
   #//! CREATE A USER
@@ -82,12 +87,12 @@ const typeDefs = gql`
   }
 
 # //! IMAGE FILE TYPE
-  type File {
-  filename: String!
-  mimetype: String!
-  encoding: String!
-  type: String!
-}
+#   type File {
+#   filename: String!
+#   mimetype: String!
+#   encoding: String!
+#   type: String!
+# }
 
 
   # MUTATION (これらを resolver で使う)

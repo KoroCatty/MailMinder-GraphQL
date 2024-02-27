@@ -14,15 +14,13 @@ import { CommonBtn } from "../../common/CommonBtn";
 // bootstrap
 import { Form } from "react-bootstrap";
 
-// TYPES 
-interface RefetchProps {
-  refetch: () => void;
-}
-
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
 import { min, max } from "../../../utils/mediaQueries";
-const homeFormsStyles = css`
+  //! ======================================================
+  //! CSS
+  //! ======================================================
+  const homeFormsStyles = css`
   position: relative;
   margin-top: 18rem;
 
@@ -171,6 +169,12 @@ const homeFormsStyles = css`
     }
   }
 
+  // 送信中のボタンのスタイル (loadingState が true の時)
+   .submitBtn.loading {
+      opacity: 0.3;
+      cursor: not-allowed;
+    }
+
   //! Paste Image URL Form
   .pasteImgUrl {
     padding: 1rem 1rem;
@@ -197,6 +201,11 @@ const homeFormsStyles = css`
 //! ========================================
 //! MAIN
 //! ========================================
+
+// TYPES 
+interface RefetchProps {
+  refetch: () => void;
+}
 
 //? TYPES (For Form Data)
 interface FormDataProps {
@@ -231,16 +240,17 @@ const HomeForms = ({ refetch }: RefetchProps) => {
     }
   };
 
-  // Mutations (CreatePost は mutation.ts で定義)
+  //* Mutations (CreatePost は mutation.ts で定義)
   const [CreatePost, { loading, error }] = useMutation(CREATE_POST);
 
-  if (loading) {
-    <h1>Loading...</h1>;
-  }
+  // btn loading state
+  const [loadingState, setLoadingState] = useState<boolean>(loading);
+
   if (error) {
     alert(error.message);
-    <h1>Error...</h1>;
+    <h1>Uploading Error!!</h1>;
   }
+
 
   //! ======================================================
   //! When forms typed (input & textarea)
@@ -262,6 +272,7 @@ const HomeForms = ({ refetch }: RefetchProps) => {
   //! ======================================================
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    setLoadingState(true); // 送信処理開始時に送信ボタンの loadingをtrueに設定
 
     // SERVER URL 
     const SERVER_URL = import.meta.env.VITE_PUBLIC_SERVER_URL || 'http://localhost:5001/uploads';
@@ -286,7 +297,7 @@ const HomeForms = ({ refetch }: RefetchProps) => {
         });
         // console.log(response.data.url); // /uploads/img-1697934272148.jpg
 
-          // CLOUDINARY ID (Backend から返したもの)
+        // CLOUDINARY ID (Backend から返したもの)
         await console.log(response.data.cloudinary_id);
 
         //  CLOUDINARY URL  (Backend から返したもの)
@@ -320,6 +331,7 @@ const HomeForms = ({ refetch }: RefetchProps) => {
 
       } catch (error) {
         console.error("Error uploading the file:", error);
+        setLoadingState(false);
         return;
 
       } finally {
@@ -345,14 +357,15 @@ const HomeForms = ({ refetch }: RefetchProps) => {
           },
         },
       });
-      window.alert("Reminder added Successfully!");
       refetch(); // Props で受け取った refetch を実行
       await refetch();
       console.log("Refetched!");
+      window.alert("Reminder added Successfully!");
     } catch (error) {
       console.error("Error saving post to database🫡:", error);
       return;
     }
+    setLoadingState(false); // 処理が完了したらloadingをfalseに設定
   };
 
 
@@ -498,8 +511,12 @@ const HomeForms = ({ refetch }: RefetchProps) => {
         <GoogleSearch />
 
         {/* Button COMPONENT*/}
-        <CommonBtn type="submit" className="submitBtn">
-          <span className="w-100">Create Post</span>
+        <CommonBtn
+          type="submit"
+          className={`submitBtn` + (loadingState ? " loading" : "")}
+          disabled={loadingState}
+        >
+          <span className="w-100"> {loadingState ? "Uploading..." : "Create Post"}</span>
         </CommonBtn>
       </form>
 
