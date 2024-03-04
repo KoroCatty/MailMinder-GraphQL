@@ -29,7 +29,6 @@ interface LimitPostsPropsType {
 
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
-import { min, max } from "../../../utils/mediaQueries";
 const recentPostsCss = css`
   padding: 3rem 0 10rem 0;
 
@@ -84,19 +83,6 @@ const recentPostsCss = css`
       color: rgba(0, 0, 0, 0.5);
       padding: 0.3rem 0; 
     }
-  }
-
-  // 1px〜479px
-  ${min[0] + max[0]} {
-  }
-  // 480px〜767px
-  ${min[1] + max[1]} {
-  }
-  // 768px〜989px
-  ${min[2] + max[2]} {
-  }
-  // 990px〜
-  ${min[3] + max[3]} {
   }
 `;
 

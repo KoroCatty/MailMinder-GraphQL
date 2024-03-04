@@ -1,4 +1,3 @@
-
 import { gql } from '@apollo/client';
 
 //! GET POSTS BY ID (pagination 実装)

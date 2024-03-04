@@ -1,4 +1,3 @@
-// Emotion sass in component
 import { css } from "@emotion/react";
 import { min, max } from "../../../utils/mediaQueries";
 

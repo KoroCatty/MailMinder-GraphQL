@@ -1,4 +1,3 @@
-// import  { useState } from "react";
 
 // Emotion
 import { css } from "@emotion/react";
@@ -18,19 +17,7 @@ interface ToggleSwitchProps {
 }
 
 const EmailToggle: React.FC<ToggleSwitchProps> = (
-  // initial = false, onChange 
 ) => {
-  // const [checked, setChecked] = useState(initial);
-
-  // const handleToggle = () => {
-  //   const newChecked = !checked;
-  //   setChecked(newChecked);
-
-  //   if (onChange) {
-  //     onChange(newChecked);
-  //   }
-  // };
-
   return (
     <section css={toggleSwitch}>
       <h2>Stop Sending Emails</h2>

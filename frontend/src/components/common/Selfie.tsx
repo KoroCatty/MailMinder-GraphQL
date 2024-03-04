@@ -1,4 +1,3 @@
-// Reactの関数や型をインポート
 import { useState, useRef } from "react";
 
 // react-icons

@@ -78,22 +78,11 @@ const typeDefs = gql`
   input PostUpdateInput {
     title: String!
     content: String!
-    # expecting a file upload. If you're sending a URL or base64 string instead of a file, this could be causing the issue.
-    # imgUrl: Upload
     imgUrl: String
     imgCloudinaryUrl: String
     imgCloudinaryId: String
     updatedAt: Date
   }
-
-# //! IMAGE FILE TYPE
-#   type File {
-#   filename: String!
-#   mimetype: String!
-#   encoding: String!
-#   type: String!
-# }
-
 
   # MUTATION (これらを resolver で使う)
    type Mutation {

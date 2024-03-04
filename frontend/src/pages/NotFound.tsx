@@ -1,11 +1,4 @@
-// components
-// import BackButton from "../components/common/BackButton";
-
 import { Link } from "react-router-dom";
-// components
-// import Header from "../components/layout/Header";
-// import Footer from "../components/layout/Footer";
-
 // Image (import することで URL によって動的にパスが変わるのを防ぐ)
 import notFoundHeroImage from "/imgs/hero_404.jpg";
 

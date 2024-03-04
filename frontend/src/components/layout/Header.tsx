@@ -192,7 +192,6 @@ const headerCss = css`
   }
 `;
 
-//! =================================================================
 function Header({ isLoggedIn, setIsLoggedIn, darkTheme, setDarkTheme }: PropsType) {
 
   const navigate = useNavigate();
@@ -250,7 +249,6 @@ function Header({ isLoggedIn, setIsLoggedIn, darkTheme, setDarkTheme }: PropsTyp
                 ""
               )}
             </Nav>
-
 
             <div className="navRight">
               {/* //! TOGGLE BUTTON */}

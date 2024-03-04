@@ -3,7 +3,6 @@ import { ApolloServer } from '@apollo/server';
 
 import express from 'express';
 import path from 'path';
-// import fs from 'fs'; // ファイル操作を可能にするモジュール
 
 // StandAloneServer -> Express server に変更するために必要なモジュール
 import { expressMiddleware } from '@apollo/server/express4';
@@ -17,9 +16,6 @@ import cookieParser from 'cookie-parser';
 // Schema and Resolvers
 import typeDefs from './typeDefs.js';
 import resolvers from './resolvers.js';
-
-import crypto from 'crypto';
-// console.log(crypto.randomUUID());// 30eee7b2-7d88-4388-9424-28257803b92d
 
 // Token
 import jwt from 'jsonwebtoken';
@@ -41,7 +37,7 @@ import sharp from 'sharp';
 const app = express();
 
 app.use(cors({
-  origin: true,     //! allow any origin
+  origin: true,
   credentials: true //! allow cookies
 }));
 
@@ -55,18 +51,16 @@ import multer from "multer";
 // 画像ファイルの保存先を指定 (cb = callback)
 const LocalStorage = multer.diskStorage({
   destination(req, file, cb) {
-    // null is for error | 画像は root の uploads からサーバーに保存される
-    cb(null, "uploads/");
+    cb(null, "uploads/"); // 画像は root の uploads からサーバーに保存される
   },
   //! Create a file name
   filename(req, file, cb) {
-    // fieldname = image なので image-163123123.jpg というファイル名になる
+    // ex) image-163123123.jpg ファイル
     cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
   },
 });
 
 // check file type
-// 関数 fileFilter はアップロードされるファイルのタイプを検証
 function fileFilter(req, file, cb) {
 
   // 受け入れられるファイルの拡張子を正規表現で定義
@@ -121,11 +115,6 @@ app.post('/uploads', uploadSingleImage, async (req, res) => {
       cloudinaryUrl: result.secure_url, // 画像のURLを返す(cloudinary)
       cloudinary_id: result.public_id // 画像のIDを返す(cloudinary)
     });
-
-    // 圧縮前の元の画像を削除 (unlinkSync は非同期ではない)
-    // しかし Email 送信用に、元の画像を残しておく
-    // fs.unlinkSync(req.file.path);
-
     console.log("画像を Cloudinary & uploads にアップロードしました🎉".green.underline);
 
   } catch (error) {
@@ -133,32 +122,17 @@ app.post('/uploads', uploadSingleImage, async (req, res) => {
   }
 });
 
-//* uploads Folder 公開ディレクトリを指定
 //* Create a uploads folder in the root directory
 const __dirname = path.resolve();
-//  console.log(__dirname); // /Users/Full-Stack/RemindApp (全てのパスを取得)
+// ex) /Users/Full-Stack/RemindApp (全てのパスを取得)
 
 // 現在のディレクトリからの相対パス./uploadsを絶対パスに変換して格納
 const uploadsDirectory = path.join(__dirname, '/uploads');
-// console.log(uploadsDirectory); // /Users/.../RemindApp/uploads
+// ex) /Users/.../RemindApp/uploads
 
-// この設定により、uploadsディレクトリ内のすべてのファイルは、/uploads/<filename> のURLでアクセス可能
-// '/uploads' エンドポイントを使用して、そのディレクトリ内の静的ファイルを提供
 // '/uploads'というパスのリクエストがあったときに次の express.static()ミドルウェアが動作
 app.use('/uploads', express.static(uploadsDirectory));
 
-//* ==============================================================
-//* CLOUDINARY IMAGE FILE DELETE (CLODINARY SERVER)
-//* ==============================================================
-// app.delete('/uploads:id', async (req, res) => {
-//   try {
-// Delete image from cloudinary
-//     await cloudinary.uploader.destroy(req.body.cloudinary_id);
-//     res.json({ msg: 'Image deleted' });
-//   } catch (err) {
-//     console.log(err);
-//   }
-// });
 
 app.use(cors({
   origin: true,  // or true to allow any origin
@@ -169,12 +143,10 @@ app.use(cors({
 //? Deploy Settings
 //? ==============================================================
 if (process.env.NODE_ENV === 'production') {
-  // Express will serve up production assets
   // Express が production 環境の assets を提供するようにする
   // ルートの / にアクセスがあった場合、Express は frontend/build/index.html を返す
   app.use(express.static(path.join(__dirname, 'frontend/dist')));
 
-  // if it doesn't recognize the route
   // Express が route を認識できない場合は、front-end の index.html ファイルを提供する
   app.get('*', (req, res) => {
     res.sendFile(path.resolve(__dirname, 'frontend', 'dist', 'index.html'));
@@ -196,10 +168,9 @@ const PORT = process.env.PORT || 5001;
 const server = new ApolloServer({
   typeDefs: typeDefs,
   resolvers: resolvers,
-  // context: ({ req, res }) => ({ req, res }),
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })], // Added
   cors: {
-    origin: true,  // or true to allow any origin
+    origin: true,
     credentials: true
   }
 })
@@ -209,18 +180,15 @@ await server.start();
 app.use('/', cors({
   origin: true,
   credentials: true,
- }
+}
 ),
 
 
   // 50mb is the limit that `startStandaloneServer` 
   bodyParser.json({ limit: '50mb' }),
-  // expressMiddleware accepts the same arguments:
-  // an Apollo Server instance and optional configuration options
   expressMiddleware(server, {
 
     // ログイン用 context を使い、resolver.js内の、各リクエストで使用できるようにする
-    // As i used HttpOnly, req, res are needed 
     context: async ({ req, res }) => {
       //! Token from HttpOnly Cookie 
       const token = req.cookies.jwt_httpOnly;
@@ -250,8 +218,6 @@ app.use('/', cors({
 // Modified server startup
 await new Promise((resolve) => httpServer.listen({ port: PORT }, resolve));
 console.log(`🚀 Server ready at http://localhost:${PORT}`.cyan.underline);
-//! ==============================================================
-
 
 //* ==============================================================
 //* MySQL DB CONNECTION 

@@ -98,10 +98,6 @@ function App() {
         </>
 
         <Footer isLoggedIn={isLoggedIn} />
-
-        {/* //! ADMIN ユーザーのみ */}
-        {/* <Route path="" element={<AdminRoute />}>
-            </Route> */}
       </BrowserRouter >
 
     </>

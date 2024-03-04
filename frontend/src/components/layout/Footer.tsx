@@ -1,4 +1,3 @@
-// Emotion
 import { css } from "@emotion/react";
 import { min, max } from "../../utils/mediaQueries";
 
@@ -17,7 +16,6 @@ function goTop() {
 // TYPE
 type IsLoggedInPropsType = {
   isLoggedIn: boolean;
-  // setIsLoggedIn: (isLoggedIn: boolean) => void;
 }
 
 const FooterCSS = css`

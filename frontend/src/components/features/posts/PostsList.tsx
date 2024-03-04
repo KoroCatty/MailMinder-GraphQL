@@ -78,23 +78,6 @@ function PostsList() {
     <div css={PostListCss}>
       <BackButton />
 
-      {/* Pagination */}
-      {/* <div>
-        <button
-          onClick={() => {
-            setCurrentPage(currentPage - 1);
-          }
-          }
-          disabled={currentPage === 1}
-        >Previous</button>
-        <span> {`${currentPage} of ${totalPages}`}</span>
-        <button
-          onClick={() => setCurrentPage(currentPage + 1)}
-          disabled={currentPage === totalPages || totalPages === 0}
-        >Next</button>
-      </div> */}
-
-
       <PaginationBar currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
       {/* 1.loading  2.error 3.post existence  */}
@@ -111,9 +94,7 @@ function PostsList() {
                   </div>
                 ))}
               </Row>
-
             )}
-
     </div>
   );
 }

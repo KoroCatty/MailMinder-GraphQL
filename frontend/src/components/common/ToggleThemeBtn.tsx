@@ -7,25 +7,7 @@ type PropsType = {
 
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
-import { min, max } from "../../utils/mediaQueries";
 const toggleCss = css`
-  // 1px〜479px
-  /* ${min[0] + max[0]} {
-    background-color: #c32626;
-  }
-  // 480px〜767px
-  ${min[1] + max[1]} {
-    background-color: blue;
-  }
-  // 768px〜989px
-  ${min[2] + max[2]} {
-    background-color: green;
-  }
-  // 990px〜1200
-  ${min[3] + max[3]} {
-    background-color: yellow;
-  } */
-
   @media screen and (min-width: 1201px) {
     transform: translateY(50%);
   }

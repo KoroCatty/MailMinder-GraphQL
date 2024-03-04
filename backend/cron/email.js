@@ -7,7 +7,6 @@
 // その投稿をメールの本文として組み立てる
 // そのユーザー全員のメールアドレスにメールを送る
 
-
 import path from 'path';
 const __dirname = path.resolve();
 
@@ -24,21 +23,9 @@ import cron from 'node-cron';
 //! Send Email every 3 minutes
 // const sendEmail = cron.schedule('*/3 * * * *', async () => {
 
-//! send email every 30 seconds
-// const sendEmail = cron.schedule('*/30 * * * * *', async () => {
-
-  //! Render.com にデプロイした時間
-  // //! Send Email at 8:00 AM, 12:00 PM, and 8:00 PM JST every day (日本時間)
-  // const sendEmail = cron.schedule('0 23,3,11 * * *', async () => {
-
-
-  //! Send Email at 8:00 AM, 12:00 PM, and 5:00 PM JST every day (日本時間)
-  // const sendEmail = cron.schedule('0 23,3,8 * * *', async () => {
-
-  //! Send Email at 10:00 AM JST every day (日本時間の毎朝10時に)
+//! Send Email at 10:00 AM JST every day (日本時間の毎朝10時に)
 const sendEmail = cron.schedule('0 1 * * *', async () => {
   try {
-    // email transport configuration
     const transporter = nodemailer.createTransport({
       service: process.env.EMAIL_SERVICE,
       host: process.env.EMAIL_HOST,
@@ -97,46 +84,44 @@ const sendEmail = cron.schedule('0 1 * * *', async () => {
       }
 
 
-    // 4. E メールの本文を組み立てる
-    const attachments = [];
-    const htmlContent = selectedPosts.map((post, index) => {
-      let imgTag;
-    
-      const oldPath = post.imgUrl;
-      const newPath = oldPath.substring('../../'.length); // 部分削除
+      // 4. E メールの本文を組み立てる
+      const attachments = [];
+      const htmlContent = selectedPosts.map((post, index) => {
+        let imgTag;
 
-      // console.log(newPath) 
-    
-      // Cloudinary files
-      if (post.imgCloudinaryUrl) {
-        imgTag = `<img src="${post.imgCloudinaryUrl}" alt="Post Image"  style="width: 300px; height: 200px;">`;
-    
-      // Local files (uploaded img or noImg.jpeg)
-      } else if (post.imgUrl.startsWith('/') || post.imgUrl.startsWith('.')) {
-        const cidValue = `postimage${index}`;
-        attachments.push({
-          filename: post.imgUrl,
-          path: `${__dirname}/uploads/compressed-${newPath}`,
-          cid: cidValue // cid は、画像をメール本文に埋め込むためのもの
-        });
-        // console.log(`${__dirname}/uploads/compressed-${newPath}`)///uploads/compressed-noImg.jpeg
-    
-        imgTag = `<img src="cid:${cidValue}"  alt="Post Image" style="width: 300px; height: 200px;">`;
-    
-      // Remote files or if no other image is available
-      } else {
-        // ここでリモートの画像URLが存在するか、もしくはデフォルト画像を使用する
-        const defaultImgPath = './compressed-imgs/noImg.jpeg';
-        imgTag = `<img src="${post.imgUrl || defaultImgPath}" alt="Post Image" onerror="this.onerror=null; this.src='${defaultImgPath}';" style="width: 300px; height: 200px;">`;
-      }
-    
-      return `
+        const oldPath = post.imgUrl;
+        const newPath = oldPath.substring('../../'.length); // 部分削除
+
+        // Cloudinary files
+        if (post.imgCloudinaryUrl) {
+          imgTag = `<img src="${post.imgCloudinaryUrl}" alt="Post Image"  style="width: 300px; height: 200px;">`;
+
+          // Local files (uploaded img or noImg.jpeg)
+        } else if (post.imgUrl.startsWith('/') || post.imgUrl.startsWith('.')) {
+          const cidValue = `postimage${index}`;
+          attachments.push({
+            filename: post.imgUrl,
+            path: `${__dirname}/uploads/compressed-${newPath}`,
+            cid: cidValue // cid は、画像をメール本文に埋め込むためのもの
+          });
+          // console.log(`${__dirname}/uploads/compressed-${newPath}`)///uploads/compressed-noImg.jpeg
+
+          imgTag = `<img src="cid:${cidValue}"  alt="Post Image" style="width: 300px; height: 200px;">`;
+
+          // Remote files or if no other image is available
+        } else {
+          // ここでリモートの画像URLが存在するか、もしくはデフォルト画像を使用する
+          const defaultImgPath = './compressed-imgs/noImg.jpeg';
+          imgTag = `<img src="${post.imgUrl || defaultImgPath}" alt="Post Image" onerror="this.onerror=null; this.src='${defaultImgPath}';" style="width: 300px; height: 200px;">`;
+        }
+
+        return `
         <div style="border-bottom: 1px solid #e0e0e0; padding: 10px 0;">
           <h2 style="font-size: 16px; margin: 0 0 10px;">Title: ${post.title}</h2>
           <p className="card-content">
             ${post.content.replace(/\n/g, '').length > 100
-        ? post.content.replace(/\n/g, '').slice(0, 100) + "..."
-        : post.content.replace(/\n/g, '')}
+            ? post.content.replace(/\n/g, '').slice(0, 100) + "..."
+            : post.content.replace(/\n/g, '')}
           </p>
           ${imgTag}
           <div style="margin-top: 10px;">
@@ -144,42 +129,40 @@ const sendEmail = cron.schedule('0 1 * * *', async () => {
           </div>
         </div>
         `;
-    }).join(''); // 配列の要素を文字列に変換する
+      }).join(''); // 配列の要素を文字列に変換する
 
-    // ランダムで subject のあいさつを変える
-    const greetings = ["Today's 5 posts😁", 'How are you?😃', "Check today's posts🫡", "Don't forget to check🥹"];
-    const randomGreeting = greetings[Math.floor(Math.random() * greetings.length)];
+      // ランダムで subject のあいさつを変える
+      const greetings = ["Today's 5 posts😁", 'How are you?😃', "Check today's posts🫡", "Don't forget to check🥹"];
+      const randomGreeting = greetings[Math.floor(Math.random() * greetings.length)];
 
+      let mailContent;
 
-    let mailContent;
+      // E メールの内容を定義 (Demoユーザーにはメールを送らない)
+      if (user.email !== 'demo@demo.com') {
+        mailContent = {
+          from: process.env.EMAIL_FROM,
+          to: user.email,
+          subject: `Hi ${user.firstName}! ${randomGreeting} `,
+          html: htmlContent,
+          attachments: attachments // 添付ファイルの配列
+        };
 
-    // E メールの内容を定義 (Demoユーザーにはメールを送らない)
-    if (user.email !== 'demo@demo.com') {
-      mailContent = {
-        from: process.env.EMAIL_FROM,
-        to: user.email,
-        subject: `Hi ${user.firstName}! ${randomGreeting} `,
-        html: htmlContent,
-        attachments: attachments // 添付ファイルの配列
-      };
-
-      const info = await transporter.sendMail(mailContent);
-      console.log(`Email sent to ${user.email}: ${info.response}`.cyan.bold.underline);
-    } else {
-      console.log(`Skipped sending email to demo user: ${user.email}`.cyan.bold.underline);
+        const info = await transporter.sendMail(mailContent);
+        console.log(`Email sent to ${user.email}: ${info.response}`.cyan.bold.underline);
+      } else {
+        console.log(`Skipped sending email to demo user: ${user.email}`.cyan.bold.underline);
+      }
     }
-  }
-
     console.log('All emails sent successfully!'.red.bold);
 
-} catch (error) {
-  console.error("エラー Error sending email with post content:", error);
-}
+  } catch (error) {
+    console.error("エラー Error sending email with post content:", error);
+  }
 },
-{
-  scheduled: true,
+  {
+    scheduled: true,
     timezone: "UTC"
-}
+  }
 );
 
 export default sendEmail;

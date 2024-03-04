@@ -22,7 +22,6 @@ const uploadLink = createUploadLink({
   uri: 'https://remindapp.onrender.com/' //! PRODUCTION
 });
 
-
 // Get the authentication token from local storage if it exists
 const authLink = setContext((_, { headers }) => {
   // return the headers to the context so httpLink can read them
@@ -40,7 +39,6 @@ const client = new ApolloClient({
   link: authLink.concat(uploadLink), // authLinkとuploadLinkを結合
   cache: new InMemoryCache(), // InMemoryCacheとは、メモリ上にデータをキャッシュする方法
 });
-
 
 // ReactアプリケーションをDOMにレンダリング
 ReactDOM.createRoot(document.getElementById('root')!).render(

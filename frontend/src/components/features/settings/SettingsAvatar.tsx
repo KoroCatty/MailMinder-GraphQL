@@ -89,8 +89,6 @@ const SettingsAvatar = () => {
         {!selectedImage && <img src="/imgs/noImg.jpeg" alt="no Image" />}
         {selectedImage && <img src={selectedImage} alt="chosen Image" />}
       </div>
-
-
     </div>
   )
 }

@@ -122,9 +122,6 @@ const GoogleSearch = () => {
       )}${creativeCommonsFilter}`,
       "_blank"
     );
-
-    // NORMAL COMMERCIAL IMAGE SEARCH
-    // window.open(`https://www.google.com/search?tbm=isch&q=${encodeURIComponent(searchTerm)}`, '_blank');
   };
 
   return (

@@ -163,8 +163,6 @@ export const CommonForm: React.FC<CommonFormProps> = ({
     }
   };
 
-
-
   return (
     <div css={formsCss}>
       <section className="">

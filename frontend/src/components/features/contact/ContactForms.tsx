@@ -120,10 +120,6 @@ const ContactForms = () => {
   //! ====================================================
   //! react-hook-form
   //! ====================================================
-  // onChangeタイプしながら下で設定したValidationを出せるようになる
-  // エラーを出したい時はこのformStateのerrorsを使う
-  // when you want to show error, use formState.errors
-
   // registerはinputのname属性に設定, handleSubmitはsubmit時に実行する関数, formStateはエラーを出すため
   const {
     register,

@@ -2,8 +2,6 @@ import { Outlet } from "react-router-dom";
 import { useLocation } from "react-router-dom";
 
 // component for layout
-// import Header from "./Header";
-// import Footer from "./Footer";
 import Hero from "../common/Hero";
 import ContactHero from "../features/contact/ContactHero";
 
@@ -62,8 +60,6 @@ const Layout = ({ isLoggedIn, darkTheme }: PropsType) => {
         {/* この Outlet が Layout で囲ってる全てのコンポーネントを監視 Outlet を使い、ネストされたルートをレンダリングする */}
         <Outlet />
       </div>
-
-      {/* <Footer /> */}
     </>
   );
 };

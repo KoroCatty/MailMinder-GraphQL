@@ -1,8 +1,3 @@
-// zod を操作するファイル
-// バリデーションの条件をここに記載し、フォームのあるページをスッキリさせる
-// to control zod
-// to write validation conditions to this file
-
 import { z } from "zod"
 
 export const validationSchema = z.object({

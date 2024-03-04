@@ -360,10 +360,6 @@ const EditPostPage = () => {
     }
   }, [data, idUrl]); // ここで指定した変数が変更されたら実行される
 
-  // console.log(data)
-  // console.log(currentData)
-
-
   //? ======================================================
   //? Title
   //? ======================================================
@@ -689,7 +685,6 @@ const EditPostPage = () => {
               {/* //! COMPONENT */}
               <GoogleSearch />
 
-              {/* Button COMPONENT*/}
               {/* Button COMPONENT*/}
               <CommonBtn
                 type="submit"

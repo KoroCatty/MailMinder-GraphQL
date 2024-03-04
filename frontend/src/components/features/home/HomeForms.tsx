@@ -333,15 +333,8 @@ const HomeForms = ({ refetch }: RefetchProps) => {
         console.error("Error uploading the file:", error);
         setLoadingState(false);
         return;
-
-      } finally {
-        // reset local selected file in useState
-        // setSelectedLocalFile(null);
-        // reset selected image input value
-        // resetLocalFileSelectValue();
-      }
+      } 
     }
-
 
     //! 1. Save post to the database using Apollo Client's mutation.
     try {
@@ -385,8 +378,6 @@ const HomeForms = ({ refetch }: RefetchProps) => {
 
     // Update the display image
     setDisplayImg(localImageUrl);
-
-    // e.target.value = '';
   }
 
 

@@ -10,7 +10,6 @@ import { DELETE_CLOUDINARY_IMAGE_FILE } from "../../../graphql/mutations";
 
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
-import { min, max } from "../../../utils/mediaQueries";
 const postItemCss = css`
   .card {
     border: none;
@@ -29,8 +28,6 @@ const postItemCss = css`
 
     &-body {
       padding: 0.8rem 0.6rem;
-
-      /* position: relative;  */
     }
 
     &-title {
@@ -59,30 +56,13 @@ const postItemCss = css`
   button {
     display: block;
     width: 100%;
-
-          /* position: absolute; 
-      bottom: 0;
-      left: 0.6rem; 
-      right: 0.6rem; card-body の右の padding と一致 */
   }
+
 .deleteBtn {
   background-color: ${colorSchema.darkLight};
   color: white;
   margin-bottom: 0.5rem;
 }
-
-  // 1px〜479px
-  ${min[0] + max[0]} {
-  }
-  // 480px〜767px
-  ${min[1] + max[1]} {
-  }
-  // 768px〜989px
-  ${min[2] + max[2]} {
-  }
-  // 990px〜
-  ${min[3] + max[3]} {
-  }
 `;
 
 // TYPES

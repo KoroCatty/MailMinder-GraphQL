@@ -1,8 +1,3 @@
-
-
-// import { Helmet } from "react-helmet";
-
-// Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
 import { min, max } from "../utils/mediaQueries";
 

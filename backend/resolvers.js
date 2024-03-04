@@ -6,8 +6,6 @@ import bcrypt from 'bcryptjs';
 import Joi from 'joi'; // Validation
 import jwt from 'jsonwebtoken';
 
-// import cloudinaryConfig from './cloudinary.js'; 
-
 import cloudinary from 'cloudinary';
 
 cloudinary.config({
@@ -15,7 +13,6 @@ cloudinary.config({
   api_key: process.env.CLOUDINARY_API_KEY,
   api_secret: process.env.CLOUDINARY_API_SECRET
 });
-
 
 // プリズマクライエントのインスタンスを格納
 import { PrismaClient } from '../prisma/generated/client/index.js'
@@ -32,7 +29,7 @@ async function deleteFile(filePath) {
 }
 
 //! ==========================================================
-//! Resolvers (what do you wanna resolve? query? mutation?)
+//! Resolvers 
 //! ==========================================================
 const resolvers = {
   Query: {
@@ -48,9 +45,6 @@ const resolvers = {
     //* -----------------------------------------------
     // context は server.js で定義済みで、ログインしていると、そのユーザーの情報が入っている
     users: async (_, args, context) => {
-      // console.log(context.userId + "👤 user ID")
-      // console.log(context)
-
       // forbidden error means you are not allowed to do this
       if (!context.userId) throw Error("You must be logged in 😱")
 
@@ -72,9 +66,6 @@ const resolvers = {
     PostsByUser: async (_, args, context) => {
       // Error means you are not allowed to do this
       if (!context.userId) throw Error("You must be logged in 😱")
-
-      // items と totalCount の両方のフィールドを持つオブジェクトを返す必要がある (2回に分けて取得)
-
       // 自分の投稿を全て取得 (postはPostモデル in typeDefs.js)
       const posts = await prisma.post.findMany({
         take: args.first, // 取得する投稿の数
@@ -90,8 +81,6 @@ const resolvers = {
       const totalCount = await prisma.post.count({
         where: { userId: context.userId },
       });
-
-      // items と totalCount を含むオブジェクトを返す
       return {
         items: posts,
         totalCount: totalCount
@@ -102,9 +91,6 @@ const resolvers = {
     //* GET ALL POSTS BY USER ID LIMIT 4
     //* -----------------------------------------------
     PostsByUserLimit: async (_, args, context) => {
-      // console.log(context.userId + "👤 user ID") // ログイン者のID
-      // console.log(args.limit + " - Limit 4 Posts -")
-
       // Error means you are not allowed to do this
       if (!context.userId) throw Error("You must be logged in 😱")
 
@@ -114,7 +100,7 @@ const resolvers = {
         where: {
           userId: context.userId // 自分の投稿を取得(ログイン者)
         },
-        take: args.limit, // 追加: limitの適用 
+        take: args.limit, // limitの適用 
       });
       return posts;
     },
@@ -125,9 +111,7 @@ const resolvers = {
     //* CREATE USER
     //* ===============================================
     signupUser: async (_, args) => {
-      // await console.log(args.userNew);// typeDefsで定義済み
-
-      // Joi Validation
+      //! Joi Validation
       const schema = Joi.object({
         firstName: Joi.string().required().min(3).max(30).alphanum(),// alphanum() は英数字のみ
         lastName: Joi.string().required().min(1).max(30),
@@ -149,14 +133,11 @@ const resolvers = {
       // email が重複してないかチェック (args~は front から送られてきたデータ)
       // user は prisma.schema で定義済みのモデル
       const user = await prisma.user.findUnique({ where: { email: args.userNew.email } });
-
       if (user) {
         throw new Error("Email already exists😂");
       }
-
       // パスワードをハッシュ化
       const hashedPassword = await bcrypt.hash(args.userNew.password, 10)
-
       // Save to DB (Promise で 返ってくるので,await 忘れない!)
       const newHashedUser = await prisma.user.create({
         data: {
@@ -264,7 +245,6 @@ const resolvers = {
       // if (context.userId === 25 || context.userId === 2) {
       //   throw new Error("SORRY, DEMO USER CANNOT CREATE A POST🙏🏻");
       // }
-
       //! save to DB
       // post は prisma.schema で定義済みのモデル
       const newPost = await prisma.post.create({
@@ -315,25 +295,16 @@ const resolvers = {
           return deletedPost;
         }
 
-
-        //! This is for CommonJS module -----------------------------------------------
-        // const path = new URL(url).pathname.replace(/^\/+/, __dirname); // remove leading slashes
-        // const currentURL = __dirname + '../' // need to get current directory path
-        // console.log(currentURL);
-        //! ---------------------------------------------------------------------------
-
         // Get the current directory path (ESM module)
         // '.' は現在のディレクトリを示し、それを import.meta.url の基準として解釈することで、ディレクトリのフルURLが得られる
         const __dirname = fileURLToPath(new URL('.', import.meta.url));
-        // console.log(__dirname);
 
         // goes up one level
         const currentURL = __dirname + '../'
-        // console.log(currentURL);
 
         // 正規表現 ^\/+ を使用して、文字列の先頭にある1つ以上のスラッシュ (/) を検出し、currentURL に置き換える
         const path = new URL(url).pathname.replace(/^\/+/, currentURL);
-        // console.log(path); // /Full-Stack/MailMinder-GraphQL/backend/../uploads/img-1698041204305.jpg
+        // ex)  /Full-Stack/MailMinder-GraphQL/backend/../uploads/img-1698041204305.jpg
 
         // Pass the path defined above to the Function
         deleteFile(path);
@@ -345,12 +316,7 @@ const resolvers = {
     //* UPDATE A POST
     //* ===============================================
     updatePost: async (_, args, context) => {
-      // await console.log(args.id + " - PostID 📨")
-      // await console.log(args.postUpdate.title + " - Title -")
-      // await console.log(args.postUpdate.content + "- Content -")
-      // await console.log(args.postUpdate.imgUrl + "- imgUrl -")
       await console.log(args.postUpdate.imgCloudinaryUrl + "- imgCloudinaryUrl -")
-      // await console.log(context.userId + " 👤 user ID")
 
       // Joi Validation
       const schema = Joi.object({
@@ -416,9 +382,6 @@ const resolvers = {
       //   return;
       // }
 
-      // console.log(args.imgCloudinaryId + " - Cloudinary ID -😻")
-      console.log(args)
-
       // postモデルから投稿を取得
       const post = await prisma.post.findUnique({
         where: {
@@ -427,9 +390,8 @@ const resolvers = {
       });
 
       // 投稿に画像が関連付けられている場合、画像を削除
+      // Delete the actual Image File if the post exists
       if (post && post.imgUrl) {
-        // 画像のURLから画像のパスを取得して削除するロジック...
-        // Delete the actual Image File if the post exists
 
         // 実際の画像ファイルが存在しないpostがある場合処理をここで停止 (エラー対策)
         if (post.imgUrl.includes('noImg.jpeg')) {
@@ -442,17 +404,13 @@ const resolvers = {
 
           // Get the current directory path (ESM module)
           const __dirname = fileURLToPath(new URL('.', import.meta.url));
-          // console.log(__dirname.red.underline);
 
           // goes up one level
           const currentURL = __dirname + '../'
-          // console.log(currentURL.yellow.underline);
 
           // 正規表現 ^\/+ を使用して、文字列の先頭にある1つ以上のスラッシュ (/) を検出し、currentURL に置き換える
           const path = new URL(url).pathname.replace(/^\/+/, currentURL);
-          // console.log(path.cyan.bold); // /Full-Stack/MailMinder-GraphQL/backend/../uploads/img-1698041204305.jpg
-
-          // Execute Function
+          // ex) /Full-Stack/MailMinder-GraphQL/backend/../uploads/img-1698041204305.jpg
           deleteFile(path);
         }
       }
@@ -477,8 +435,6 @@ const resolvers = {
         return false;
       }
     },
-
-
   }
 }
 
