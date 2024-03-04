@@ -261,9 +261,9 @@ const resolvers = {
       }
 
       // DEMO LOGGED IN USER
-      if (context.userId === 25 || context.userId === 2) {
-        throw new Error("SORRY, DEMO USER CANNOT CREATE A POST🙏🏻");
-      }
+      // if (context.userId === 25 || context.userId === 2) {
+      //   throw new Error("SORRY, DEMO USER CANNOT CREATE A POST🙏🏻");
+      // }
 
       //! save to DB
       // post は prisma.schema で定義済みのモデル
@@ -292,9 +292,9 @@ const resolvers = {
       }
 
       // DEMO LOGGED IN USER
-      if (context.userId === 25 || context.userId === 2) {
-        throw new Error("SORRY, DEMO USER CANNOT DELETE A POST🙏🏻");
-      }
+      // if (context.userId === 25 || context.userId === 2) {
+      //   throw new Error("SORRY, DEMO USER CANNOT DELETE A POST🙏🏻");
+      // }
 
       console.log(args.id + " - PostID 👆🏻")
 
@@ -380,9 +380,9 @@ const resolvers = {
       }
 
       // DEMO LOGGED IN USER
-      if (context.userId === 25 || context.userId === 2) {
-        throw new Error("SORRY, DEMO USER CANNOT UPDATE A POST🙏🏻");
-      }
+      // if (context.userId === 25 || context.userId === 2) {
+      //   throw new Error("SORRY, DEMO USER CANNOT UPDATE A POST🙏🏻");
+      // }
 
       // post は prisma.schema で定義済みのモデル
       const updatedPost = await prisma.post.update({
@@ -412,9 +412,9 @@ const resolvers = {
       }
 
       // DEMO LOGGED IN USER
-      if (context.userId === 25 || context.userId === 2) {
-        return;
-      }
+      // if (context.userId === 25 || context.userId === 2) {
+      //   return;
+      // }
 
       // console.log(args.imgCloudinaryId + " - Cloudinary ID -😻")
       console.log(args)
@@ -464,9 +464,9 @@ const resolvers = {
     //* ===============================================
     deleteCloudinaryImage: async (_, { publicId }, context) => {
       // DEMO LOGGED IN USER
-      if (context.userId === 25 || context.userId === 2) {
-        return;
-      }
+      // if (context.userId === 25 || context.userId === 2) {
+      //   return;
+      // }
 
       try {
         const result = await cloudinary.uploader.destroy(publicId);
