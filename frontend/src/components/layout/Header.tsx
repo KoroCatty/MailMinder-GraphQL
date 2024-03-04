@@ -239,9 +239,9 @@ function Header({ isLoggedIn, setIsLoggedIn, darkTheme, setDarkTheme }: PropsTyp
                   <Nav.Link as={Link} to="/postlist" onClick={() => toTop()} >
                     Posts
                   </Nav.Link>
-                  <Nav.Link as={Link} to="/settings" onClick={() => toTop()} >
+                  {/* <Nav.Link as={Link} to="/settings" onClick={() => toTop()} >
                     Settings
-                  </Nav.Link>
+                  </Nav.Link> */}
                   <Nav.Link as={Link} to="/contact" onClick={() => toTop()} >
                     Contact
                   </Nav.Link>
