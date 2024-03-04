@@ -121,7 +121,7 @@ app.post('/uploads', uploadSingleImage, async (req, res) => {
       cloudinaryUrl: result.secure_url, // 画像のURLを返す(cloudinary)
       cloudinary_id: result.public_id // 画像のIDを返す(cloudinary)
     });
-    
+
     // 圧縮前の元の画像を削除 (unlinkSync は非同期ではない)
     // しかし Email 送信用に、元の画像を残しておく
     // fs.unlinkSync(req.file.path);
@@ -159,16 +159,6 @@ app.use('/uploads', express.static(uploadsDirectory));
 //     console.log(err);
 //   }
 // });
-
-
-
-
-
-
-
-
-
-
 
 app.use(cors({
   origin: true,  // or true to allow any origin
@@ -219,7 +209,7 @@ await server.start();
 app.use('/', cors({
   origin: true,
   credentials: true,
-}
+ }
 ),
 
 
