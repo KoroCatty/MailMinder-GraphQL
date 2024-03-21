@@ -25,6 +25,7 @@ const authPageCss = css`
   flex-direction: column;
   justify-content: center;
   margin: 4rem 0;
+  height: 600px;
 
   h1 {
     font-size: 2.5rem;

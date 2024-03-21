@@ -19,22 +19,8 @@ import { Container } from "react-bootstrap";
 import { css } from "@emotion/react";
 import { min, max } from "../utils/mediaQueries";
 const HomePageCss = css`
-  // 1px〜479px
-  ${min[0] + max[0]} {
-  }
-  // 480px〜767px
-  ${min[1] + max[1]} {
-  }
-  // 768px〜989px
-  ${min[2] + max[2]} {
-  }
-  // 990px〜
-  ${min[3] + max[3]} {
-  }
 
   .homeContainer {
-
-    // Bootstrap Container adjustment
     @media screen and (max-width: 999px) and (min-width: 768px) {
       width: 96% !important;
       max-width: 96% !important;
@@ -75,7 +61,7 @@ type IsLoggedInPropType = {
 const HomePage = ({ isLoggedIn }: IsLoggedInPropType) => {
 
   // Get 4 Posts by User ID
-  const {data, loading, error, refetch } = useQuery(GET_POSTS_BY_ID_LIMIT, {
+  const { data, loading, error, refetch } = useQuery(GET_POSTS_BY_ID_LIMIT, {
     variables: {
       uid: Number(), // backend (resolver) で id を指定しているので、空にする
       limit: Number(4),
