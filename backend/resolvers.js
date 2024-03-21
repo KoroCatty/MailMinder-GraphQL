@@ -168,7 +168,9 @@ const resolvers = {
       // Joi Error Handling
       const { error } = schema.validate(args.userSignin);
       if (error) {
-        throw new Error(error.details[0].message);
+        // throw new Error(error.details[0].message);
+        throw new Error("Credential is incorrect🤬");
+
       }
 
       // email が重複してないかチェック (args~は front から送られてきたデータ)

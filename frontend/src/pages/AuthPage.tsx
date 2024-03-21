@@ -20,7 +20,6 @@ type IsLoggedInPropsType = {
 import { css } from "@emotion/react";
 import { min, max } from "../utils/mediaQueries";
 const authPageCss = css`
-  /* min-height: 70vh; */
   text-align: center;
   display: flex;
   flex-direction: column;
@@ -79,11 +78,17 @@ const authPageCss = css`
     text-decoration: underline;
     width: fit-content;
     margin: 0 auto;
+    font-size: 1.2rem;
+    color: #5358d0;
+
+    &:hover {
+      transform: scale(1.05);
+      transition: all 0.3s ease-in-out;
+    }
   }
 `;
 
 //! ======================================================
-// const AuthPage: React.FC<AuthPageProps> = ({ setLoggedIn }) => {
 const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
   // HOOKS
   const [showLoginPage, setShowLoginPage] = useState(true); // true = login, false = signup
@@ -126,19 +131,21 @@ const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
     },
   });
 
+
+
   //! ======================================================
   //! DEMO ACCOUNT LOGIN
   //! ======================================================
-const demoCredential = () => {
-        loginUser({
-          variables: {
-            userSignin: {
-              email: "demo@demo.com",
-              password: "1234",
-            }
-          },
-        });
-}
+  const demoCredential = () => {
+    loginUser({
+      variables: {
+        userSignin: {
+          email: "demo@demo.com",
+          password: "1234",
+        }
+      },
+    });
+  }
 
   //! ======================================================
   //! When loading
@@ -197,16 +204,21 @@ const demoCredential = () => {
         {/* サインアップ時 */}
         {signupData && (
           <>
-            <h1>{signupData.signupUser.firstName}You Signed Up!</h1>
+            <h1><span>"{signupData.signupUser.firstName}"  </span>You Signed Up!</h1>
           </>
         )}
 
         {/* ログイン時 */}
         {loginData && <h1>{loginData.signinUser.firstName}You Logged In!</h1>}
 
-        {/* エラー時 */}
-        {error && <div>{error.message}</div>}
-        {loginError && <div>{loginError.message}</div>}
+        {/* sign up エラー時 */}
+        {/* {error && <div>{error.message}</div>} */}
+        {error && <div style={{ color: "red" }}>{"Please fill out the forms"}</div>}
+
+
+        {/* Login エラー時 */}
+        {/* {loginError && <div>{loginError.message}</div>} */}
+        {loginError && <div style={{ color: "red" }}>{"Credential is incorrect..."}</div>}
 
         <form onSubmit={handleSubmit} ref={authForm}>
           {!showLoginPage && (

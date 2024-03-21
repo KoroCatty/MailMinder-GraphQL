@@ -32,7 +32,6 @@ export const CommonBtn: React.FC<Props> = ({ children, className, disabled }) =>
 
   useEffect(() => {
     const button = buttonRef.current; // DOM にアクセス
-    // console.log(button) // <button>Sign Up</button>
 
     if (!button) return; // Do nothing
 

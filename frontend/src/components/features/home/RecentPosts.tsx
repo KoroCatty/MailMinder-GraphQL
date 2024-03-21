@@ -101,14 +101,14 @@ const RecentPosts = (limitPostsProps: LimitPostsPropsType) => {
   const postsByUserLimit: PostType[] = data?.PostsByUserLimit || [];
   // console.log(PostsByUserLimit);
 
-  if (loading) return <p>Loading...</p>;
-  if (error) return <p>エラー: {error.message}</p>;
+  if (loading) return <p>Loading Posts...</p>;
+  if (error) return <p>Sever Error occurred</p>;
   if (data && !postsByUserLimit) return <p>No posts found.</p>;
 
   return (
     <div css={recentPostsCss}>
-      {data && loading ? <h1>Loading...</h1> : ""}
-      {data && error ? <h1>Error...</h1> : ""}
+      {data && loading ? <h1>Loading Posts...</h1> : ""}
+      {/* {data && error ? <h1>Error...</h1> : ""} */}
 
       {data ? (
         <>

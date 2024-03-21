@@ -250,7 +250,7 @@ const PostsDetailPage = () => {
         <BackButton />
 
         {loading ? (
-          <p>Loading...🧐</p>
+          <p>Loading...</p>
         ) : error ? (
           <p>Error: {error.message}</p>
         ) : filteredPosts && filteredPosts.length > 0 ? (
