@@ -16,7 +16,7 @@ const titleSmallCss = css`
   padding: 0.8rem 1.6rem;
   border-left: 4px solid #6d6d6d;
   font-size: 2rem;
-  margin: 2rem 0;
+  margin-bottom: 2rem;
   color: #434343;
   letter-spacing: 0.1rem;
 
@@ -56,7 +56,7 @@ const titleMediumCss = css`
 //! =================================================
 const titleLargeCss = css`
   font-size: 2.5rem;
-  margin: 4rem auto 4rem auto;
+  margin: 3rem auto 2rem auto;
   text-align: center;
   width: fit-content;
   letter-spacing: 0.1rem;

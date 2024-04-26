@@ -19,6 +19,9 @@ import { GET_POSTS_BY_ID } from "../graphql/queries";
 import { DELETE_POST_BY_ID } from "../graphql/mutations";
 import { DELETE_CLOUDINARY_IMAGE_FILE } from "../graphql/mutations";
 
+// Loading 
+import LoadingSpinner from "../components/common/LoadingSpinner";
+
 
 // Emotion CSS
 import { css } from "@emotion/react";
@@ -250,7 +253,7 @@ const PostsDetailPage = () => {
         <BackButton />
 
         {loading ? (
-          <p>Loading...</p>
+         <LoadingSpinner loading={true} />
         ) : error ? (
           <p>Error: {error.message}</p>
         ) : filteredPosts && filteredPosts.length > 0 ? (

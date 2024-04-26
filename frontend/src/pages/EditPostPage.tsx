@@ -11,6 +11,9 @@ import { TitleLarge, TitleSmall } from "../components/common/Titles";
 import { CommonForm, CommonTextarea } from "../components/common/Forms";
 import { CommonBtn } from "../components/common/CommonBtn";
 
+// Loading 
+import LoadingSpinner from "../components/common/LoadingSpinner";
+
 // Color Schema
 import colorSchema from "../utils/colorSchema";
 
@@ -565,7 +568,8 @@ const EditPostPage = () => {
 
           {/* If no exist the post, error message */}
           {(!currentData || Object.keys(currentData).length === 0 || !currentData.id) ? (
-            <h2 className="noPostMessage">No Post Found...</h2>
+            // <h2 className="noPostMessage">No Post Found...</h2>
+            <LoadingSpinner loading={true}  />
           ) : (
             <form onSubmit={handleSubmit} className="detailItem">
               <h1>USER ID: {currentData.id}</h1>

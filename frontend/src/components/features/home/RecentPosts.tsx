@@ -4,6 +4,9 @@ import { useEffect } from "react";
 // components
 import { TitleLarge } from "../../common/Titles";
 
+// Loading 
+import LoadingSpinner from "../../common/LoadingSpinner";
+
 // TYPES
 type PostType = {
   id: number;
@@ -30,10 +33,10 @@ interface LimitPostsPropsType {
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
 const recentPostsCss = css`
-  padding: 3rem 0 10rem 0;
+  padding: 3rem 0 3rem 0;
 
   .eachCard {
-    margin-bottom: 1.5rem;
+    margin-bottom: 2.5rem;
 
     @media screen and (max-width: 999px) {
       padding-right: 0.4rem !important;
@@ -41,12 +44,19 @@ const recentPostsCss = css`
   }
 
   .card {
+    margin-top: 1rem;
     border: none;
     box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.2);
     background-color: transparent;
     transition: all 0.3s ease-in-out;
     min-height: 100%;
     max-height: 100%;
+
+    &:hover {
+      transform: translateY(-0.3rem);
+      box-shadow: 2px 3px 3px rgba(30, 30, 30, 0.5);
+      transition: all 0.3s ease-in-out;
+    }
 
     img {
       width: 100%;
@@ -99,21 +109,16 @@ const RecentPosts = (limitPostsProps: LimitPostsPropsType) => {
 
   // if data exists PostsByUserLimit assigned
   const postsByUserLimit: PostType[] = data?.PostsByUserLimit || [];
-  // console.log(PostsByUserLimit);
 
-  if (loading) return <p>Loading Posts...</p>;
   if (error) return <p>Sever Error occurred</p>;
   if (data && !postsByUserLimit) return <p>No posts found.</p>;
 
   return (
     <div css={recentPostsCss}>
-      {data && loading ? <h1>Loading Posts...</h1> : ""}
-      {/* {data && error ? <h1>Error...</h1> : ""} */}
-
+      <TitleLarge title="RECENT CARDS" />
+      {loading && <LoadingSpinner loading={true} />}
       {data ? (
         <>
-          <TitleLarge title="RECENT POSTS" />
-
           <div className="row">
             {postsByUserLimit.map((item: PostType) => (
               <div className="eachCard col-6 col-md-3 sm-3" key={item.id}>

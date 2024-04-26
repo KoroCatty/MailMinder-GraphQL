@@ -22,9 +22,9 @@ import { min, max } from "../../../utils/mediaQueries";
   //! ======================================================
   const homeFormsStyles = css`
   position: relative;
-  margin-top: 18rem;
+  /* margin-top: 18rem; */
 
-  &:before {
+  /* &:before {
     position: absolute;
     left: 50%;
     top: -12%;
@@ -40,7 +40,7 @@ import { min, max } from "../../../utils/mediaQueries";
       left: 50%;
       top: -6%;
     }
-  }
+  } */
 
   // 1px〜479px
   ${min[0] + max[0]} {

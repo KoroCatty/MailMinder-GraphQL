@@ -9,7 +9,6 @@ import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 import ColorThemeGlobal from "./components/common/ColorThemeGlobal";
 
-
 // pages
 import AuthPage from "./pages/AuthPage"
 import HomePage from "./pages/HomePage"
@@ -22,6 +21,9 @@ import EditPostPage from "./pages/EditPostPage";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Contact from "./pages/Contact";
 
+// Loading 
+import LoadingSpinner from "./components/common/LoadingSpinner"
+
 // bootstrap
 import 'bootstrap/dist/css/bootstrap.min.css'
 
@@ -31,6 +33,14 @@ import 'react-bootstrap/dist/react-bootstrap.min.js'
 // Apollo client
 import { useQuery } from '@apollo/client';
 import { IS_LOGGED_IN_QUERY } from "./graphql/queries";
+
+// Custom CSS Props for LoadingSpinner
+const center : React.CSSProperties = {
+  position: 'fixed',
+  top: '50%',
+  left: '50%',
+  transform: 'translate(-50%, -50%)',
+};
 
 
 function App() {
@@ -58,7 +68,7 @@ function App() {
     }
   }, []);
 
-  if (loading) return <p>読み込み中</p>;
+  if (loading) return <LoadingSpinner loading={true} center={center} />
   if (error) return <p>Error: {error.message}</p>;
 
 
@@ -66,7 +76,6 @@ function App() {
     <>
       {/* Toggle Dark Theme */}
       {darkTheme ? <ColorThemeGlobal /> : null}
-
       <BrowserRouter>
         <Header
           isLoggedIn={isLoggedIn}

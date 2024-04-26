@@ -160,8 +160,7 @@ const config = {
     "isCustomOutput": true
   },
   "relativeEnvPaths": {
-    "rootEnvPath": "../../../.env",
-    "schemaEnvPath": "../../../.env"
+    "rootEnvPath": "../../../.env"
   },
   "relativePath": "../..",
   "clientVersion": "5.4.2",

@@ -8,6 +8,10 @@ import PaginationBar from "../../common/PaginationBar";
 import { useQuery } from '@apollo/client';
 import { GET_POSTS_BY_ID } from '../../../graphql/queries';
 
+// Loading 
+import LoadingSpinner from "../../common/LoadingSpinner";
+
+// Bootstrap
 import { Row } from 'react-bootstrap';
 
 // TYPES
@@ -81,7 +85,7 @@ function PostsList() {
       <PaginationBar currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
 
       {/* 1.loading  2.error 3.post existence  */}
-      {loading ? <p>Loading...</p> :
+      {loading ? <LoadingSpinner loading={true} /> :
         error ? <p>Error: {error.message}</p> :
           !data || !data.PostsByUser || data.PostsByUser.length === 0 ? <p>No posts found.</p> :
             (
