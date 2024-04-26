@@ -22,14 +22,13 @@ import { DELETE_CLOUDINARY_IMAGE_FILE } from "../graphql/mutations";
 // Loading 
 import LoadingSpinner from "../components/common/LoadingSpinner";
 
-
 // Emotion CSS
 import { css } from "@emotion/react";
 import { min, max } from "../utils/mediaQueries";
 
 const PostDetailPageStyle = css`
   max-width: 800px;
-  margin: 0 auto;
+  margin: 0rem auto 4rem auto;
 
   // CREATED & UPDATED DATE TAG
   .timeContainer {
@@ -86,9 +85,9 @@ const PostDetailPageStyle = css`
 
   // TITLE
   h1 {
-    font-size: 3rem;
+    font-size: 1.6rem;
+    font-weight: 600;
     margin: 2rem 0;
-
     padding: 0.5em 0.7em;
     border-left: 5px solid #4f4f4f;
     border-bottom: 3px solid #d5d5d5;
@@ -113,13 +112,19 @@ const PostDetailPageStyle = css`
 
   img {
     width: 100%;
-    height: auto;
+    height: 400px;
+    object-fit: contain;
+
+        // 1px〜479px
+    ${min[0] + max[0]} {
+      height: 280px;
+    }
   }
 
   // CONTENT BOX
   .contentBox {
     max-width: 800px;
-    margin: 4rem auto;
+    margin: 2rem auto;
     border: 2px solid #545454;
     border-radius: 5px;
     color: #333333;
@@ -127,7 +132,6 @@ const PostDetailPageStyle = css`
     font-size: 1.7rem;
     letter-spacing: 1px;
     line-height: 1.4;
-    height: auto;
 
     div {
       display: inline-flex;
@@ -163,6 +167,17 @@ const PostDetailPageStyle = css`
     margin: 2rem 0;
   }
 
+  .editBtn {
+    padding: 0.5rem;
+    font-size: 1.2rem;
+  }
+
+  .deleteBtn {
+    width: 100%;
+    padding: 0.5rem;
+    font-size: 1.2rem;
+  }
+
   // COMPONENT BACK BUTTON
   .backButton {
     text-align: left;
@@ -171,10 +186,7 @@ const PostDetailPageStyle = css`
 
 //! ============================================================
 const PostsDetailPage = () => {
-  // useParams
-  // useParamsは文字列を返すので、Number()を使うことで数値に変換すること
   const { id } = useParams<{ id: string }>();
-  // console.log(typeof id) // string
 
   // GET All POSTS by User ID
   const { data, loading, error } = useQuery(GET_POSTS_BY_ID, {
@@ -242,9 +254,6 @@ const PostsDetailPage = () => {
     (item: postProp) => Number(item.id) === Number(id)
   );
 
-  //! ============================================================
-  //! JSX
-  //! ============================================================
   return (
     <main css={PostDetailPageStyle}>
       <Container>
@@ -253,7 +262,7 @@ const PostsDetailPage = () => {
         <BackButton />
 
         {loading ? (
-         <LoadingSpinner loading={true} />
+          <LoadingSpinner loading={true} />
         ) : error ? (
           <p>Error: {error.message}</p>
         ) : filteredPosts && filteredPosts.length > 0 ? (
@@ -335,14 +344,14 @@ const PostsDetailPage = () => {
           <>
             {/* EDIT BUTTON */}
             <Link onClick={() => { window.scrollTo({ top: 0, behavior: "smooth" }) }} to={`/editpost/${id}`}>
-              <button className="btn btn-primary mb-4" style={{ width: "100%" }}>
+              <button className="editBtn btn btn-primary mb-4" style={{ width: "100%" }}>
                 Edit
               </button>
             </Link>
 
             {/* DELETE BUTTON */}
             <button
-              className="btn btn-danger btn-sm"
+              className="deleteBtn btn btn-danger btn-sm"
               onClick={(e) => {
                 e.preventDefault();
                 window.confirm("Are you sure you want to delete this post?") &&
@@ -366,9 +375,6 @@ const PostsDetailPage = () => {
         ) : (
           null
         )}
-
-
-
       </Container>
     </main>
   );

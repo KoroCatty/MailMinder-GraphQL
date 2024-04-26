@@ -7,7 +7,7 @@ const colorSchema = {
   fontLight: '#fcf5fd',
 
   success: '#2e195a',
-  danger: '#af4436',
+  danger: '#404040',
   warning: '#ffc107',
   info: '#17a2b8',
 

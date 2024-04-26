@@ -56,6 +56,7 @@ const recentPostsCss = css`
       transform: translateY(-0.3rem);
       box-shadow: 2px 3px 3px rgba(30, 30, 30, 0.5);
       transition: all 0.3s ease-in-out;
+      filter: brightness(0.8);
     }
 
     img {

@@ -29,9 +29,9 @@ type PostPropType = {
 import { css } from "@emotion/react";
 import { min, max } from "../../../utils/mediaQueries";
 const PostListCss = css`
+margin-bottom: 4rem;
 
 .eachCard {
-  border: 1px solid #ddd;
 }
 
   // 1px〜479px
@@ -91,9 +91,7 @@ function PostsList() {
             (
               <Row xs={1} md={2} className="g-4">
                 {data.PostsByUser.items.map((item: PostPropType) => (
-                  <div className="eachCard col-6 col-md-3 sm-3" key={item.id}>
-
-                    {/* Component (Give a Prop) */}
+                  <div className="eachCard col-6 col-md-4 sm-4" key={item.id}>
                     <PostItem postProp={item} />
                   </div>
                 ))}

@@ -7,9 +7,9 @@ import colorSchema from "../../../utils/colorSchema";
 import { css } from "@emotion/react";
 import { min, max } from "../../../utils/mediaQueries";
 const googleSearchStyles = css`
-  margin: 1rem 0 12rem 0;
   display: flex;
   align-items: flex-end;
+  width: fit-content;
 
   // 1px〜479px
   ${min[0] + max[0]} {
@@ -59,10 +59,15 @@ const googleSearchStyles = css`
     max-width: 60px;
     height: 48px;
     border: none;
-    background-color: ${colorSchema.success};
+    background-color: ${colorSchema.primary};
     color: #fff;
     cursor: pointer;
     border-radius: 4px;
+
+    &:hover {
+      filter: brightness(0.8);
+      transition: all 0.3s ease-in-out;
+    }
 
     &:before {
       width: 20px;
@@ -91,7 +96,6 @@ const googleSearchStyles = css`
     margin-bottom: 10px;
     font-size: 1.4rem;
     font-weight: 400;
-    color: #515151;
 
     // 1px〜479px
     ${min[0] + max[0]} {
@@ -127,12 +131,14 @@ const GoogleSearch = () => {
   return (
     <div css={googleSearchStyles}>
       <label>
-        {/* <small>Get Image URL</small> */}
         <input
           type="text"
           value={searchTerm}
           onChange={handleInputChange}
-          placeholder="Search Image"
+          placeholder="Search Image URL"
+          onKeyDown={(event) => {
+            if (event.key === "Enter") handleSearch();
+          }}
         />
       </label>
       <div onClick={handleSearch} className="searchBtn"></div>

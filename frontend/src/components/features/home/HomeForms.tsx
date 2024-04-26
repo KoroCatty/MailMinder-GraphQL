@@ -11,6 +11,8 @@ import { TitleLarge, TitleSmall } from "../../common/Titles";
 import { CommonForm, CommonTextarea } from "../../common/Forms";
 import { CommonBtn } from "../../common/CommonBtn";
 
+import LoadingSpinner  from "../../common/LoadingSpinner";
+
 // bootstrap
 import { Form } from "react-bootstrap";
 
@@ -22,25 +24,6 @@ import { min, max } from "../../../utils/mediaQueries";
   //! ======================================================
   const homeFormsStyles = css`
   position: relative;
-  /* margin-top: 18rem; */
-
-  /* &:before {
-    position: absolute;
-    left: 50%;
-    top: -12%;
-    content: "";
-    display: block;
-    width: 16%;
-    transform: translateX(-50%) rotate(90deg);
-    height: 1px;
-    background-color: #ccc;
-
-    // 1px〜479px
-    ${min[0] + max[0]} {
-      left: 50%;
-      top: -6%;
-    }
-  } */
 
   // 1px〜479px
   ${min[0] + max[0]} {
@@ -63,7 +46,7 @@ import { min, max } from "../../../utils/mediaQueries";
     border: 1px solid #ccc;
     border-radius: 5px;
     padding: 10px;
-    margin: 40px 0;
+    margin: 80px 0;
     resize: none; // resizeとは、textareaの右下にある、ドラッグでサイズ変更できる機能
     box-shadow: 0 0 5px #ccc;
   }
@@ -128,45 +111,28 @@ import { min, max } from "../../../utils/mediaQueries";
     position: relative;
     overflow: hidden;
 
-    // For Animation
-    &:before {
-      position: absolute;
-      top: -50%;
-      left: -30%;
-      transform: rotate(30deg);
-      width: 50px;
-      height: 100px;
-      content: "";
-      background-image: linear-gradient(
-        left,
-        rgba(255, 255, 255, 0) 0%,
-        rgba(255, 255, 255, 1) 50%,
-        rgba(255, 255, 255, 0) 100%
-      );
-      background-image: -webkit-gradient(
-        linear,
-        left bottom,
-        right bottom,
-        color-stop(0%, rgba(255, 255, 255, 0)),
-        color-stop(50%, rgba(255, 255, 255, 1)),
-        color-stop(100%, rgba(255, 255, 255, 0))
-      );
-      animation: submitBtn 5s infinite linear;
-    }
-
     &:hover {
       transition: all 0.3s ease-in-out;
       transform: translate(0, 4px);
+      border: none;
     }
+  }
 
-    @keyframes submitBtn {
-      10% {
-        left: 120%;
-      }
-      100% {
-        left: 120%;
-      }
-    }
+  .googleImgSearchForms {
+    display: flex;
+    align-items: center;
+    height: 60px;
+    gap: 1rem;
+    margin-bottom: 6rem;
+
+      // 1px〜479px
+  ${min[0] + max[0]} {
+    display: block;
+  }
+  // 480px〜767px
+  ${min[1] + max[1]} {
+    display: block;
+  }
   }
 
   // 送信中のボタンのスタイル (loadingState が true の時)
@@ -183,8 +149,7 @@ import { min, max } from "../../../utils/mediaQueries";
     outline: none;
     font-size: 1rem;
     letter-spacing: 0.1rem;
-    width: 60%;
-    margin-bottom: 1rem;
+    width: 50%;
 
     &:focus {
       border: 1px solid #323232;
@@ -251,6 +216,8 @@ const HomeForms = ({ refetch }: RefetchProps) => {
     <h1>Uploading Error!!</h1>;
   }
 
+  if (loading) return (<LoadingSpinner loading={true} />);
+
 
   //! ======================================================
   //! When forms typed (input & textarea)
@@ -261,11 +228,8 @@ const HomeForms = ({ refetch }: RefetchProps) => {
     setFormData({
       ...formData,
       [e.target.name]: e.target.value, // name attribute
-      // imgCloudinaryUrl : formData.imgCloudinaryUrl,
-
     });
   };
-  // console.log(formData);
 
   //! ======================================================
   //! FORM SUBMIT !!
@@ -277,7 +241,6 @@ const HomeForms = ({ refetch }: RefetchProps) => {
     // SERVER URL 
     const SERVER_URL = import.meta.env.VITE_PUBLIC_SERVER_URL || 'http://localhost:5001/uploads';
     // console.log(SERVER_URL + "🫡") // http://localhost:5001/uploads
-
 
     // Define a variable for asyncronous data to save DB
     let imageUrlForDB: string | undefined = formData.imgUrl;
@@ -338,7 +301,6 @@ const HomeForms = ({ refetch }: RefetchProps) => {
 
     //! 1. Save post to the database using Apollo Client's mutation.
     try {
-      // if (!imageUrlForDB) return;
       await CreatePost({
         variables: {
           postNew: {
@@ -436,11 +398,7 @@ const HomeForms = ({ refetch }: RefetchProps) => {
       <TitleLarge title="YOUR REMINDER" />
 
       <form onSubmit={handleSubmit}>
-        <br />
-        <br />
         <TitleSmall title="TEXTS" />
-        <br />
-
         {/* TITLE COMPONENT */}
         <CommonForm
           onChange={(e) => handleChange(e)}
@@ -449,10 +407,6 @@ const HomeForms = ({ refetch }: RefetchProps) => {
           name="title"
           required
         />
-
-        <br />
-        <br />
-        <br />
 
         {/*//! CONTENT */}
         <CommonTextarea
@@ -482,7 +436,6 @@ const HomeForms = ({ refetch }: RefetchProps) => {
             type="file"
             size="lg"
             accept="image/*" // 画像ファイルのみを選択できるようにする
-            // onChange={handleImageChange}
             onChange={handleImageUpload}
             name="img"
           />
@@ -490,6 +443,8 @@ const HomeForms = ({ refetch }: RefetchProps) => {
 
         {/*//* Paste Image URL */}
         <h3>Paste Image URL</h3>
+        <div className="googleImgSearchForms">
+
         <input
           name="imgUrl"
           type="text"
@@ -500,6 +455,7 @@ const HomeForms = ({ refetch }: RefetchProps) => {
 
         {/*//! COMPONENT */}
         <GoogleSearch />
+        </div>
 
         {/* Button COMPONENT*/}
         <CommonBtn

@@ -7,7 +7,6 @@ import { min, max } from "../../utils/mediaQueries";
 const formsCss = css`
   .form-field {
     position: relative;
-    margin: 32px 0;
   }
 
   // FORM（共通）
@@ -165,12 +164,10 @@ export const CommonForm: React.FC<CommonFormProps> = ({
 
   return (
     <div css={formsCss}>
-      <section className="">
         <div className="contact-form">
           <div className="form-field">
             <input
               id="name"
-              // className={`input-text js-input ${classNameProp}`}
               className={`input-text js-input ${classNameProp} ${hasText ? 'has-text' : ''}`}
               type={type}
               required
@@ -192,7 +189,6 @@ export const CommonForm: React.FC<CommonFormProps> = ({
             </label>
           </div>
         </div>
-      </section>
     </div>
   );
 };

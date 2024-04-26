@@ -10,14 +10,16 @@ import { DELETE_CLOUDINARY_IMAGE_FILE } from "../../../graphql/mutations";
 
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
+import LoadingSpinner from "../../common/LoadingSpinner";
 const postItemCss = css`
+
   .card {
     border: none;
-    box-shadow: 1px 2px 2px rgba(0, 0, 0, 0.2);
     background-color: transparent;
     transition: all 0.3s ease-in-out;
     min-height: 100%;
     max-height: 100%;
+
 
     img {
       width: 100%;
@@ -28,6 +30,10 @@ const postItemCss = css`
 
     &-body {
       padding: 0.8rem 0.6rem;
+    }
+
+    &-text {
+      height: 100px;
     }
 
     &-title {
@@ -56,6 +62,9 @@ const postItemCss = css`
   button {
     display: block;
     width: 100%;
+    /* position: absolute;
+    bottom: 0;
+    left: 0; */
   }
 
 .deleteBtn {
@@ -128,63 +137,70 @@ const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
   };
 
   return (
-    <div css={postItemCss}>
-      <Link to={`/postdetails/${postProp.id}`} className="card">
-        <img
-          src={postProp.imgUrl}
-          onError={(e) => {
-            const imgElement = e.target as HTMLImageElement;
-            if (imgElement.src !== postProp.imgCloudinaryUrl) {
-              imgElement.src = postProp.imgCloudinaryUrl;
-            }
-          }}
-        />
-      </Link>
+    <>
+      <div css={postItemCss}>
+        {loading ? (<LoadingSpinner loading />) : (
+          <Link to={`/postdetails/${postProp.id}`} className="card">
+            <img
+              src={postProp.imgUrl}
+              onError={(e) => {
+                const imgElement = e.target as HTMLImageElement;
+                if (imgElement.src !== postProp.imgCloudinaryUrl) {
+                  imgElement.src = postProp.imgCloudinaryUrl;
+                }
+              }}
+            />
+          </Link>
+        )}
 
-      <div className="card-body">
-        <h5 className="card-title">
-          {postProp.title.length > 20
-            ? postProp.title.slice(0, 20) + "..."
-            : postProp.title}
-        </h5>
-        {/* 40文字まで、改行を削除 */}
-        <p className="card-content">
-          {postProp.content.replace(/\n/g, '').length > 40
-            ? postProp.content.replace(/\n/g, '').slice(0, 40).trim() + "..."
-            : postProp.content.replace(/\n/g, '').trim()}
-        </p>
+        <div className="card-body">
+          <div className="card-text">
 
-        <time>{new Date(postProp.createdAt).toLocaleString()}</time>
+            <h5 className="card-title">
+              {postProp.title.length > 20
+                ? postProp.title.slice(0, 20) + "..."
+                : postProp.title}
+            </h5>
+            {/* 40文字まで、改行を削除 */}
+            <p className="card-content">
+              {postProp.content.replace(/\n/g, '').length > 40
+                ? postProp.content.replace(/\n/g, '').slice(0, 40).trim() + "..."
+                : postProp.content.replace(/\n/g, '').trim()}
+            </p>
 
-        {/* EDIT BUTTON */}
-        <Link
-          to={`/editpost/${postProp.id}`}
-          onClick={() => {
-            scrollTop();
-          }}
-        >
-          <button className="deleteBtn btn btn-sm" style={{ width: "100%" }}>
-            Edit
+            <time>{new Date(postProp.createdAt).toLocaleString()}</time>
+          </div>
+
+          {/* EDIT BUTTON */}
+          <Link
+            to={`/editpost/${postProp.id}`}
+            onClick={() => {
+              scrollTop();
+            }}
+          >
+            <button className="deleteBtn btn btn-sm" style={{ width: "100%" }}>
+              Edit
+            </button>
+          </Link>
+
+          {/*//! DELETE BUTTON */}
+          <button
+            className="btn btn-danger btn-sm"
+            onClick={(e) => {
+              e.preventDefault();
+              window.confirm("Are you sure you want to delete this post?") &&
+                deletePostById();
+              { loading && <LoadingSpinner loading /> }
+              //! Delete Cloudinary Image File that much with Post ID
+              handleCloudinary_deleteImg(postProp.imgCloudinaryId);
+            }}
+          >
+            {loading ? "Deleting..." : "Delete"}
           </button>
-        </Link>
-
-        {/*//! DELETE BUTTON */}
-        <button
-          className="btn btn-danger btn-sm"
-          onClick={(e) => {
-            e.preventDefault();
-            window.confirm("Are you sure you want to delete this post?") &&
-              deletePostById();
-
-            //! Delete Cloudinary Image File that much with Post ID
-            handleCloudinary_deleteImg(postProp.imgCloudinaryId);
-          }}
-        >
-          {loading ? "Deleting..." : "Delete"}
-        </button>
+        </div>
+        {error && <p>Error! {error.message}</p>}
       </div>
-      {error && <p>Error! {error.message}</p>}
-    </div>
+    </>
   );
 };
 

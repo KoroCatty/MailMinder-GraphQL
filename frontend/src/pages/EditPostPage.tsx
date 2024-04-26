@@ -35,6 +35,7 @@ import { css } from "@emotion/react";
 import { min, max } from "../utils/mediaQueries";
 
 const EditPostCss = css`
+margin: 3rem 0 ;
   // 1px〜479px
   ${min[0] + max[0]} {
   }
@@ -414,9 +415,6 @@ const EditPostPage = () => {
 
     // reset selected image input value
     resetLocalFileSelectValue();
-
-    // display image
-    //  setDisplayImg(imageUrl);
   };
 
   //* ===================================================
@@ -560,16 +558,15 @@ const EditPostPage = () => {
   //! ======================================================
   return (
     <main css={EditPostCss}>
-      {/* COMPONENT */}
-      <BackButton />
 
       <div className="container">
+        <BackButton />
         <div className="row">
 
           {/* If no exist the post, error message */}
           {(!currentData || Object.keys(currentData).length === 0 || !currentData.id) ? (
             // <h2 className="noPostMessage">No Post Found...</h2>
-            <LoadingSpinner loading={true}  />
+            <LoadingSpinner loading={true} />
           ) : (
             <form onSubmit={handleSubmit} className="detailItem">
               <h1>USER ID: {currentData.id}</h1>

@@ -16,7 +16,7 @@ const titleSmallCss = css`
   padding: 0.8rem 1.6rem;
   border-left: 4px solid #6d6d6d;
   font-size: 2rem;
-  margin-bottom: 2rem;
+  margin-bottom: 4rem;
   color: #434343;
   letter-spacing: 0.1rem;
 
