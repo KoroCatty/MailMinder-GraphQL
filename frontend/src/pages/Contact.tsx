@@ -1,16 +1,14 @@
 // Components
 import ContactForms from "../components/features/contact/ContactForms";
 
-
-
 const Contact = () => {
   return (
     <>
-      <main className='fadeIn1' >
+      <main className="fadeIn1">
         <ContactForms />
       </main>
     </>
-  )
-}
+  );
+};
 
-export default Contact
+export default Contact;

@@ -1,10 +1,10 @@
-import { useState } from 'react'
+import { useState } from "react";
 
-import { Form, Button } from 'react-bootstrap'
+import { Form, Button } from "react-bootstrap";
 
-import { css } from '@emotion/react';
+import { css } from "@emotion/react";
 const settingsFormsStyles = css`
-margin: 60px 0;
+  margin: 60px 0;
 `;
 
 const SettingsForms = () => {
@@ -20,9 +20,7 @@ const SettingsForms = () => {
     <section css={settingsFormsStyles}>
       <h2>Change Email Address</h2>
 
-
       <Form onSubmit={handleSubmit}>
-
         <Form.Group className="mb-3" controlId="formBasicEmail">
           <Form.Label>Email address</Form.Label>
           <Form.Control
@@ -37,9 +35,9 @@ const SettingsForms = () => {
           Update
         </Button>
       </Form>
-<hr />  
+      <hr />
     </section>
-  )
-}
+  );
+};
 
-export default SettingsForms
+export default SettingsForms;

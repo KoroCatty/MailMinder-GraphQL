@@ -14,7 +14,7 @@ import { LOGIN_USER } from "../graphql/mutations";
 type IsLoggedInPropsType = {
   isLoggedIn: boolean;
   setIsLoggedIn: (isLoggedIn: boolean) => void;
-}
+};
 
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
@@ -107,7 +107,6 @@ const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
     }
   }, [isLoggedIn, navigate]);
 
-
   // Mutations (Sign Up)
   const [signupUser, { data: signupData, loading, error }] =
     useMutation(SIGNUP_USER);
@@ -121,7 +120,7 @@ const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
     // onCompleted(data) {
     onCompleted() {
       window.scrollTo(0, 0);
-      setIsLoggedIn(true);  // Update the state 
+      setIsLoggedIn(true); // Update the state
 
       // if there is a path in sessionStorage, go to that path (Emailパス対応)
       if (sessionStorage.getItem("postPath")) {
@@ -132,8 +131,6 @@ const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
     },
   });
 
-
-
   //! ======================================================
   //! DEMO ACCOUNT LOGIN
   //! ======================================================
@@ -143,10 +140,10 @@ const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
         userSignin: {
           email: "demo@demo.com",
           password: "1234",
-        }
+        },
       },
     });
-  }
+  };
 
   //! ======================================================
   //! When loading
@@ -189,7 +186,8 @@ const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
     }
 
     // switch to Login forms (reset form data then,  show login forms)
-    if (!isLoggedIn) { // sign up しただけで、ログイン状態ではないので下記が実行
+    if (!isLoggedIn) {
+      // sign up しただけで、ログイン状態ではないので下記が実行
       setFormData({}); // clear form data
       authForm?.current?.reset(); // clear form inputs
       setShowLoginPage(true);
@@ -205,7 +203,9 @@ const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
         {/* サインアップ時 */}
         {signupData && (
           <>
-            <h1><span>"{signupData.signupUser.firstName}"  </span>You Signed Up!</h1>
+            <h1>
+              <span>"{signupData.signupUser.firstName}" </span>You Signed Up!
+            </h1>
           </>
         )}
 
@@ -214,12 +214,15 @@ const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
 
         {/* sign up エラー時 */}
         {/* {error && <div>{error.message}</div>} */}
-        {error && <div style={{ color: "red" }}>{"Please fill out the forms"}</div>}
-
+        {error && (
+          <div style={{ color: "red" }}>{"Please fill out the forms"}</div>
+        )}
 
         {/* Login エラー時 */}
         {/* {loginError && <div>{loginError.message}</div>} */}
-        {loginError && <div style={{ color: "red" }}>{"Credential is incorrect..."}</div>}
+        {loginError && (
+          <div style={{ color: "red" }}>{"Credential is incorrect..."}</div>
+        )}
 
         <form onSubmit={handleSubmit} ref={authForm}>
           {!showLoginPage && (
@@ -264,7 +267,9 @@ const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
           <br />
 
           {/* //! DEMO */}
-          <div onClick={demoCredential} className="demoLogin">DEMO LOGIN</div>
+          <div onClick={demoCredential} className="demoLogin">
+            DEMO LOGIN
+          </div>
 
           {/* link */}
           <div
@@ -281,7 +286,9 @@ const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
           </div>
 
           {/* BUTTON */}
-          <CommonBtn type="submit">{showLoginPage ? "Login" : "Sign Up"}</CommonBtn>
+          <CommonBtn type="submit">
+            {showLoginPage ? "Login" : "Sign Up"}
+          </CommonBtn>
         </form>
       </div>
     </div>

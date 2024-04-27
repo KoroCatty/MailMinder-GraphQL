@@ -1,4 +1,4 @@
-import ClipLoader from 'react-spinners/ClipLoader'
+import ClipLoader from "react-spinners/ClipLoader";
 
 type LoadingSpinnerProps = {
   loading: boolean;
@@ -8,19 +8,19 @@ type LoadingSpinnerProps = {
 const LoadingSpinner = ({ loading, center }: LoadingSpinnerProps) => {
   // css
   const override = {
-    display: 'block',
-    margin: '0 auto',
+    display: "block",
+    margin: "0 auto",
     ...center,
   };
   return (
-    <ClipLoader 
-    color="#2c3895" 
-    size={80} 
-    loading={loading}
-    cssOverride={override}
-    aria-label="Loading..."
+    <ClipLoader
+      color="#2c3895"
+      size={80}
+      loading={loading}
+      cssOverride={override}
+      aria-label="Loading..."
     />
-  )
-}
+  );
+};
 
-export default LoadingSpinner
+export default LoadingSpinner;

@@ -30,7 +30,8 @@ const fireworksCss = css`
     top: 50%;
     left: 50%;
     aspect-ratio: 1;
-    background: radial-gradient(circle, yellow 10px, #000 0) 50% 00%,
+    background:
+      radial-gradient(circle, yellow 10px, #000 0) 50% 00%,
       radial-gradient(circle, khaki 10px, #000 0) 00% 50%,
       radial-gradient(circle, white 10px, #000 0) 50% 99%,
       radial-gradient(circle, lime 10px, #000 0) 99% 50%,

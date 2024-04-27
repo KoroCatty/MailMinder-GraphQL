@@ -8,8 +8,8 @@ import ToggleThemeBtn from "../common/ToggleThemeBtn";
 import { Navbar, Nav, Container } from "react-bootstrap";
 
 // Apollo client
-import { useApolloClient } from '@apollo/client';// Main.tsx で wrapしたもの
-import { LOGOUT_MUTATION } from "../../graphql/mutations"
+import { useApolloClient } from "@apollo/client"; // Main.tsx で wrapしたもの
+import { LOGOUT_MUTATION } from "../../graphql/mutations";
 
 // TYPE
 type PropsType = {
@@ -17,7 +17,7 @@ type PropsType = {
   setIsLoggedIn: (isLoggedIn: boolean) => void;
   darkTheme: boolean;
   setDarkTheme: (themeUpdater: (prevTheme: boolean) => boolean) => void;
-}
+};
 
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
@@ -139,7 +139,7 @@ const headerCss = css`
       padding: 12px 16px;
       transition: all 0.3s ease-in-out;
       border-radius: 4px;
-      
+
       @media screen and (max-width: 992px) {
         margin: 2rem 0;
       }
@@ -192,17 +192,21 @@ const headerCss = css`
   }
 `;
 
-function Header({ isLoggedIn, setIsLoggedIn, darkTheme, setDarkTheme }: PropsType) {
-
+function Header({
+  isLoggedIn,
+  setIsLoggedIn,
+  darkTheme,
+  setDarkTheme,
+}: PropsType) {
   const navigate = useNavigate();
-  const client = useApolloClient();  // main.tsx で wrapしたもの
+  const client = useApolloClient(); // main.tsx で wrapしたもの
 
   // Scroll to Top
   const toTop = () => {
     window.scrollTo({
       top: 0,
       left: 0,
-      behavior: 'smooth'
+      behavior: "smooth",
     });
   };
 
@@ -211,11 +215,11 @@ function Header({ isLoggedIn, setIsLoggedIn, darkTheme, setDarkTheme }: PropsTyp
     try {
       const { data } = await client.mutate({ mutation: LOGOUT_MUTATION });
       if (data.logout) {
-        setIsLoggedIn(false);  // Update the state 
-        navigate('/login');
+        setIsLoggedIn(false); // Update the state
+        navigate("/login");
       }
     } catch (error) {
-      console.error('ログアウト中にエラーが発生しました:', error);
+      console.error("ログアウト中にエラーが発生しました:", error);
     }
   };
 
@@ -235,13 +239,13 @@ function Header({ isLoggedIn, setIsLoggedIn, darkTheme, setDarkTheme }: PropsTyp
                   <Nav.Link as={Link} to="/" onClick={() => toTop()}>
                     Home
                   </Nav.Link>
-                  <Nav.Link as={Link} to="/postlist" onClick={() => toTop()} >
+                  <Nav.Link as={Link} to="/postlist" onClick={() => toTop()}>
                     Posts
                   </Nav.Link>
                   {/* <Nav.Link as={Link} to="/settings" onClick={() => toTop()} >
                     Settings
                   </Nav.Link> */}
-                  <Nav.Link as={Link} to="/contact" onClick={() => toTop()} >
+                  <Nav.Link as={Link} to="/contact" onClick={() => toTop()}>
                     Contact
                   </Nav.Link>
                 </>
@@ -253,7 +257,10 @@ function Header({ isLoggedIn, setIsLoggedIn, darkTheme, setDarkTheme }: PropsTyp
             <div className="navRight">
               {/* //! TOGGLE BUTTON */}
               <div className="ToggleThemeBtn__SP">
-                <ToggleThemeBtn darkTheme={darkTheme} setDarkTheme={setDarkTheme} />
+                <ToggleThemeBtn
+                  darkTheme={darkTheme}
+                  setDarkTheme={setDarkTheme}
+                />
               </div>
 
               {/*//!  Avatar Icon */}
@@ -286,7 +293,7 @@ function Header({ isLoggedIn, setIsLoggedIn, darkTheme, setDarkTheme }: PropsTyp
                   <Nav.Link as={Link} to="/Login">
                     Login
                   </Nav.Link>
-                  <Nav.Link as={Link} to="/contact" onClick={() => toTop()} >
+                  <Nav.Link as={Link} to="/contact" onClick={() => toTop()}>
                     Contact
                   </Nav.Link>
                 </>
@@ -298,7 +305,6 @@ function Header({ isLoggedIn, setIsLoggedIn, darkTheme, setDarkTheme }: PropsTyp
           <div className="ToggleThemeBtn__PC">
             <ToggleThemeBtn darkTheme={darkTheme} setDarkTheme={setDarkTheme} />
           </div>
-
         </Container>
       </Navbar>
     </>

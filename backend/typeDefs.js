@@ -1,25 +1,25 @@
-import { gql } from 'graphql-tag';
+import { gql } from "graphql-tag";
 
 //! ==========================================================
 //! Schema
 //! ==========================================================
 const typeDefs = gql`
-  scalar Date 
-  scalar Upload 
+  scalar Date
+  scalar Upload
 
   type Token {
     token: String
   }
 
-# QUERY
+  # QUERY
   type Query {
     users: [User!]! # return an array
-    PostsByUser(id: ID!, first: Int, skip:Int): PostTotalCount #(pagination & total数を実装)
+    PostsByUser(id: ID!, first: Int, skip: Int): PostTotalCount #(pagination & total数を実装)
     PostsByUserLimit(id: ID!, limit: Int!): [Post!]! # limit を使ったresolver関数
     isLoggedIn: Boolean! # login しているかどうか
   }
 
-#//!  実際にクライエントに返すデータの型(これを使い回す)
+  #//!  実際にクライエントに返すデータの型(これを使い回す)
   type User {
     id: ID!
     firstName: String!
@@ -28,7 +28,7 @@ const typeDefs = gql`
     # password: String # never return password to client
   }
 
-#//!  実際にクライエントに返すデータの型(これを使い回す)
+  #//!  実際にクライエントに返すデータの型(これを使い回す)
   type Post {
     id: ID!
     title: String!
@@ -36,14 +36,14 @@ const typeDefs = gql`
     imgUrl: String!
     createdAt: Date!
     updatedAt: Date!
-    user : User! # PostモデルにはUserモデルが含まれている
+    user: User! # PostモデルにはUserモデルが含まれている
     imgCloudinaryUrl: String
     imgCloudinaryId: String
   }
 
   type PostTotalCount {
     items: [Post!]! # 上の Post オブジェクトを、items という配列に格納 (Postが nestされるので注意)
-    totalCount: Int 
+    totalCount: Int
   }
 
   #//! CREATE A USER
@@ -85,16 +85,13 @@ const typeDefs = gql`
   }
 
   # MUTATION (これらを resolver で使う)
-   type Mutation {
+  type Mutation {
     # CREATE USER
     signupUser(userNew: UserInput!): User! # return a single user (配列じゃない)
-
     # SIGNIN USER
     signinUser(userSignin: UserSigninInput!): Token #トークンを返す
-
     # CREATE A POST
     createPost(postNew: PostInput!): Post! # これが playground で出現
-
     # DELETE A POST
     deletePost(id: ID!): Post!
 
@@ -107,7 +104,6 @@ const typeDefs = gql`
 
     # LOGOUT USER
     logout: Boolean! # return a boolean
-
     # DELETE A CLOUDINARY IMAGE FILE ON SERVER
     deleteCloudinaryImage(publicId: String): Boolean
   }

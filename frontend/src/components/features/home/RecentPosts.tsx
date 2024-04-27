@@ -4,7 +4,7 @@ import { useEffect } from "react";
 // components
 import { TitleLarge } from "../../common/Titles";
 
-// Loading 
+// Loading
 import LoadingSpinner from "../../common/LoadingSpinner";
 
 // TYPES
@@ -70,7 +70,7 @@ const recentPostsCss = css`
       padding: 0.8rem 0.6rem;
 
       position: relative; /* For time tag */
-      padding-bottom: 2rem; 
+      padding-bottom: 2rem;
     }
 
     &-title {
@@ -86,13 +86,13 @@ const recentPostsCss = css`
     }
 
     time {
-      position: absolute; 
+      position: absolute;
       bottom: 0;
       left: 0.6rem; /* card-body の左の padding と一致 */
       right: 0.6rem; /* card-body の右の padding と一致 */
       font-size: 0.8rem;
       color: rgba(0, 0, 0, 0.5);
-      padding: 0.3rem 0; 
+      padding: 0.3rem 0;
     }
   }
 `;
@@ -123,7 +123,6 @@ const RecentPosts = (limitPostsProps: LimitPostsPropsType) => {
           <div className="row">
             {postsByUserLimit.map((item: PostType) => (
               <div className="eachCard col-6 col-md-3 sm-3" key={item.id}>
-
                 <Link to={`/postdetails/${item.id}`} className="card">
                   {/* uploads から画像ファイルが削除されても、CLOUDINARY から取得 */}
                   {/* onError で画像の読み込みに失敗したときの処理 */}
@@ -147,9 +146,9 @@ const RecentPosts = (limitPostsProps: LimitPostsPropsType) => {
                     </h5>
                     {/* 60文字まで、改行を削除 */}
                     <p className="card-content">
-                      {item.content.replace(/\n/g, '').length > 100
-                        ? item.content.replace(/\n/g, '').slice(0, 100) + "..."
-                        : item.content.replace(/\n/g, '')}
+                      {item.content.replace(/\n/g, "").length > 100
+                        ? item.content.replace(/\n/g, "").slice(0, 100) + "..."
+                        : item.content.replace(/\n/g, "")}
                     </p>
 
                     <time>{new Date(item.createdAt).toLocaleString()}</time>

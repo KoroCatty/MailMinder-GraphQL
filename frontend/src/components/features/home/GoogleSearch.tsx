@@ -122,9 +122,9 @@ const GoogleSearch = () => {
 
     window.open(
       `https://www.google.com/search?tbm=isch&q=${encodeURIComponent(
-        searchTerm
+        searchTerm,
       )}${creativeCommonsFilter}`,
-      "_blank"
+      "_blank",
     );
   };
 

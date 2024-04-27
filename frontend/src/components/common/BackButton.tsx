@@ -1,9 +1,9 @@
-import { useNavigate } from 'react-router-dom';
+import { useNavigate } from "react-router-dom";
 
 // Emotion
-import { css } from '@emotion/react';
+import { css } from "@emotion/react";
 const BackButtonStyle = css`
-    button {
+  button {
     margin: 20px 0;
     padding: 10px 20px;
     border: 1px solid #ccc;
@@ -19,7 +19,7 @@ const BackButtonStyle = css`
 // TYPES (from NotFound.tsx)
 type BackButtonProps = {
   classNameProp?: string;
-}
+};
 
 const BackButton: React.FC<BackButtonProps> = ({ classNameProp }) => {
   const navigate = useNavigate();
@@ -28,7 +28,7 @@ const BackButton: React.FC<BackButtonProps> = ({ classNameProp }) => {
     window.scrollTo({
       top: 0,
       left: 0,
-      behavior: 'smooth'
+      behavior: "smooth",
     });
     navigate(-1);
   };
@@ -38,7 +38,6 @@ const BackButton: React.FC<BackButtonProps> = ({ classNameProp }) => {
       <button onClick={handleGoBack}>Go Back</button>
     </div>
   );
-}
+};
 
 export default BackButton;
-

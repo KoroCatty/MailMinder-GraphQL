@@ -49,10 +49,10 @@ const HeroStyles = css`
       filter: blur(2px) brightness(0.8);
       box-shadow: 0 0 10px 0 rgba(0, 0, 0, 0.5);
 
-                // 1px〜479px
-    ${min[0] + max[0]} {
-      height: 160px;
-    }
+      // 1px〜479px
+      ${min[0] + max[0]} {
+        height: 160px;
+      }
     }
 
     &__title {
@@ -65,14 +65,14 @@ const HeroStyles = css`
       font-weight: 700;
       text-shadow: 1px 1px 6px black;
 
-          // 1px〜479px
-    ${min[0] + max[0]} {
-      font-size: 2.1rem;
-    }
-    // 480px〜767px
-    ${min[1] + max[1]} {
-      font-size: 3rem;
-    }
+      // 1px〜479px
+      ${min[0] + max[0]} {
+        font-size: 2.1rem;
+      }
+      // 480px〜767px
+      ${min[1] + max[1]} {
+        font-size: 3rem;
+      }
     }
   }
 `;

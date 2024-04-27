@@ -1,8 +1,5 @@
-
 const PostsDays = () => {
-  return (
-    <div>PostsDays</div>
-  )
-}
+  return <div>PostsDays</div>;
+};
 
-export default PostsDays
+export default PostsDays;

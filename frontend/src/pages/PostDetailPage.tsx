@@ -19,7 +19,7 @@ import { GET_POSTS_BY_ID } from "../graphql/queries";
 import { DELETE_POST_BY_ID } from "../graphql/mutations";
 import { DELETE_CLOUDINARY_IMAGE_FILE } from "../graphql/mutations";
 
-// Loading 
+// Loading
 import LoadingSpinner from "../components/common/LoadingSpinner";
 
 // Emotion CSS
@@ -115,7 +115,7 @@ const PostDetailPageStyle = css`
     height: 400px;
     object-fit: contain;
 
-        // 1px〜479px
+    // 1px〜479px
     ${min[0] + max[0]} {
       height: 280px;
     }
@@ -196,7 +196,7 @@ const PostsDetailPage = () => {
   });
 
   // DELETE CLOUDINARY IMAGE FILE
-  const [deleteCloudinaryImageFile] = useMutation(DELETE_CLOUDINARY_IMAGE_FILE,);
+  const [deleteCloudinaryImageFile] = useMutation(DELETE_CLOUDINARY_IMAGE_FILE);
 
   // CLOUDINARY 画像を削除するための関数
   const handleCloudinary_deleteImg = (publicId: string) => {
@@ -226,12 +226,12 @@ const PostsDetailPage = () => {
               // 削除した投稿を除外して、更新後の投稿リストを返す
               return existingPostsByUser.items.filter(
                 // eslint-disable-next-line @typescript-eslint/no-explicit-any
-                (postRef: any) => postRef.__ref !== deletePost.__ref
+                (postRef: any) => postRef.__ref !== deletePost.__ref,
               );
-            }
-          }
-        })
-      }
+            },
+          },
+        });
+      },
     });
 
   if (deleteErr) {
@@ -249,15 +249,14 @@ const PostsDetailPage = () => {
     imgCloudinaryUrl: string;
   };
 
-  //  URL の id と DB の id を比較し一致するものを取得 
+  //  URL の id と DB の id を比較し一致するものを取得
   const filteredPosts = data?.PostsByUser.items.filter(
-    (item: postProp) => Number(item.id) === Number(id)
+    (item: postProp) => Number(item.id) === Number(id),
   );
 
   return (
     <main css={PostDetailPageStyle}>
       <Container>
-
         {/* component */}
         <BackButton />
 
@@ -267,9 +266,7 @@ const PostsDetailPage = () => {
           <p>Error: {error.message}</p>
         ) : filteredPosts && filteredPosts.length > 0 ? (
           filteredPosts.map((filteredItem: postProp) => (
-
             <div key={filteredItem.id} className="detailItem">
-
               {/*  CREATED & UPDATED DATE */}
               <div className="timeContainer">
                 <div className="created">
@@ -281,7 +278,8 @@ const PostsDetailPage = () => {
                   </svg>
                   <time>
                     Created:{" "}
-                    {filteredItem.createdAt.toLocaleString()
+                    {filteredItem.createdAt
+                      .toLocaleString()
                       .substring(0, 10)
                       .replace("T", " ")
                       .replace(/-/g, "/")}
@@ -343,8 +341,16 @@ const PostsDetailPage = () => {
         {filteredPosts && filteredPosts.length > 0 ? (
           <>
             {/* EDIT BUTTON */}
-            <Link onClick={() => { window.scrollTo({ top: 0, behavior: "smooth" }) }} to={`/editpost/${id}`}>
-              <button className="editBtn btn btn-primary mb-4" style={{ width: "100%" }}>
+            <Link
+              onClick={() => {
+                window.scrollTo({ top: 0, behavior: "smooth" });
+              }}
+              to={`/editpost/${id}`}
+            >
+              <button
+                className="editBtn btn btn-primary mb-4"
+                style={{ width: "100%" }}
+              >
                 Edit
               </button>
             </Link>
@@ -363,18 +369,20 @@ const PostsDetailPage = () => {
                 }, 500);
 
                 //! Delete Cloudinary Image File that much with Post ID
-                const cloudinaryId_muchWithPostId = data.PostsByUser.items.find((item: postProp) => Number(item.id) === Number(id));
+                const cloudinaryId_muchWithPostId = data.PostsByUser.items.find(
+                  (item: postProp) => Number(item.id) === Number(id),
+                );
                 if (cloudinaryId_muchWithPostId) {
-                  handleCloudinary_deleteImg(cloudinaryId_muchWithPostId.imgCloudinaryId);
+                  handleCloudinary_deleteImg(
+                    cloudinaryId_muchWithPostId.imgCloudinaryId,
+                  );
                 }
               }}
             >
               {deleteLoading ? "Deleting..." : "Delete"}
             </button>
           </>
-        ) : (
-          null
-        )}
+        ) : null}
       </Container>
     </main>
   );

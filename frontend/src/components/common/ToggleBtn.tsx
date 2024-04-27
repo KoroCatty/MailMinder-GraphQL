@@ -1,4 +1,3 @@
-
 import React, { useState } from "react";
 
 // Emotion
@@ -58,7 +57,6 @@ const toggleSwitch = css`
   }
 `;
 
-
 // types
 interface ToggleSwitchProps {
   id: string;
@@ -66,11 +64,11 @@ interface ToggleSwitchProps {
   onChange?: (checked: boolean) => void;
 }
 
-  const ToggleBtn: React.FC<ToggleSwitchProps> = ({
-    id,
-    initial = false,
-    onChange,
-  }) => {
+const ToggleBtn: React.FC<ToggleSwitchProps> = ({
+  id,
+  initial = false,
+  onChange,
+}) => {
   const [checked, setChecked] = useState(initial);
 
   const handleToggle = () => {
@@ -83,18 +81,18 @@ interface ToggleSwitchProps {
   };
   return (
     <label css={toggleSwitch}>
-    <input
-      id={id}
-      onChange={handleToggle}
-      className="toggleButton_input"
-      type="checkbox"
-      checked={checked}
-    />
-    <label htmlFor={id} className="toggleButton_label"></label>
+      <input
+        id={id}
+        onChange={handleToggle}
+        className="toggleButton_input"
+        type="checkbox"
+        checked={checked}
+      />
+      <label htmlFor={id} className="toggleButton_label"></label>
 
-    <span className="onOff">{checked ? "On" : "Off"}</span>
-  </label>
-  )
-}
+      <span className="onOff">{checked ? "On" : "Off"}</span>
+    </label>
+  );
+};
 
-export default ToggleBtn
+export default ToggleBtn;

@@ -42,12 +42,12 @@ const settingAvatarStyles = css`
     background-color: #fff;
     cursor: pointer;
 
-      // 1px〜479px
-  ${min[0] + max[0]} {
-    margin: 0 auto;
+    // 1px〜479px
+    ${min[0] + max[0]} {
+      margin: 0 auto;
+    }
   }
-  }
-  
+
   img {
     width: 140px;
     height: 140px;
@@ -56,9 +56,7 @@ const settingAvatarStyles = css`
 `;
 
 const SettingsAvatar = () => {
-
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
 
   //* 画像を選択した時に発火する関数
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -81,7 +79,9 @@ const SettingsAvatar = () => {
           className=""
         />
         {/* Button */}
-        <button type="submit" className="">SAVE</button>
+        <button type="submit" className="">
+          SAVE
+        </button>
       </form>
 
       {/* 画像があれば表示 */}
@@ -90,7 +90,7 @@ const SettingsAvatar = () => {
         {selectedImage && <img src={selectedImage} alt="chosen Image" />}
       </div>
     </div>
-  )
-}
+  );
+};
 
-export default SettingsAvatar
+export default SettingsAvatar;

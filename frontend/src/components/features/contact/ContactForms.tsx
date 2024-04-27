@@ -158,7 +158,7 @@ const ContactForms = () => {
         },
         (error) => {
           console.log(error.text);
-        }
+        },
       );
 
       // フォームを空にする

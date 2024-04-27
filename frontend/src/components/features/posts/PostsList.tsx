@@ -5,14 +5,14 @@ import PostItem from "./PostItem";
 import PaginationBar from "../../common/PaginationBar";
 
 // Apollo Client
-import { useQuery } from '@apollo/client';
-import { GET_POSTS_BY_ID } from '../../../graphql/queries';
+import { useQuery } from "@apollo/client";
+import { GET_POSTS_BY_ID } from "../../../graphql/queries";
 
-// Loading 
+// Loading
 import LoadingSpinner from "../../common/LoadingSpinner";
 
 // Bootstrap
-import { Row } from 'react-bootstrap';
+import { Row } from "react-bootstrap";
 
 // TYPES
 type PostPropType = {
@@ -29,10 +29,10 @@ type PostPropType = {
 import { css } from "@emotion/react";
 import { min, max } from "../../../utils/mediaQueries";
 const PostListCss = css`
-margin-bottom: 4rem;
+  margin-bottom: 4rem;
 
-.eachCard {
-}
+  .eachCard {
+  }
 
   // 1px〜479px
   ${min[0] + max[0]} {
@@ -50,7 +50,6 @@ margin-bottom: 4rem;
 
 //! ============================================================
 function PostsList() {
-
   const POSTS_PER_PAGE = 12;
 
   // pagination
@@ -64,7 +63,7 @@ function PostsList() {
       first: POSTS_PER_PAGE, // Post表示数。この数値を backend に渡す
       skip: (currentPage - 1) * 12, // 何件目から取得するかを指定。 この数値を backend に渡す
     },
-    fetchPolicy: "cache-first"
+    fetchPolicy: "cache-first",
   });
 
   // Total number of pages (ex. 50 / 20 = 2.5 => 3 pages)
@@ -74,29 +73,35 @@ function PostsList() {
 
   // refetch posts
   useEffect(() => {
-    refetch({ uid: Number() })
+    refetch({ uid: Number() });
   }, [refetch]);
-
 
   return (
     <div css={PostListCss}>
       <BackButton />
 
-      <PaginationBar currentPage={currentPage} totalPages={totalPages} onPageChange={setCurrentPage} />
+      <PaginationBar
+        currentPage={currentPage}
+        totalPages={totalPages}
+        onPageChange={setCurrentPage}
+      />
 
       {/* 1.loading  2.error 3.post existence  */}
-      {loading ? <LoadingSpinner loading={true} /> :
-        error ? <p>Error: {error.message}</p> :
-          !data || !data.PostsByUser || data.PostsByUser.length === 0 ? <p>No posts found.</p> :
-            (
-              <Row xs={1} md={2} className="g-4">
-                {data.PostsByUser.items.map((item: PostPropType) => (
-                  <div className="eachCard col-6 col-md-4 sm-4" key={item.id}>
-                    <PostItem postProp={item} />
-                  </div>
-                ))}
-              </Row>
-            )}
+      {loading ? (
+        <LoadingSpinner loading={true} />
+      ) : error ? (
+        <p>Error: {error.message}</p>
+      ) : !data || !data.PostsByUser || data.PostsByUser.length === 0 ? (
+        <p>No posts found.</p>
+      ) : (
+        <Row xs={1} md={2} className="g-4">
+          {data.PostsByUser.items.map((item: PostPropType) => (
+            <div className="eachCard col-6 col-md-4 sm-4" key={item.id}>
+              <PostItem postProp={item} />
+            </div>
+          ))}
+        </Row>
+      )}
     </div>
   );
 }

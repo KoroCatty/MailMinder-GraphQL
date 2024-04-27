@@ -8,7 +8,7 @@ export const max = breakpoints2.map((bpMax) => ` and (max-width: ${bpMax}px)`);
 
 // Example
 // const NavUl = css`
-    /* // 1px〜479px
+/* // 1px〜479px
     ${min[0] + max[0]}{
     }
     // 480px〜767px

@@ -11,7 +11,7 @@ import { TitleLarge, TitleSmall } from "../../common/Titles";
 import { CommonForm, CommonTextarea } from "../../common/Forms";
 import { CommonBtn } from "../../common/CommonBtn";
 
-import LoadingSpinner  from "../../common/LoadingSpinner";
+import LoadingSpinner from "../../common/LoadingSpinner";
 
 // bootstrap
 import { Form } from "react-bootstrap";
@@ -19,10 +19,10 @@ import { Form } from "react-bootstrap";
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
 import { min, max } from "../../../utils/mediaQueries";
-  //! ======================================================
-  //! CSS
-  //! ======================================================
-  const homeFormsStyles = css`
+//! ======================================================
+//! CSS
+//! ======================================================
+const homeFormsStyles = css`
   position: relative;
 
   // 1px〜479px
@@ -53,7 +53,16 @@ import { min, max } from "../../../utils/mediaQueries";
 
   // UPLOAD IMAGE TITLE
   .uploadImgTitle {
-    margin: 8rem 0 4rem 0;
+    margin: 4rem 0 1rem 0;
+
+    // 1px〜479px
+    ${min[0] + max[0]} {
+      margin: 0;
+    }
+    // 480px〜767px
+    ${min[1] + max[1]} {
+      margin: 0;
+    }
   }
 
   // label caption
@@ -125,21 +134,21 @@ import { min, max } from "../../../utils/mediaQueries";
     gap: 1rem;
     margin-bottom: 6rem;
 
-      // 1px〜479px
-  ${min[0] + max[0]} {
-    display: block;
-  }
-  // 480px〜767px
-  ${min[1] + max[1]} {
-    display: block;
-  }
+    // 1px〜479px
+    ${min[0] + max[0]} {
+      display: block;
+    }
+    // 480px〜767px
+    ${min[1] + max[1]} {
+      display: block;
+    }
   }
 
   // 送信中のボタンのスタイル (loadingState が true の時)
-   .submitBtn.loading {
-      opacity: 0.3;
-      cursor: not-allowed;
-    }
+  .submitBtn.loading {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
 
   //! Paste Image URL Form
   .pasteImgUrl {
@@ -167,7 +176,7 @@ import { min, max } from "../../../utils/mediaQueries";
 //! MAIN
 //! ========================================
 
-// TYPES 
+// TYPES
 interface RefetchProps {
   refetch: () => void;
 }
@@ -182,7 +191,6 @@ interface FormDataProps {
 }
 
 const HomeForms = ({ refetch }: RefetchProps) => {
-
   // For Selfie & Paste Image URL
   const [, setSelectedImage] = useState<string | null>(null);
   // console.log(selectedImage)
@@ -216,14 +224,13 @@ const HomeForms = ({ refetch }: RefetchProps) => {
     <h1>Uploading Error!!</h1>;
   }
 
-  if (loading) return (<LoadingSpinner loading={true} />);
-
+  if (loading) return <LoadingSpinner loading={true} />;
 
   //! ======================================================
   //! When forms typed (input & textarea)
   //! ======================================================
   const handleChange = (
-    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>
+    e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>,
   ) => {
     setFormData({
       ...formData,
@@ -238,8 +245,9 @@ const HomeForms = ({ refetch }: RefetchProps) => {
     e.preventDefault();
     setLoadingState(true); // 送信処理開始時に送信ボタンの loadingをtrueに設定
 
-    // SERVER URL 
-    const SERVER_URL = import.meta.env.VITE_PUBLIC_SERVER_URL || 'http://localhost:5001/uploads';
+    // SERVER URL
+    const SERVER_URL =
+      import.meta.env.VITE_PUBLIC_SERVER_URL || "http://localhost:5001/uploads";
     // console.log(SERVER_URL + "🫡") // http://localhost:5001/uploads
 
     // Define a variable for asyncronous data to save DB
@@ -252,11 +260,11 @@ const HomeForms = ({ refetch }: RefetchProps) => {
     //! 1. Upload the image to the server using AXIOS
     if (selectedLocalFile) {
       const formData = new FormData();
-      formData.append('img', selectedLocalFile);
+      formData.append("img", selectedLocalFile);
 
       try {
         const response = await axios.post(SERVER_URL, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
+          headers: { "Content-Type": "multipart/form-data" },
         });
         // console.log(response.data.url); // /uploads/img-1697934272148.jpg
 
@@ -282,21 +290,20 @@ const HomeForms = ({ refetch }: RefetchProps) => {
         }
 
         // make tis absolute path and get rid of double 'uploads/'
-        imageUrlForDB = `${SERVER_URL}${response.data.url.replace('uploads/', '')}`;
+        imageUrlForDB = `${SERVER_URL}${response.data.url.replace("uploads/", "")}`;
 
         // get rid of double '//' in a server (Local is fine)
-        imageUrlForDB = imageUrlForDB.replace('uploads//', 'uploads/');
+        imageUrlForDB = imageUrlForDB.replace("uploads//", "uploads/");
         setFormData((prevFormData) => ({
           ...prevFormData,
           // これらを追加
           imgUrl: imageUrlForDB,
         }));
-
       } catch (error) {
         console.error("Error uploading the file:", error);
         setLoadingState(false);
         return;
-      } 
+      }
     }
 
     //! 1. Save post to the database using Apollo Client's mutation.
@@ -323,7 +330,6 @@ const HomeForms = ({ refetch }: RefetchProps) => {
     setLoadingState(false); // 処理が完了したらloadingをfalseに設定
   };
 
-
   //* ===================================================
   //* Choose image from local file (画像を選択した時に発火する関数)
   //* ===================================================
@@ -340,8 +346,7 @@ const HomeForms = ({ refetch }: RefetchProps) => {
 
     // Update the display image
     setDisplayImg(localImageUrl);
-  }
-
+  };
 
   //* ===================================================
   //* Paste Image URL
@@ -444,17 +449,16 @@ const HomeForms = ({ refetch }: RefetchProps) => {
         {/*//* Paste Image URL */}
         <h3>Paste Image URL</h3>
         <div className="googleImgSearchForms">
+          <input
+            name="imgUrl"
+            type="text"
+            placeholder="Paste the image URL here"
+            className="pasteImgUrl"
+            onChange={pasteImage}
+          />
 
-        <input
-          name="imgUrl"
-          type="text"
-          placeholder="Paste the image URL here"
-          className="pasteImgUrl"
-          onChange={pasteImage}
-        />
-
-        {/*//! COMPONENT */}
-        <GoogleSearch />
+          {/*//! COMPONENT */}
+          <GoogleSearch />
         </div>
 
         {/* Button COMPONENT*/}
@@ -463,10 +467,12 @@ const HomeForms = ({ refetch }: RefetchProps) => {
           className={`submitBtn` + (loadingState ? " loading" : "")}
           disabled={loadingState}
         >
-          <span className="w-100"> {loadingState ? "Uploading..." : "Create Post"}</span>
+          <span className="w-100">
+            {" "}
+            {loadingState ? "Uploading..." : "Create Post"}
+          </span>
         </CommonBtn>
       </form>
-
     </section>
   );
 };

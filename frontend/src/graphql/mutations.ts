@@ -3,7 +3,7 @@ import { gql } from "@apollo/client";
 //! Sign Up (Create User)
 export const SIGNUP_USER = gql`
   mutation signupUser($userNew: UserInput!) {
-      # signupUser is defined in resolvers.js
+    # signupUser is defined in resolvers.js
     signupUser(userNew: $userNew) {
       #  Frontend に返すデータを下記に定義し、console.log()で確認可能になる
       id
@@ -68,7 +68,7 @@ export const UPDATE_POST_BY_ID = gql`
 
 //! LOGOUT USER
 export const LOGOUT_MUTATION = gql`
-    mutation Logout {
+  mutation Logout {
     logout
   }
 `;
@@ -87,7 +87,7 @@ export const DELETE_POST_IMAGE_FILE = gql`
 
 //! DELETE A CLOUDINARY IMAGE FILE ON SERVER
 export const DELETE_CLOUDINARY_IMAGE_FILE = gql`
-mutation deleteCloudinaryImage($publicId: String) {
-  deleteCloudinaryImage(publicId: $publicId)
-}
-`
+  mutation deleteCloudinaryImage($publicId: String) {
+    deleteCloudinaryImage(publicId: $publicId)
+  }
+`;

@@ -5,28 +5,31 @@ import { css } from "@emotion/react";
 type Props = {
   children: React.ReactNode;
   type: "button" | "submit" | "reset" | undefined;
-  className? : string;
+  className?: string;
   disabled?: boolean;
 };
 
 // Emotion CSS (Responsive Design)
 const commonBtnCss = css`
-    background-color: rgba(0, 0, 0, 0.9);
-    color: #ffffff;
-    text-shadow: 1px 1px 6px black;
-    font-size: 1.2rem;
-    letter-spacing: 1px;
-    border: 1px solid #4d4d4d;
-    padding: 16px 20px;
-    width: 40%;
-    transition: all 0.3s ease-in-out;
-    border-radius: 4px;
-  
+  background-color: rgba(0, 0, 0, 0.9);
+  color: #ffffff;
+  text-shadow: 1px 1px 6px black;
+  font-size: 1.2rem;
+  letter-spacing: 1px;
+  border: 1px solid #4d4d4d;
+  padding: 16px 20px;
+  width: 40%;
+  transition: all 0.3s ease-in-out;
+  border-radius: 4px;
 `;
 //! ===============================================================
 //! Regular
 //! ===============================================================
-export const CommonBtn: React.FC<Props> = ({ children, className, disabled }) => {
+export const CommonBtn: React.FC<Props> = ({
+  children,
+  className,
+  disabled,
+}) => {
   //HOOKS
   const buttonRef = useRef<HTMLButtonElement | null>(null);
 
@@ -64,7 +67,13 @@ export const CommonBtn: React.FC<Props> = ({ children, className, disabled }) =>
   }, []);
 
   return (
-      <button className={className} ref={buttonRef} css={commonBtnCss} disabled={disabled}>{children}</button>
-
+    <button
+      className={className}
+      ref={buttonRef}
+      css={commonBtnCss}
+      disabled={disabled}
+    >
+      {children}
+    </button>
   );
 };

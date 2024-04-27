@@ -1,4 +1,4 @@
-import { z } from "zod"
+import { z } from "zod";
 
 export const validationSchema = z.object({
   name: z
@@ -22,4 +22,4 @@ export const validationSchema = z.object({
     .string()
     .nonempty("Message is required")
     .max(1000, "Less than 1000!!"),
-  })
+});

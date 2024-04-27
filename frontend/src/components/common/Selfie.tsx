@@ -256,7 +256,8 @@ const Selfie: React.FC<SelfieProps> = ({ selfieImage }) => {
         onClick={() => startSelfie()}
         className={isDisplay ? "openBtn displayNone" : "openBtn"}
       >
-        <FaCamera style={{margin: "-4px 8px 0 0"}} />Open Camera
+        <FaCamera style={{ margin: "-4px 8px 0 0" }} />
+        Open Camera
       </div>
 
       {/*//! CLOSE BUTTON */}
@@ -269,7 +270,8 @@ const Selfie: React.FC<SelfieProps> = ({ selfieImage }) => {
           isDisplay ? "videosContainer stopBtn" : "videosContainer displayNone"
         }
       >
-         <FaCamera style={{margin: "-4px 8px 0 0"}} />CLOSE CAMERA
+        <FaCamera style={{ margin: "-4px 8px 0 0" }} />
+        CLOSE CAMERA
       </div>
 
       <div

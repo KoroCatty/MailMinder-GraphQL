@@ -1,19 +1,19 @@
 import { useState, useEffect } from "react";
 
-import { BrowserRouter, Routes, Route } from "react-router-dom"
+import { BrowserRouter, Routes, Route } from "react-router-dom";
 
 // components
-import Layout from './components/layout/Layout';
+import Layout from "./components/layout/Layout";
 import PrivateRoutes from "./components/common/PrivateRoutes";
 import Header from "./components/layout/Header";
 import Footer from "./components/layout/Footer";
 import ColorThemeGlobal from "./components/common/ColorThemeGlobal";
 
 // pages
-import AuthPage from "./pages/AuthPage"
-import HomePage from "./pages/HomePage"
-import NotFound from "./pages/NotFound"
-import PostsPage from './pages/PostsPage';
+import AuthPage from "./pages/AuthPage";
+import HomePage from "./pages/HomePage";
+import NotFound from "./pages/NotFound";
+import PostsPage from "./pages/PostsPage";
 import PostsDays from "./pages/PostsDays";
 import SettingsPage from "./pages/SettingsPage";
 import PostsDetailPage from "./pages/PostDetailPage";
@@ -21,32 +21,31 @@ import EditPostPage from "./pages/EditPostPage";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Contact from "./pages/Contact";
 
-// Loading 
-import LoadingSpinner from "./components/common/LoadingSpinner"
+// Loading
+import LoadingSpinner from "./components/common/LoadingSpinner";
 
 // bootstrap
-import 'bootstrap/dist/css/bootstrap.min.css'
+import "bootstrap/dist/css/bootstrap.min.css";
 
 // react-bootstrap
-import 'react-bootstrap/dist/react-bootstrap.min.js'
+import "react-bootstrap/dist/react-bootstrap.min.js";
 
 // Apollo client
-import { useQuery } from '@apollo/client';
+import { useQuery } from "@apollo/client";
 import { IS_LOGGED_IN_QUERY } from "./graphql/queries";
 
 // Custom CSS Props for LoadingSpinner
-const center : React.CSSProperties = {
-  position: 'fixed',
-  top: '50%',
-  left: '50%',
-  transform: 'translate(-50%, -50%)',
+const center: React.CSSProperties = {
+  position: "fixed",
+  top: "50%",
+  left: "50%",
+  transform: "translate(-50%, -50%)",
 };
 
-
 function App() {
-  // Login Check 
+  // Login Check
   const { data, loading, error } = useQuery(IS_LOGGED_IN_QUERY, {
-    fetchPolicy: 'network-only', // キャッシュを使わない
+    fetchPolicy: "network-only", // キャッシュを使わない
     //   onCompleted: (data) => setIsLoggedIn(data.isLoggedIn)// ログイン状態を更新
   });
 
@@ -54,7 +53,9 @@ function App() {
   const [isLoggedIn, setIsLoggedIn] = useState(data?.isLoggedIn || false);
 
   // Theme Color Toggle
-  const [darkTheme, setDarkTheme] = useState(localStorage.getItem('Theme-color') === 'true');
+  const [darkTheme, setDarkTheme] = useState(
+    localStorage.getItem("Theme-color") === "true",
+  );
 
   // ログイン状態を更新 (If there's data)
   useEffect(() => {
@@ -68,9 +69,8 @@ function App() {
     }
   }, []);
 
-  if (loading) return <LoadingSpinner loading={true} center={center} />
+  if (loading) return <LoadingSpinner loading={true} center={center} />;
   if (error) return <p>Error: {error.message}</p>;
-
 
   return (
     <>
@@ -86,14 +86,32 @@ function App() {
 
         <>
           <Routes>
-            <Route path="" element={<Layout isLoggedIn={isLoggedIn} darkTheme={darkTheme} />}>
-              <Route path="/" index={true} element={<HomePage isLoggedIn={isLoggedIn} />} />
-              <Route path="/login" element={<AuthPage isLoggedIn={isLoggedIn} setIsLoggedIn={setIsLoggedIn} />} />
+            <Route
+              path=""
+              element={<Layout isLoggedIn={isLoggedIn} darkTheme={darkTheme} />}
+            >
+              <Route
+                path="/"
+                index={true}
+                element={<HomePage isLoggedIn={isLoggedIn} />}
+              />
+              <Route
+                path="/login"
+                element={
+                  <AuthPage
+                    isLoggedIn={isLoggedIn}
+                    setIsLoggedIn={setIsLoggedIn}
+                  />
+                }
+              />
               <Route path="/contact" element={<Contact />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
 
               {/* //! ログインユーザーのみ */}
-              <Route path="" element={<PrivateRoutes isLoggedIn={isLoggedIn} />}>
+              <Route
+                path=""
+                element={<PrivateRoutes isLoggedIn={isLoggedIn} />}
+              >
                 <Route path="/postlist" element={<PostsPage />} />
                 <Route path="/postsDays" element={<PostsDays />} />
                 <Route path="/postdetails/:id" element={<PostsDetailPage />} />
@@ -107,10 +125,9 @@ function App() {
         </>
 
         <Footer isLoggedIn={isLoggedIn} />
-      </BrowserRouter >
-
+      </BrowserRouter>
     </>
-  )
+  );
 }
 
-export default App
+export default App;

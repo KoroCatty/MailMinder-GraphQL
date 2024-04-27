@@ -23,8 +23,9 @@ const Layout = ({ isLoggedIn, darkTheme }: PropsType) => {
   //? Emotion CSS (Responsive Design)
   const LayoutCss = css`
     // when the URL -> /postlist & darkTheme is false
-    ${location.pathname === "/postlist" && !darkTheme &&
-      ` background-image: url("./imgs/marbleBg.jpg");`}
+    ${location.pathname === "/postlist" &&
+    !darkTheme &&
+    ` background-image: url("./imgs/marbleBg.jpg");`}
 
     // 1201px 以上の場合
     @media screen and (min-width: 1201px) {

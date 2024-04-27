@@ -93,7 +93,7 @@ const globalCss = css`
   .notFoundBackBtn {
     background-color: ${colorSchema.dark} !important;
     box-shadow: 0 0 12px rgba(255, 255, 255, 1) !important;
-    
+
     &:hover {
       color: ${colorSchema.danger} !important;
       box-shadow: none !important;

@@ -14,7 +14,7 @@ const formsCss = css`
     display: block;
     width: 100%;
     min-height: 36px;
-    border-width: 0 0 2px 0; 
+    border-width: 0 0 2px 0;
     border-color: #a3a3a3;
     font-family: Lusitana, serif;
     font-size: 18px;
@@ -49,10 +49,10 @@ const formsCss = css`
     }
   }
 
-      /* 新しく追加するスタイル */
-    .input-text.has-text + .label {
-      transform: translateY(-60px);
-    }
+  /* 新しく追加するスタイル */
+  .input-text.has-text + .label {
+    transform: translateY(-60px);
+  }
 
   // TEXTAREA
   .input-textArea {
@@ -145,7 +145,7 @@ export const CommonForm: React.FC<CommonFormProps> = ({
 
   // ページ読み込み時の監視
   useEffect(() => {
-    if (inputRef.current && inputRef.current.value !== '' ) {
+    if (inputRef.current && inputRef.current.value !== "") {
       setHasText(true);
     }
   }, [value]); // Async で値が DB から入ってくるので、valueを監視
@@ -164,31 +164,31 @@ export const CommonForm: React.FC<CommonFormProps> = ({
 
   return (
     <div css={formsCss}>
-        <div className="contact-form">
-          <div className="form-field">
-            <input
-              id="name"
-              className={`input-text js-input ${classNameProp} ${hasText ? 'has-text' : ''}`}
-              type={type}
-              required
-              onChange={(e) => {
-                onChange;
-                handleChange(e);
-              }}
-              name={name}
-              value={value}
-              ref={inputRef}
-            />
+      <div className="contact-form">
+        <div className="form-field">
+          <input
+            id="name"
+            className={`input-text js-input ${classNameProp} ${hasText ? "has-text" : ""}`}
+            type={type}
+            required
+            onChange={(e) => {
+              onChange;
+              handleChange(e);
+            }}
+            name={name}
+            value={value}
+            ref={inputRef}
+          />
 
-            <label
-              className="label"
-              htmlFor="name"
-              style={{ letterSpacing: "0.4rem" }}
-            >
-              {text}
-            </label>
-          </div>
+          <label
+            className="label"
+            htmlFor="name"
+            style={{ letterSpacing: "0.4rem" }}
+          >
+            {text}
+          </label>
         </div>
+      </div>
     </div>
   );
 };
@@ -210,12 +210,12 @@ export const CommonTextarea: React.FC<CommonTextareaProps> = ({
   // テキストが存在するかどうかで state を変え、クラスを付与
   const [hasText, setHasText] = useState(false);
 
-    // ページ読み込み時の監視
-    useEffect(() => {
-      if (textAreaRef.current && textAreaRef.current.value !== '' ) {
-        setHasText(true);
-      }
-    }, [value]); // Async で値が DB から入ってくるので、valueを監視
+  // ページ読み込み時の監視
+  useEffect(() => {
+    if (textAreaRef.current && textAreaRef.current.value !== "") {
+      setHasText(true);
+    }
+  }, [value]); // Async で値が DB から入ってくるので、valueを監視
 
   // onChangeハンドラー
   const handleChange = (e: React.ChangeEvent<HTMLTextAreaElement>) => {
@@ -233,10 +233,10 @@ export const CommonTextarea: React.FC<CommonTextareaProps> = ({
   const handleInput = () => {
     const textArea = textAreaRef.current;
     if (textArea) {
-      textArea.style.height = 'auto'; // 高さを初期化
-      textArea.style.height = textArea.scrollHeight + 'px'; // 新しい高さを設定
+      textArea.style.height = "auto"; // 高さを初期化
+      textArea.style.height = textArea.scrollHeight + "px"; // 新しい高さを設定
     }
-  }
+  };
 
   return (
     <div css={formsCss}>
@@ -248,10 +248,10 @@ export const CommonTextarea: React.FC<CommonTextareaProps> = ({
                 onChange;
                 handleChange(e);
               }}
-              onInput={handleInput}  // ここで高さを自動調整
-              ref={textAreaRef}      // ここで高さを自動調整
+              onInput={handleInput} // ここで高さを自動調整
+              ref={textAreaRef} // ここで高さを自動調整
               name={name}
-              className={`input-text input-textArea ${hasText ? 'has-text' : ''}`}
+              className={`input-text input-textArea ${hasText ? "has-text" : ""}`}
               value={value}
               required
             />

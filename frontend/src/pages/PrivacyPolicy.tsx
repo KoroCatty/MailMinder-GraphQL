@@ -75,9 +75,9 @@ function PrivacyPolicy() {
       <article css={privacy} className="privacy">
         <h1 className="privacy__title">Privacy Policy</h1>
         <p className="privacy__text">
-          [ KAY-DEV ] is committed to providing quality services to you and
-          this policy outlines our ongoing obligations to you in respect of how
-          we manage your Personal Information. We have adopted the Australian
+          [ KAY-DEV ] is committed to providing quality services to you and this
+          policy outlines our ongoing obligations to you in respect of how we
+          manage your Personal Information. We have adopted the Australian
           Privacy Principles (APPs) contained in the Privacy Act 1988 (Cth) (the
           Privacy Act). The NPPs govern the way in which we collect, use,
           disclose, store, secure and dispose of your Personal Information. A
@@ -182,12 +182,12 @@ function PrivacyPolicy() {
           </h2>
           <p className="privacy__text">
             It is an important to us that your Personal Information is up to
-            date. We import PrivacyPolicy from './PrivacyPolicy';
-will take reasonable steps to make sure that your Personal
-            Information is accurate, complete and up-to-date. If you find that
-            the information we have is not up to date or is inaccurate, please
-            advise us as soon as practicable so we can update our records and
-            ensure we can continue to provide quality services to you.
+            date. We import PrivacyPolicy from './PrivacyPolicy'; will take
+            reasonable steps to make sure that your Personal Information is
+            accurate, complete and up-to-date. If you find that the information
+            we have is not up to date or is inaccurate, please advise us as soon
+            as practicable so we can update our records and ensure we can
+            continue to provide quality services to you.
           </p>
         </div>
 

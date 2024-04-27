@@ -1,4 +1,3 @@
-
 // Emotion
 import { css } from "@emotion/react";
 import ToggleBtn from "../../common/ToggleBtn";
@@ -16,8 +15,7 @@ interface ToggleSwitchProps {
   onChange?: (checked: boolean) => void;
 }
 
-const EmailToggle: React.FC<ToggleSwitchProps> = (
-) => {
+const EmailToggle: React.FC<ToggleSwitchProps> = () => {
   return (
     <section css={toggleSwitch}>
       <h2>Stop Sending Emails</h2>

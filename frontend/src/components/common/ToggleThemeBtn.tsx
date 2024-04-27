@@ -4,7 +4,6 @@ type PropsType = {
   setDarkTheme: (themeUpdater: (prevTheme: boolean) => boolean) => void;
 };
 
-
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
 const toggleCss = css`
@@ -79,10 +78,9 @@ const toggleCss = css`
 `;
 
 function ToggleThemeBtn({ darkTheme, setDarkTheme }: PropsType) {
+  // Save Theme Color Boolean to LocalStorage
+  localStorage.setItem("Theme-color", JSON.stringify(darkTheme));
 
-    // Save Theme Color Boolean to LocalStorage
-    localStorage.setItem('Theme-color', JSON.stringify(darkTheme));
-  
   return (
     <div css={toggleCss}>
       {/* //! Dark Theme Toggle BUTTON */}

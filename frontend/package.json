@@ -7,7 +7,8 @@
     "dev": "vite",
     "build": "tsc && vite build",
     "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
-    "preview": "vite preview"
+    "preview": "vite preview",
+    "format": "prettier --write \"src/**/*.{ts,tsx,js,jsx}\""
   },
   "dependencies": {
     "@apollo/client": "^3.8.4",
@@ -20,6 +21,7 @@
     "bootstrap": "^5.3.2",
     "dotenv": "^16.3.1",
     "graphql": "^16.8.1",
+    "prettier": "^3.2.5",
     "react": "^18.2.0",
     "react-bootstrap": "^2.9.0",
     "react-dom": "^18.2.0",

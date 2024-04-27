@@ -10,13 +10,13 @@ import { Link } from "react-router-dom";
 
 // go to top
 function goTop() {
-  window.scroll({ top: 0, behavior: 'smooth' });
+  window.scroll({ top: 0, behavior: "smooth" });
 }
 
 // TYPE
 type IsLoggedInPropsType = {
   isLoggedIn: boolean;
-}
+};
 
 const FooterCSS = css`
   .footer {
@@ -175,7 +175,6 @@ function Footer({ isLoggedIn }: IsLoggedInPropsType) {
               </p>
             </Col>
             <Col>
-
               {/* LOGIN CHECK */}
               {isLoggedIn ? (
                 <div className="footer__links">

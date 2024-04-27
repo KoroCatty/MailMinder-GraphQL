@@ -1,11 +1,11 @@
-import Card from 'react-bootstrap/Card';
-import Col from 'react-bootstrap/Col';
-import Row from 'react-bootstrap/Row';
+import Card from "react-bootstrap/Card";
+import Col from "react-bootstrap/Col";
+import Row from "react-bootstrap/Row";
 
 const MonthPosts = () => {
   return (
     <>
-      <h2 className='text-center m-6'>Monthly Posts</h2>
+      <h2 className="text-center m-6">Monthly Posts</h2>
 
       <Row xs={1} md={2} className="g-4">
         {Array.from({ length: 2 }).map((_, idx) => (
@@ -24,9 +24,8 @@ const MonthPosts = () => {
           </Col>
         ))}
       </Row>
-
     </>
-  )
-}
+  );
+};
 
-export default MonthPosts
+export default MonthPosts;

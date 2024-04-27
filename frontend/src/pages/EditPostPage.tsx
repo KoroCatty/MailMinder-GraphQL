@@ -11,7 +11,7 @@ import { TitleLarge, TitleSmall } from "../components/common/Titles";
 import { CommonForm, CommonTextarea } from "../components/common/Forms";
 import { CommonBtn } from "../components/common/CommonBtn";
 
-// Loading 
+// Loading
 import LoadingSpinner from "../components/common/LoadingSpinner";
 
 // Color Schema
@@ -35,7 +35,7 @@ import { css } from "@emotion/react";
 import { min, max } from "../utils/mediaQueries";
 
 const EditPostCss = css`
-margin: 3rem 0 ;
+  margin: 3rem 0;
   // 1px〜479px
   ${min[0] + max[0]} {
   }
@@ -143,10 +143,10 @@ margin: 3rem 0 ;
       margin: 0 auto;
       display: block;
 
-          // 1px〜479px
-    ${min[0] + max[0]} {
-      width: 80%;
-    }
+      // 1px〜479px
+      ${min[0] + max[0]} {
+        width: 80%;
+      }
     }
   }
 
@@ -225,11 +225,11 @@ margin: 3rem 0 ;
     }
   }
 
-    // 送信中のボタンのスタイル (loadingState が true の時)
-    .submitBtn.loading {
-      opacity: 0.3;
-      cursor: not-allowed;
-    }
+  // 送信中のボタンのスタイル (loadingState が true の時)
+  .submitBtn.loading {
+    opacity: 0.3;
+    cursor: not-allowed;
+  }
 
   //! Paste Image URL Form
   .pasteImgUrl {
@@ -253,8 +253,8 @@ margin: 3rem 0 ;
     }
   }
 
-    // NO POST MESSAGE
-    .noPostMessage {
+  // NO POST MESSAGE
+  .noPostMessage {
     text-align: center;
     font-size: 3rem;
     margin: 2rem 0;
@@ -272,15 +272,14 @@ const EditPostPage = () => {
   // Get local selected image value
   const fileInputRef = useRef<HTMLInputElement>(null);
 
-  //* GET POSTS BY ID 
+  //* GET POSTS BY ID
   const { data, refetch } = useQuery(GET_POSTS_BY_ID, {
     variables: {
       uid: Number(idUrl), // queries.ts で uid を定義している
     },
   });
 
-
-  //* UPDATE POST BY ID 
+  //* UPDATE POST BY ID
   const [updatePostById, { loading, error }] = useMutation(UPDATE_POST_BY_ID);
   if (error) {
     alert(error.message);
@@ -288,17 +287,16 @@ const EditPostPage = () => {
   // Button loading state
   const [loadingState, setLoadingState] = useState<boolean>(loading);
 
-  //! DELETE POST IMAGE FILE 
+  //! DELETE POST IMAGE FILE
   const [deletePostImage] = useMutation(DELETE_POST_IMAGE_FILE);
 
   //! DELETE CLOUDINARY IMAGE FILE
-  const [deleteCloudinaryImageFile] = useMutation(DELETE_CLOUDINARY_IMAGE_FILE,);
+  const [deleteCloudinaryImageFile] = useMutation(DELETE_CLOUDINARY_IMAGE_FILE);
 
   // CLOUDINARY 画像を削除するための関数
   const handleCloudinary_deleteImg = (publicId: string) => {
     deleteCloudinaryImageFile({ variables: { publicId } });
   };
-
 
   // Initialize with an empty array or a suitable default value.
   const [currentData, setCurrentData] = useState({
@@ -350,14 +348,13 @@ const EditPostPage = () => {
     }
   };
 
-
   //* useEffect
   // DB から post id と同じ 投稿データを取得
   useEffect(() => {
     if (data && data.PostsByUser) {
       const idToFind = Number(idUrl); // 特定のID
       const filteredData = data?.PostsByUser.items.filter(
-        (item: FormDataType) => Number(item.id) === idToFind
+        (item: FormDataType) => Number(item.id) === idToFind,
       );
 
       setCurrentData(filteredData[0]);
@@ -391,13 +388,13 @@ const EditPostPage = () => {
 
     // Create a local URL for the file to display it in an img tag
     const localImageUrl = URL.createObjectURL(file);
-    console.log(localImageUrl)// blob:http://localhost:3000/9ad32e0f-6952-45c7-99c9-051430a562a9
+    console.log(localImageUrl); // blob:http://localhost:3000/9ad32e0f-6952-45c7-99c9-051430a562a9
 
     setSelectedImage(localImageUrl);
     // resetLocalFileSelectValue();
 
     // e.target.value = '';
-  }
+  };
 
   //* ===================================================
   //* Paste Image URL
@@ -449,8 +446,9 @@ const EditPostPage = () => {
     e.preventDefault();
     setLoadingState(true); // 送信処理開始時に送信ボタンの loadingをtrueに設定
 
-    // SERVER URL 
-    const SERVER_URL = import.meta.env.VITE_PUBLIC_SERVER_URL || 'http://localhost:5001/uploads';
+    // SERVER URL
+    const SERVER_URL =
+      import.meta.env.VITE_PUBLIC_SERVER_URL || "http://localhost:5001/uploads";
     //  console.log(SERVER_URL + "🫡") // http://localhost:5001/uploads
 
     // Define a variable for asyncronous data to save DB
@@ -464,33 +462,32 @@ const EditPostPage = () => {
     //! 1. Upload the image to the server using AXIOS
     if (selectedLocalFile) {
       const formData = new FormData();
-      formData.append('img', selectedLocalFile);
+      formData.append("img", selectedLocalFile);
 
       try {
         const response = await axios.post(SERVER_URL, formData, {
-          headers: { 'Content-Type': 'multipart/form-data' },
+          headers: { "Content-Type": "multipart/form-data" },
         });
         console.log(response.data.url); // /uploads/img-1697934272148.jpg
 
         // CLOUDINARY Image URL (backendから返したもの)
-        console.log(response.data.cloudinaryUrl)
-        console.log(response.data.cloudinary_id)
+        console.log(response.data.cloudinaryUrl);
+        console.log(response.data.cloudinary_id);
 
         // 初期化してた変数に値を入れる
         cloudinaryUrl = response.data.cloudinaryUrl;
         cloudinaryId = response.data.cloudinary_id;
 
         // make this absolute path and get rid of double 'uploads/'
-        imageUrlForDB = `${SERVER_URL}${response.data.url.replace('uploads/', '')}`;
+        imageUrlForDB = `${SERVER_URL}${response.data.url.replace("uploads/", "")}`;
 
         // get rid of double '//' in a server (Local is fine)
-        imageUrlForDB = imageUrlForDB.replace('uploads//', 'uploads/');
+        imageUrlForDB = imageUrlForDB.replace("uploads//", "uploads/");
 
         setFormData((prevFormData) => ({
           ...prevFormData, // shallow copy
           imgUrl: imageUrlForDB, // add or update the imgUrl property
         }));
-
       } catch (error) {
         console.error("Error uploading the file:", error);
         setLoadingState(false); // 処理が完了したらloadingをfalseに設定
@@ -513,7 +510,8 @@ const EditPostPage = () => {
       const response = await updatePostById({
         variables: {
           updatePostId: currentData.id, // ここで指定したIDのデータを更新する
-          postUpdate: { // typeDefs.jsで定義
+          postUpdate: {
+            // typeDefs.jsで定義
             title: currentData.title,
             content: currentData.content,
             imgUrl: imageUrlForDB || currentData.imgUrl, // Use selectedImage if it's available, else use currentData.imgUrl
@@ -528,23 +526,27 @@ const EditPostPage = () => {
       if (response.data) {
         window.alert("Post updated successfully");
         console.log("Post updated successfully", response.data);
-        await refetch();// Props で受け取った refetch を実行
+        await refetch(); // Props で受け取った refetch を実行
         console.log("Refetched!");
         setLoadingState(false); // 処理が完了したらloadingをfalseに設定
       }
 
-
       //! Delete Cloudinary Image File that much with Post ID
       // if File or Img Address is not empty, don't delete CLOUDINARY IMG
-      if (fileInputRef.current && !fileInputRef.current.value && !selectedImage) {
-        console.log("Not Image File is chosen")
+      if (
+        fileInputRef.current &&
+        !fileInputRef.current.value &&
+        !selectedImage
+      ) {
+        console.log("Not Image File is chosen");
         return;
       }
-      const cloudinaryId_muchWithPostId = data.PostsByUser.items.find((item: FormDataType) => Number(item.id) === Number(idUrl));
+      const cloudinaryId_muchWithPostId = data.PostsByUser.items.find(
+        (item: FormDataType) => Number(item.id) === Number(idUrl),
+      );
       if (cloudinaryId_muchWithPostId) {
         handleCloudinary_deleteImg(cloudinaryId_muchWithPostId.imgCloudinaryId);
       }
-
     } catch (error) {
       // window.alert("Error updating post");
       console.error("Error updating post - アップデートエラー:", error);
@@ -558,13 +560,13 @@ const EditPostPage = () => {
   //! ======================================================
   return (
     <main css={EditPostCss}>
-
       <div className="container">
         <BackButton />
         <div className="row">
-
           {/* If no exist the post, error message */}
-          {(!currentData || Object.keys(currentData).length === 0 || !currentData.id) ? (
+          {!currentData ||
+          Object.keys(currentData).length === 0 ||
+          !currentData.id ? (
             // <h2 className="noPostMessage">No Post Found...</h2>
             <LoadingSpinner loading={true} />
           ) : (
@@ -604,9 +606,9 @@ const EditPostPage = () => {
                     Updated:{" "}
                     {currentData.updatedAt
                       ? currentData.updatedAt
-                        .substring(0, 10)
-                        .replace("T", " ")
-                        .replace(/-/g, "/")
+                          .substring(0, 10)
+                          .replace("T", " ")
+                          .replace(/-/g, "/")
                       : "Not Updated"}
                   </time>
                 </div>
@@ -644,19 +646,19 @@ const EditPostPage = () => {
               {/*//* DISPLAY IMG  画像があれば表示 (Local or Cloudinary) */}
               <div className="imageWrap">
                 {!selectedImage && (
-                  <img src={currentData.imgUrl}
+                  <img
+                    src={currentData.imgUrl}
                     onError={(e) => {
                       const imgElement = e.target as HTMLImageElement;
                       if (imgElement.src !== currentData.imgCloudinaryUrl) {
                         imgElement.src = currentData.imgCloudinaryUrl;
                       }
                     }}
-                    alt="no Image" />
+                    alt="no Image"
+                  />
                 )}
                 {selectedImage && (
-                  <img src={selectedImage}
-                    alt="chosen Image"
-                  />
+                  <img src={selectedImage} alt="chosen Image" />
                 )}
               </div>
 
@@ -692,11 +694,13 @@ const EditPostPage = () => {
                 className={`submitBtn` + (loadingState ? " loading" : "")}
                 disabled={loadingState}
               >
-                <span className="w-100"> {loadingState ? "Updating..." : "Update Post"}</span>
+                <span className="w-100">
+                  {" "}
+                  {loadingState ? "Updating..." : "Update Post"}
+                </span>
               </CommonBtn>
             </form>
           )}
-
         </div>
       </div>
     </main>

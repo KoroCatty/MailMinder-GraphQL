@@ -1,50 +1,52 @@
-import colors from 'colors';
-import { ApolloServer } from '@apollo/server';
+import colors from "colors";
+import { ApolloServer } from "@apollo/server";
 
-import express from 'express';
-import path from 'path';
+import express from "express";
+import path from "path";
 
 // StandAloneServer -> Express server に変更するために必要なモジュール
-import { expressMiddleware } from '@apollo/server/express4';
-import { ApolloServerPluginDrainHttpServer } from '@apollo/server/plugin/drainHttpServer';
+import { expressMiddleware } from "@apollo/server/express4";
+import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
 
-import http from 'http';
-import cors from 'cors';
-import bodyParser from 'body-parser';
-import cookieParser from 'cookie-parser';
+import http from "http";
+import cors from "cors";
+import bodyParser from "body-parser";
+import cookieParser from "cookie-parser";
 
 // Schema and Resolvers
-import typeDefs from './typeDefs.js';
-import resolvers from './resolvers.js';
+import typeDefs from "./typeDefs.js";
+import resolvers from "./resolvers.js";
 
 // Token
-import jwt from 'jsonwebtoken';
+import jwt from "jsonwebtoken";
 
 //! SENDING EMAIL  (DO NOT DELETE)
-import './cron/email.js';
+import "./cron/email.js";
 
 // プリズマのクライアントをインポート (DB接続確認のため)
-import { PrismaClient } from '../prisma/generated/client/index.js'
-const prisma = new PrismaClient()
+import { PrismaClient } from "../prisma/generated/client/index.js";
+const prisma = new PrismaClient();
 
 // CLOUDINARY
-import cloudinaryConfig from './cloudinary.js';
+import cloudinaryConfig from "./cloudinary.js";
 
 // Sharp (Image compressor)
-import sharp from 'sharp';
+import sharp from "sharp";
 
 // Initialize express
 const app = express();
 
-app.use(cors({
-  origin: true,
-  credentials: true //! allow cookies
-}));
+app.use(
+  cors({
+    origin: true,
+    credentials: true, //! allow cookies
+  }),
+);
 
 app.use(cookieParser());
 
 //* ==============================================================
-//* UPLOAD IMAGE to Both uploads folder & Cloudinary 
+//* UPLOAD IMAGE to Both uploads folder & Cloudinary
 //* ==============================================================
 import multer from "multer";
 
@@ -56,13 +58,15 @@ const LocalStorage = multer.diskStorage({
   //! Create a file name
   filename(req, file, cb) {
     // ex) image-163123123.jpg ファイル
-    cb(null, `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`);
+    cb(
+      null,
+      `${file.fieldname}-${Date.now()}${path.extname(file.originalname)}`,
+    );
   },
 });
 
 // check file type
 function fileFilter(req, file, cb) {
-
   // 受け入れられるファイルの拡張子を正規表現で定義
   const filetypes = /jpe?g|png|gif|webp/;
   // 受け入れられるMIMEタイプ（ファイルの種類）を正規表現で定義
@@ -78,22 +82,22 @@ function fileFilter(req, file, cb) {
   if (extname && mimetype) {
     cb(null, true);
   } else {
-    cb(new Error('Images only!'), false);
+    cb(new Error("Images only!"), false);
   }
 }
 // multerの設定を適用して、アップロード機能を初期化
 const upload = multer({ storage: LocalStorage, fileFilter });
 
 // 'img' という名前の単一の画像をアップロードするためのミドルウェアを設定
-const uploadSingleImage = upload.single('img');
+const uploadSingleImage = upload.single("img");
 
 // 画像をアップロードするためのエンドポイントを追加
-app.post('/uploads', uploadSingleImage, async (req, res) => {
+app.post("/uploads", uploadSingleImage, async (req, res) => {
   try {
     // 画像を圧縮 (圧縮した画像のファイル名を生成 (接頭辞を付与)
     const compressedFilename = `compressed-${req.file.filename}`;
-    const compressedFilePath = path.join('uploads/', compressedFilename);
-    console.log(compressedFilename) // compressed-img-1700445713500.png
+    const compressedFilePath = path.join("uploads/", compressedFilename);
+    console.log(compressedFilename); // compressed-img-1700445713500.png
 
     // 画像を圧縮して、uploadsフォルダに保存
     await sharp(req.file.path)
@@ -103,20 +107,21 @@ app.post('/uploads', uploadSingleImage, async (req, res) => {
 
     // Cloudinaryの設定
     const result = await cloudinaryConfig.uploader.upload(compressedFilePath, {
-      folder: 'My Folder',
-      allowedFormats: ['jpg', 'jpeg', 'png', 'webp', 'gif'],
-      transformation: [{ width: 800, height: 800, crop: 'limit' }]
+      folder: "My Folder",
+      allowedFormats: ["jpg", "jpeg", "png", "webp", "gif"],
+      transformation: [{ width: 800, height: 800, crop: "limit" }],
     });
 
     // Cloudinary が返してくれるもの
     // Response to FrontEnd (Frontendから POST でアクセスできるようにする)
     res.json({
-      url: `/uploads/${compressedFilename}`,// 圧縮された画像のURL(local)
+      url: `/uploads/${compressedFilename}`, // 圧縮された画像のURL(local)
       cloudinaryUrl: result.secure_url, // 画像のURLを返す(cloudinary)
-      cloudinary_id: result.public_id // 画像のIDを返す(cloudinary)
+      cloudinary_id: result.public_id, // 画像のIDを返す(cloudinary)
     });
-    console.log("画像を Cloudinary & uploads にアップロードしました🎉".green.underline);
-
+    console.log(
+      "画像を Cloudinary & uploads にアップロードしました🎉".green.underline,
+    );
   } catch (error) {
     res.status(500).send({ error: error.message });
   }
@@ -127,33 +132,34 @@ const __dirname = path.resolve();
 // ex) /Users/Full-Stack/RemindApp (全てのパスを取得)
 
 // 現在のディレクトリからの相対パス./uploadsを絶対パスに変換して格納
-const uploadsDirectory = path.join(__dirname, '/uploads');
+const uploadsDirectory = path.join(__dirname, "/uploads");
 // ex) /Users/.../RemindApp/uploads
 
 // '/uploads'というパスのリクエストがあったときに次の express.static()ミドルウェアが動作
-app.use('/uploads', express.static(uploadsDirectory));
+app.use("/uploads", express.static(uploadsDirectory));
 
-
-app.use(cors({
-  origin: true,  // or true to allow any origin
-  credentials: true
-}));
+app.use(
+  cors({
+    origin: true, // or true to allow any origin
+    credentials: true,
+  }),
+);
 
 //? ==============================================================
 //? Deploy Settings
 //? ==============================================================
-if (process.env.NODE_ENV === 'production') {
+if (process.env.NODE_ENV === "production") {
   // Express が production 環境の assets を提供するようにする
   // ルートの / にアクセスがあった場合、Express は frontend/build/index.html を返す
-  app.use(express.static(path.join(__dirname, 'frontend/dist')));
+  app.use(express.static(path.join(__dirname, "frontend/dist")));
 
   // Express が route を認識できない場合は、front-end の index.html ファイルを提供する
-  app.get('*', (req, res) => {
-    res.sendFile(path.resolve(__dirname, 'frontend', 'dist', 'index.html'));
+  app.get("*", (req, res) => {
+    res.sendFile(path.resolve(__dirname, "frontend", "dist", "index.html"));
   });
 } else {
-  app.get('/', (req, res) => {
-    res.send('API is running...');
+  app.get("/", (req, res) => {
+    res.send("API is running...");
   });
 }
 
@@ -171,26 +177,25 @@ const server = new ApolloServer({
   plugins: [ApolloServerPluginDrainHttpServer({ httpServer })], // Added
   cors: {
     origin: true,
-    credentials: true
-  }
-})
+    credentials: true,
+  },
+});
 // Ensure we wait for our server to start
 await server.start();
 
-app.use('/', cors({
-  origin: true,
-  credentials: true,
-}
-),
+app.use(
+  "/",
+  cors({
+    origin: true,
+    credentials: true,
+  }),
 
-
-  // 50mb is the limit that `startStandaloneServer` 
-  bodyParser.json({ limit: '50mb' }),
+  // 50mb is the limit that `startStandaloneServer`
+  bodyParser.json({ limit: "50mb" }),
   expressMiddleware(server, {
-
     // ログイン用 context を使い、resolver.js内の、各リクエストで使用できるようにする
     context: async ({ req, res }) => {
-      //! Token from HttpOnly Cookie 
+      //! Token from HttpOnly Cookie
       const token = req.cookies.jwt_httpOnly;
 
       // 最初はトークンがないので、userId は null に設定
@@ -201,7 +206,6 @@ app.use('/', cors({
           // トークンを検証
           const decodedToken = jwt.verify(token, process.env.JWT_SECRET);
           userId = decodedToken.userId;
-
         } catch (error) {
           console.error("トークン Verification Error 😢", error);
         }
@@ -220,14 +224,17 @@ await new Promise((resolve) => httpServer.listen({ port: PORT }, resolve));
 console.log(`🚀 Server ready at http://localhost:${PORT}`.cyan.underline);
 
 //* ==============================================================
-//* MySQL DB CONNECTION 
+//* MySQL DB CONNECTION
 //* ==============================================================
 async function connectDB() {
   try {
     await prisma.$connect();
     console.log("connected to MySQL! - DB接続成功💾".yellow.underline);
   } catch (error) {
-    console.error("Error connecting to the database - DB接続が失敗しました😢".red.underline, error);
+    console.error(
+      "Error connecting to the database - DB接続が失敗しました😢".red.underline,
+      error,
+    );
   } finally {
     await prisma.$disconnect();
   }

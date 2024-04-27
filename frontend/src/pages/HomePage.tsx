@@ -1,4 +1,4 @@
-// import { useState, useEffect } from "react"; 
+// import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
 
 // Home components
@@ -19,7 +19,6 @@ import { Container } from "react-bootstrap";
 import { css } from "@emotion/react";
 import { min, max } from "../utils/mediaQueries";
 const HomePageCss = css`
-
   .homeContainer {
     @media screen and (max-width: 999px) and (min-width: 768px) {
       width: 96% !important;
@@ -55,11 +54,10 @@ const HomePageCss = css`
 // TYPE
 type IsLoggedInPropType = {
   isLoggedIn: boolean;
-}
+};
 
 //! ============================================
 const HomePage = ({ isLoggedIn }: IsLoggedInPropType) => {
-
   // Get 4 Posts by User ID
   const { data, loading, error, refetch } = useQuery(GET_POSTS_BY_ID_LIMIT, {
     variables: {
@@ -73,7 +71,12 @@ const HomePage = ({ isLoggedIn }: IsLoggedInPropType) => {
       {/* LOGIN CHECK */}
       {isLoggedIn ? (
         <Container className="homeContainer">
-          <RecentPosts data={data} loading={loading} error={error} refetch={refetch} />
+          <RecentPosts
+            data={data}
+            loading={loading}
+            error={error}
+            refetch={refetch}
+          />
           <HomeForms refetch={refetch} />
           {/* <MonthPosts /> */}
         </Container>

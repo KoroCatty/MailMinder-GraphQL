@@ -10,21 +10,25 @@ type TitlePropType = {
 
 //? Emotion CSS (Responsive Design)
 const titleSmallCss = css`
-//! =================================================
-//! SMALL
-//! =================================================
-  padding: 0.8rem 1.6rem;
+  //! =================================================
+  //! SMALL
+  //! =================================================
+  padding: 0.8rem 1.1rem;
   border-left: 4px solid #6d6d6d;
-  font-size: 2rem;
+  font-size: 1.5rem;
   margin-bottom: 4rem;
   color: #434343;
   letter-spacing: 0.1rem;
 
   // 1px〜479px
   ${min[0] + max[0]} {
+    font-size: 1.2rem;
+    margin-bottom: 2rem;
   }
   // 480px〜767px
   ${min[1] + max[1]} {
+    font-size: 1.4rem;
+    margin-bottom: 3.5rem;
   }
   // 768px〜989px
   ${min[2] + max[2]} {
@@ -65,26 +69,6 @@ const titleLargeCss = css`
   display: block;
   padding: 0 80px;
 
-  :before,
-  :after {
-    content: "";
-    position: absolute;
-    top: 50%;
-    display: inline-block;
-    width: 45px;
-    height: 1px;
-    background-color: #9e9e9e;
-
-      // 1px〜479px
-  ${min[0] + max[0]} {
-    width: 24px;
-  }
-  // 480px〜767px
-  ${min[1] + max[1]} {
-    width: 32px;
-  }
-  }
-
   :before {
     left: 0;
   }
@@ -113,7 +97,11 @@ const titleLargeCss = css`
 `;
 
 export const TitleSmall = ({ title, className }: TitlePropType) => {
-  return <h2 className={className}  css={titleSmallCss}>{title}</h2>;
+  return (
+    <h2 className={className} css={titleSmallCss}>
+      {title}
+    </h2>
+  );
 };
 
 export const TitleMedium = ({ title }: TitlePropType) => {

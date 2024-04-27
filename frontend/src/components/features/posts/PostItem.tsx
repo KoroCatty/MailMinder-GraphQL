@@ -12,14 +12,12 @@ import { DELETE_CLOUDINARY_IMAGE_FILE } from "../../../graphql/mutations";
 import { css } from "@emotion/react";
 import LoadingSpinner from "../../common/LoadingSpinner";
 const postItemCss = css`
-
   .card {
     border: none;
     background-color: transparent;
     transition: all 0.3s ease-in-out;
     min-height: 100%;
     max-height: 100%;
-
 
     img {
       width: 100%;
@@ -67,11 +65,11 @@ const postItemCss = css`
     left: 0; */
   }
 
-.deleteBtn {
-  background-color: ${colorSchema.darkLight};
-  color: white;
-  margin-bottom: 0.5rem;
-}
+  .deleteBtn {
+    background-color: ${colorSchema.darkLight};
+    color: white;
+    margin-bottom: 0.5rem;
+  }
 `;
 
 // TYPES
@@ -117,7 +115,7 @@ const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
             // 削除した投稿を除外して、更新後の投稿リストを返す
             return existingPostsByUser.items.filter(
               // eslint-disable-next-line @typescript-eslint/no-explicit-any
-              (postRef: any) => postRef.__ref !== deletePost.__ref
+              (postRef: any) => postRef.__ref !== deletePost.__ref,
             );
           },
         },
@@ -139,7 +137,9 @@ const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
   return (
     <>
       <div css={postItemCss}>
-        {loading ? (<LoadingSpinner loading />) : (
+        {loading ? (
+          <LoadingSpinner loading />
+        ) : (
           <Link to={`/postdetails/${postProp.id}`} className="card">
             <img
               src={postProp.imgUrl}
@@ -155,7 +155,6 @@ const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
 
         <div className="card-body">
           <div className="card-text">
-
             <h5 className="card-title">
               {postProp.title.length > 20
                 ? postProp.title.slice(0, 20) + "..."
@@ -163,9 +162,10 @@ const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
             </h5>
             {/* 40文字まで、改行を削除 */}
             <p className="card-content">
-              {postProp.content.replace(/\n/g, '').length > 40
-                ? postProp.content.replace(/\n/g, '').slice(0, 40).trim() + "..."
-                : postProp.content.replace(/\n/g, '').trim()}
+              {postProp.content.replace(/\n/g, "").length > 40
+                ? postProp.content.replace(/\n/g, "").slice(0, 40).trim() +
+                  "..."
+                : postProp.content.replace(/\n/g, "").trim()}
             </p>
 
             <time>{new Date(postProp.createdAt).toLocaleString()}</time>
@@ -190,7 +190,9 @@ const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
               e.preventDefault();
               window.confirm("Are you sure you want to delete this post?") &&
                 deletePostById();
-              { loading && <LoadingSpinner loading /> }
+              {
+                loading && <LoadingSpinner loading />;
+              }
               //! Delete Cloudinary Image File that much with Post ID
               handleCloudinary_deleteImg(postProp.imgCloudinaryId);
             }}
