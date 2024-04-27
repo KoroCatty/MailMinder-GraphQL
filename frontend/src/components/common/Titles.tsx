@@ -64,7 +64,6 @@ const titleLargeCss = css`
   text-align: center;
   width: fit-content;
   letter-spacing: 0.1rem;
-
   position: relative;
   display: block;
   padding: 0 80px;
@@ -78,7 +77,7 @@ const titleLargeCss = css`
 
   // 1px〜479px
   ${min[0] + max[0]} {
-    margin: 40px auto 2rem auto;
+    margin: 0 auto 2rem auto;
     font-size: 1.4rem;
     padding: 0 4rem;
   }

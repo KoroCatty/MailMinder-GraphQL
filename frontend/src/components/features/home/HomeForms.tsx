@@ -11,15 +11,10 @@ import { TitleLarge, TitleSmall } from "../../common/Titles";
 import { CommonForm, CommonTextarea } from "../../common/Forms";
 import { CommonBtn } from "../../common/CommonBtn";
 import LoadingSpinner from "../../common/LoadingSpinner";
-
 // bootstrap
 import { Form } from "react-bootstrap";
-
 // CSS
 import { formStylesCSS } from "../../../styles/FormsCSS";
-
-// functions
-// import { handleSubmit, handleChange, handleImageUpload, pasteImage, selfieImage } from "./formFunctions";
 
 // TYPES
 interface RefetchProps {
@@ -88,11 +83,9 @@ const HomeForms = ({ refetch }: RefetchProps) => {
     // SERVER URL
     const SERVER_URL =
       import.meta.env.VITE_PUBLIC_SERVER_URL || "http://localhost:5001/uploads";
-    // console.log(SERVER_URL + "🫡") // http://localhost:5001/uploads
 
     // Define a variable for asyncronous data to save DB
     let imageUrlForDB: string | undefined = formData.imgUrl;
-
     // 初期化
     let cloudinaryUrl;
     let cloudinaryId;
@@ -101,7 +94,6 @@ const HomeForms = ({ refetch }: RefetchProps) => {
     if (selectedLocalFile) {
       const formData = new FormData();
       formData.append("img", selectedLocalFile);
-
       try {
         const response = await axios.post(SERVER_URL, formData, {
           headers: { "Content-Type": "multipart/form-data" },
@@ -123,15 +115,12 @@ const HomeForms = ({ refetch }: RefetchProps) => {
           await console.error("Error: Cloudinary URL is missing ありません.😿");
           return;
         }
-
         if (!cloudinaryId) {
           await console.error("Error: Cloudinary ID is missing ありません.😿");
           return;
         }
-
         // make tis absolute path and get rid of double 'uploads/'
         imageUrlForDB = `${SERVER_URL}${response.data.url.replace("uploads/", "")}`;
-
         // get rid of double '//' in a server (Local is fine)
         imageUrlForDB = imageUrlForDB.replace("uploads//", "uploads/");
         setFormData((prevFormData) => ({
@@ -179,11 +168,9 @@ const HomeForms = ({ refetch }: RefetchProps) => {
 
     // Set the selected file to state for later use in handleSubmit
     setSelectedLocalFile(file);
-
     // Create a local URL for the file to display it in an img tag
     const localImageUrl = URL.createObjectURL(file);
     // console.log(localImageUrl) // blob:http://localhost:3000/9ad32e0f-6952-45c7-99c9-051430a562a9
-
     // Update the display image
     setDisplayImg(localImageUrl);
   };
@@ -233,7 +220,6 @@ const HomeForms = ({ refetch }: RefetchProps) => {
   //! JSX
   //! ======================================================
   return (
-    // <section css={homeFormsStyles}>
     <section css={formStylesCSS}>
       {/* COMPONENT */}
       <TitleLarge title="YOUR REMINDER" />

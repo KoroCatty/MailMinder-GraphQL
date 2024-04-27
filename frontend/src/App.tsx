@@ -14,19 +14,17 @@ import AuthPage from "./pages/AuthPage";
 import HomePage from "./pages/HomePage";
 import NotFound from "./pages/NotFound";
 import PostsPage from "./pages/PostsPage";
-import PostsDays from "./pages/PostsDays";
 import SettingsPage from "./pages/SettingsPage";
 import PostsDetailPage from "./pages/PostDetailPage";
 import EditPostPage from "./pages/EditPostPage";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Contact from "./pages/Contact";
+import RegisterPage from "./pages/RegisterPage";
 
 // Loading
 import LoadingSpinner from "./components/common/LoadingSpinner";
-
 // bootstrap
 import "bootstrap/dist/css/bootstrap.min.css";
-
 // react-bootstrap
 import "react-bootstrap/dist/react-bootstrap.min.js";
 
@@ -83,7 +81,6 @@ function App() {
           darkTheme={darkTheme}
           setDarkTheme={setDarkTheme}
         />
-
         <>
           <Routes>
             <Route
@@ -104,6 +101,15 @@ function App() {
                   />
                 }
               />
+              <Route
+                path="/register"
+                element={
+                  <RegisterPage
+                    isLoggedIn={isLoggedIn}
+                    setIsLoggedIn={setIsLoggedIn}
+                  />
+                }
+              />
               <Route path="/contact" element={<Contact />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
 
@@ -113,7 +119,6 @@ function App() {
                 element={<PrivateRoutes isLoggedIn={isLoggedIn} />}
               >
                 <Route path="/postlist" element={<PostsPage />} />
-                <Route path="/postsDays" element={<PostsDays />} />
                 <Route path="/postdetails/:id" element={<PostsDetailPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/editpost/:id" element={<EditPostPage />} />
@@ -123,7 +128,6 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </>
-
         <Footer isLoggedIn={isLoggedIn} />
       </BrowserRouter>
     </>

@@ -4,11 +4,9 @@ import { Link } from "react-router-dom";
 // Home components
 import HomeForms from "../components/features/home/HomeForms";
 import RecentPosts from "../components/features/home/RecentPosts";
-// import MonthPosts from '../components/features/home/MonthPosts';
 import { CommonBtn } from "../components/common/CommonBtn";
 
 // Apollo client
-// import { GET_POSTS_BY_ID } from "../graphql/queries";
 import { GET_POSTS_BY_ID_LIMIT } from "../graphql/queries";
 import { useQuery } from "@apollo/client";
 

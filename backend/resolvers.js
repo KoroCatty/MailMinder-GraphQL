@@ -36,8 +36,24 @@ const resolvers = {
     //* -----------------------------------------------
     //* CHECK LOGIN STATUS
     //* -----------------------------------------------
-    isLoggedIn: (_, __, context) => {
+    isLoggedIn: (_, args, context) => {
       return Boolean(context.userId); // httpOnly で取得したトークンがあるかどうか
+    },
+
+    //* -----------------------------------------------
+    //* GET LOGGED IN USER INFO
+    //* -----------------------------------------------
+    getLoggedInUserDetails: async (_, args, context) => {
+      // forbidden error means you are not allowed to do this
+      if (!context.userId) throw Error("You must be logged in 😱");
+
+      // 自分の情報を取得
+      const LoggedInUser = await prisma.user.findUnique({
+        where: {
+          id: context.userId,
+        },
+      });
+      return LoggedInUser;
     },
 
     //* -----------------------------------------------

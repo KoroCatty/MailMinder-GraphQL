@@ -17,6 +17,7 @@ const typeDefs = gql`
     PostsByUser(id: ID!, first: Int, skip: Int): PostTotalCount #(pagination & total数を実装)
     PostsByUserLimit(id: ID!, limit: Int!): [Post!]! # limit を使ったresolver関数
     isLoggedIn: Boolean! # login しているかどうか
+    getLoggedInUserDetails: User # login しているユーザーの詳細情報
   }
 
   #//!  実際にクライエントに返すデータの型(これを使い回す)

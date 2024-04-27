@@ -46,3 +46,15 @@ export const IS_LOGGED_IN_QUERY = gql`
     isLoggedIn
   }
 `;
+
+//! GET LOGGED IN USER'S DETAILS
+export const GET_LOGGEDIN_USER_DETAILS = gql`
+  query GetLoggedInUserDetails {
+    getLoggedInUserDetails {
+      id
+      firstName
+      lastName
+      email
+    }
+  }
+`;

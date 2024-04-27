@@ -150,8 +150,8 @@ const sendEmail = cron.schedule(
 
         let mailContent;
 
-        // E メールの内容を定義 (Demoユーザー, admin ユーザーにはメールを送らない)
-        if (user.email !== "demo@demo.com" && "admin@admin.com") {
+        // E メールの内容を定義 (Demoユーザー ユーザーにはメールを送らない)
+        if (user.email !== "demo@demo.com") {
           mailContent = {
             from: process.env.EMAIL_FROM,
             to: user.email,

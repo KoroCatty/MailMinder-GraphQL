@@ -22,9 +22,8 @@ const googleSearchStyles = css`
     border-radius: 5px;
     padding: 20px;
     margin-right: 40px;
-    resize: none; // resizeとは、textareaの右下にある、ドラッグでサイズ変更できる機能
+    resize: none; // textareaの右下にある、ドラッグでサイズ変更できる機能
     box-shadow: 0 0 5px #ccc;
-
     width: 100%;
     height: 48px;
     padding: 1px 5px 1px 8px;
@@ -34,6 +33,14 @@ const googleSearchStyles = css`
     outline: none;
     font-size: 1.2rem;
     letter-spacing: 0.1rem;
+
+    &::placeholder {
+      // 1px〜479px
+      ${min[0] + max[0]} {
+        font-size: 0.95rem;
+        padding-left: 5px;
+      }
+    }
 
     &:focus {
       outline: none;
@@ -82,12 +89,6 @@ const googleSearchStyles = css`
         margin-right: 2px;
         width: 16px;
       }
-    }
-
-    // 1px〜479px
-    ${min[0] + max[0]} {
-      font-size: 1rem;
-      width: 100%;
     }
   }
 

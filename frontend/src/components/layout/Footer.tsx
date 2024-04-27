@@ -163,7 +163,7 @@ function Footer({ isLoggedIn }: IsLoggedInPropsType) {
               <h3 className="footer__title">GITHUB</h3>
 
               <div className="footer__sns">
-                <a target="blank" href="https://github.com/TechnoEmpire">
+                <a target="blank" href="https://github.com/KoroCatty">
                   <AiFillGithub style={{ color: "white", fontSize: "2rem" }} />
                 </a>
               </div>

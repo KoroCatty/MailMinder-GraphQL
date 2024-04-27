@@ -35,6 +35,13 @@ import { css } from "@emotion/react";
 const recentPostsCss = css`
   padding: 3rem 0 3rem 0;
 
+  .noCardMsg {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 1.5rem;
+    color: #333;
+  }
+
   .eachCard {
     margin-bottom: 2.5rem;
 
@@ -112,11 +119,13 @@ const RecentPosts = (limitPostsProps: LimitPostsPropsType) => {
   const postsByUserLimit: PostType[] = data?.PostsByUserLimit || [];
 
   if (error) return <p>Sever Error occurred</p>;
-  if (data && !postsByUserLimit) return <p>No posts found.</p>;
 
   return (
     <div css={recentPostsCss}>
       <TitleLarge title="RECENT CARDS" />
+      {!loading && data.PostsByUserLimit.length === 0 && (
+        <p className="noCardMsg">No cards found.</p>
+      )}
       {loading && <LoadingSpinner loading={true} />}
       {data ? (
         <>

@@ -8,7 +8,6 @@ export const formStylesCSS = css`
 
   // 1px〜479px
   ${min[0] + max[0]} {
-    margin-top: 8rem;
   }
   // 480px〜767px
   ${min[1] + max[1]} {
@@ -30,6 +29,10 @@ export const formStylesCSS = css`
     margin: 80px 0;
     resize: none; // resizeとは、textareaの右下にある、ドラッグでサイズ変更できる機能
     box-shadow: 0 0 5px #ccc;
+
+    // 1px〜479px
+    ${min[0] + max[0]} {
+    }
   }
 
   // UPLOAD IMAGE TITLE
@@ -79,6 +82,11 @@ export const formStylesCSS = css`
 
   .imageWrap {
     margin: 3rem 0;
+
+    // 1px〜479px
+    ${min[0] + max[0]} {
+      margin: 2rem 0 0 0;
+    }
 
     img {
       width: 50%;

@@ -1,15 +1,13 @@
 import { Link } from "react-router-dom";
 import { useNavigate } from "react-router-dom";
-
 // components
 import ToggleThemeBtn from "../common/ToggleThemeBtn";
-
 // Bootstrap
 import { Navbar, Nav, Container } from "react-bootstrap";
-
 // Apollo client
-import { useApolloClient } from "@apollo/client"; // Main.tsx で wrapしたもの
+import { useApolloClient, useQuery } from "@apollo/client"; // Main.tsx で wrapしたもの
 import { LOGOUT_MUTATION } from "../../graphql/mutations";
+import { GET_LOGGEDIN_USER_DETAILS } from "../../graphql/queries";
 
 // TYPE
 type PropsType = {
@@ -153,22 +151,24 @@ const headerCss = css`
     }
   }
 
-  // 1px〜479px
-  /* ${min[0] + max[0]} {
-    background-color: #c32626;
+  .loggedInUserInfo {
+    color: #4d4d4d;
+    text-align: center;
+
+    @media screen and (max-width: 1199px) {
+      text-align: left;
+    }
+
+    p {
+      font-weight: 600;
+      margin-bottom: 0.5rem;
+      font-size: 1.2rem;
+
+      @media screen and (max-width: 1199px) {
+        margin-bottom: 0.1rem;
+      }
+    }
   }
-  // 480px〜767px
-  ${min[1] + max[1]} {
-    background-color: blue;
-  }
-  // 768px〜989px
-  ${min[2] + max[2]} {
-    background-color: green;
-  }
-  // 990px〜1200
-  ${min[3] + max[3]} {
-    background-color: yellow;
-  } */
 
   //! Control the Theme Toggle Button
   .ToggleThemeBtn__PC {
@@ -223,6 +223,15 @@ function Header({
     }
   };
 
+  //! ログイン中のユーザー情報を取得
+  const { data: userData, loading: userLoading } = useQuery(
+    GET_LOGGEDIN_USER_DETAILS,
+    {
+      skip: !isLoggedIn, // isLoggedInがfalseの場合はクエリをスキップ
+      fetchPolicy: "cache-and-network", // キャッシュから読み込みつつ、ネットワークからも更新を試みる
+    },
+  );
+
   return (
     <>
       <Navbar css={headerCss} expand="lg" className="">
@@ -253,6 +262,22 @@ function Header({
                 ""
               )}
             </Nav>
+
+            {/*//!  User info */}
+            {userLoading ? (
+              <p>Loading...</p>
+            ) : (
+              <div className="loggedInUserInfo">
+                {isLoggedIn ? (
+                  <div>
+                    <p>{userData?.getLoggedInUserDetails.firstName}</p>
+                    <address>{userData?.getLoggedInUserDetails.email}</address>
+                  </div>
+                ) : (
+                  ""
+                )}
+              </div>
+            )}
 
             <div className="navRight">
               {/* //! TOGGLE BUTTON */}

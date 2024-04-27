@@ -30,6 +30,8 @@ import { css } from "@emotion/react";
 import { min, max } from "../../../utils/mediaQueries";
 const PostListCss = css`
   margin-bottom: 4rem;
+  max-width: 860px;
+  margin: 0 auto;
 
   .eachCard {
   }
@@ -50,7 +52,7 @@ const PostListCss = css`
 
 //! ============================================================
 function PostsList() {
-  const POSTS_PER_PAGE = 12;
+  const POSTS_PER_PAGE = 4;
 
   // pagination
   // 第二引数はoffsetで、何件目から取得するかを指定する
@@ -61,7 +63,7 @@ function PostsList() {
     variables: {
       uid: Number(), // backend (resolver) で id を指定しているので、空にする
       first: POSTS_PER_PAGE, // Post表示数。この数値を backend に渡す
-      skip: (currentPage - 1) * 12, // 何件目から取得するかを指定。 この数値を backend に渡す
+      skip: (currentPage - 1) * 4, // 何件目から取得するかを指定。 この数値を backend に渡す
     },
     fetchPolicy: "cache-first",
   });

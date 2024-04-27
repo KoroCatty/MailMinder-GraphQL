@@ -30,10 +30,8 @@ import { Form } from "react-bootstrap";
 import { formStylesCSS } from "../styles/FormsCSS";
 
 const EditPostPage = () => {
-  // useParam
   const { id: idUrl } = useParams<{ id: string }>();
 
-  // useRef
   // Get local selected image value
   const fileInputRef = useRef<HTMLInputElement>(null);
 
