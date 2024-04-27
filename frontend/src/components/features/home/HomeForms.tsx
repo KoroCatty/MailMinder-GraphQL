@@ -10,171 +10,16 @@ import Selfie from "../../common/Selfie";
 import { TitleLarge, TitleSmall } from "../../common/Titles";
 import { CommonForm, CommonTextarea } from "../../common/Forms";
 import { CommonBtn } from "../../common/CommonBtn";
-
 import LoadingSpinner from "../../common/LoadingSpinner";
 
 // bootstrap
 import { Form } from "react-bootstrap";
 
-// Emotion CSS (Responsive Design)
-import { css } from "@emotion/react";
-import { min, max } from "../../../utils/mediaQueries";
-//! ======================================================
-//! CSS
-//! ======================================================
-const homeFormsStyles = css`
-  position: relative;
+// CSS
+import { formStylesCSS } from "../../../styles/FormsCSS";
 
-  // 1px〜479px
-  ${min[0] + max[0]} {
-    margin-top: 8rem;
-  }
-  // 480px〜767px
-  ${min[1] + max[1]} {
-  }
-  // 768px〜989px
-  ${min[2] + max[2]} {
-  }
-  // 990px〜
-  ${min[3] + max[3]} {
-  }
-
-  textarea {
-    display: block;
-    width: 100%;
-    height: 200px;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    padding: 10px;
-    margin: 80px 0;
-    resize: none; // resizeとは、textareaの右下にある、ドラッグでサイズ変更できる機能
-    box-shadow: 0 0 5px #ccc;
-  }
-
-  // UPLOAD IMAGE TITLE
-  .uploadImgTitle {
-    margin: 4rem 0 1rem 0;
-
-    // 1px〜479px
-    ${min[0] + max[0]} {
-      margin: 0;
-    }
-    // 480px〜767px
-    ${min[1] + max[1]} {
-      margin: 0;
-    }
-  }
-
-  // label caption
-  h3 {
-    font-size: 1.4rem;
-    margin: 4rem 0 1rem 0;
-    color: #616161;
-  }
-
-  // Select Image Form
-  .imgChooseBtn {
-    width: 60%;
-    outline: 1px solid #ccc;
-    color: #616161;
-    margin-bottom: 5rem;
-
-    &:focus {
-      border: 1px solid #323232;
-      box-shadow: 0 0 8px #ccc;
-    }
-
-    &:hover {
-      transition: all 0.3s ease-in-out;
-      transform: translate(0, 4px);
-      box-shadow: 0 0 8px #ccc;
-    }
-
-    // 1px〜479px
-    ${min[0] + max[0]} {
-      width: 100%;
-    }
-  }
-
-  .imageWrap {
-    margin: 3rem 0;
-
-    img {
-      width: 50%;
-      height: auto;
-      aspect-ratio: 1/1;
-      border-radius: 5px;
-      box-shadow: 0 0 5px #ccc;
-      margin: 0 auto;
-      display: block;
-    }
-  }
-
-  //! Create Button (Props に渡すCSS)
-  .submitBtn {
-    width: 80%;
-    font-size: 2rem;
-    margin: 3rem auto;
-    display: block;
-    letter-spacing: 0.1rem;
-    position: relative;
-    overflow: hidden;
-
-    &:hover {
-      transition: all 0.3s ease-in-out;
-      transform: translate(0, 4px);
-      border: none;
-    }
-  }
-
-  .googleImgSearchForms {
-    display: flex;
-    align-items: center;
-    height: 60px;
-    gap: 1rem;
-    margin-bottom: 6rem;
-
-    // 1px〜479px
-    ${min[0] + max[0]} {
-      display: block;
-    }
-    // 480px〜767px
-    ${min[1] + max[1]} {
-      display: block;
-    }
-  }
-
-  // 送信中のボタンのスタイル (loadingState が true の時)
-  .submitBtn.loading {
-    opacity: 0.3;
-    cursor: not-allowed;
-  }
-
-  //! Paste Image URL Form
-  .pasteImgUrl {
-    padding: 1rem 1rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    outline: none;
-    font-size: 1rem;
-    letter-spacing: 0.1rem;
-    width: 50%;
-
-    &:focus {
-      border: 1px solid #323232;
-      box-shadow: 0 0 8px #ccc;
-    }
-
-    // 1px〜479px
-    ${min[0] + max[0]} {
-      width: 100%;
-    }
-  }
-`;
-
-//! ========================================
-//! MAIN
-//! ========================================
+// functions
+// import { handleSubmit, handleChange, handleImageUpload, pasteImage, selfieImage } from "./formFunctions";
 
 // TYPES
 interface RefetchProps {
@@ -193,16 +38,11 @@ interface FormDataProps {
 const HomeForms = ({ refetch }: RefetchProps) => {
   // For Selfie & Paste Image URL
   const [, setSelectedImage] = useState<string | null>(null);
-  // console.log(selectedImage)
-
   const [formData, setFormData] = useState<FormDataProps>({});
-
   // which image to preview
   const [displayImg, setDisplayImg] = useState<string>("/imgs/noImg.jpeg");
-
   // Get local selected image value
   const fileInputRef = useRef<HTMLInputElement>(null);
-
   // local selected image
   const [selectedLocalFile, setSelectedLocalFile] = useState<File | null>(null);
 
@@ -358,13 +198,10 @@ const HomeForms = ({ refetch }: RefetchProps) => {
       ...formData,
       imgUrl: imageUrl,
     });
-
     // reset local selected file in useState
     setSelectedLocalFile(null);
-
     // reset selected image input value
     resetLocalFileSelectValue();
-
     // display image
     setDisplayImg(imageUrl);
   };
@@ -383,10 +220,8 @@ const HomeForms = ({ refetch }: RefetchProps) => {
       });
       // reset selected image value
       resetLocalFileSelectValue();
-
       // reset local selected file in useState
       setSelectedLocalFile(null);
-
       setDisplayImg(image64);
     } else {
       console.log("Too Big");
@@ -398,7 +233,8 @@ const HomeForms = ({ refetch }: RefetchProps) => {
   //! JSX
   //! ======================================================
   return (
-    <section css={homeFormsStyles}>
+    // <section css={homeFormsStyles}>
+    <section css={formStylesCSS}>
       {/* COMPONENT */}
       <TitleLarge title="YOUR REMINDER" />
 
@@ -456,8 +292,6 @@ const HomeForms = ({ refetch }: RefetchProps) => {
             className="pasteImgUrl"
             onChange={pasteImage}
           />
-
-          {/*//! COMPONENT */}
           <GoogleSearch />
         </div>
 

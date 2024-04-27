@@ -14,9 +14,6 @@ import { CommonBtn } from "../components/common/CommonBtn";
 // Loading
 import LoadingSpinner from "../components/common/LoadingSpinner";
 
-// Color Schema
-import colorSchema from "../utils/colorSchema";
-
 // Apollo client
 import { useQuery } from "@apollo/client";
 import { useMutation } from "@apollo/client";
@@ -29,241 +26,9 @@ import { DELETE_CLOUDINARY_IMAGE_FILE } from "../graphql/mutations";
 
 // bootstrap
 import { Form } from "react-bootstrap";
+// CSS
+import { formStylesCSS } from "../styles/FormsCSS";
 
-// Emotion CSS
-import { css } from "@emotion/react";
-import { min, max } from "../utils/mediaQueries";
-
-const EditPostCss = css`
-  margin: 3rem 0;
-  // 1px〜479px
-  ${min[0] + max[0]} {
-  }
-  // 480px〜767px
-  ${min[1] + max[1]} {
-  }
-  // 768px〜989px
-  ${min[2] + max[2]} {
-  }
-  // 990px〜
-  ${min[3] + max[3]} {
-  }
-
-  // CREATED & UPDATED DATE TAG
-  .timeContainer {
-    display: flex;
-    align-items: center;
-    gap: 2rem;
-
-    // 1px〜479px
-    ${min[0] + max[0]} {
-      gap: 0.4rem;
-    }
-    // 480px〜767px
-    ${min[1] + max[1]} {
-      gap: 0.8rem;
-    }
-
-    .created,
-    .updated {
-      display: flex;
-      align-items: center;
-      grid-gap: 0 0.7em;
-      padding: 0.6rem 0.6rem;
-      border-radius: 5px;
-      background-color: ${colorSchema.primary};
-      color: #ffffff;
-      font-size: 1.1rem;
-      letter-spacing: 0.1rem;
-
-      // 1px〜479px
-      ${min[0] + max[0]} {
-        font-size: 0.8rem;
-        padding: 0.4rem 0.4rem;
-      }
-      // 480px〜767px
-      ${min[1] + max[1]} {
-        font-size: 1rem;
-      }
-
-      svg {
-        width: 1rem;
-        height: 1rem;
-
-        // 1px〜479px
-        ${min[0] + max[0]} {
-          width: 0.6rem;
-          height: 0.6rem;
-        }
-      }
-    }
-    .updated {
-      background-color: ${colorSchema.success};
-    }
-  }
-
-  // COMPONENT className Prop
-  .formTitleProp {
-    margin-bottom: 6rem;
-
-    // 1px〜479px
-    ${min[0] + max[0]} {
-      margin-bottom: 6rem;
-    }
-  }
-
-  textarea {
-    border-radius: 5px;
-    padding: 10px;
-    resize: none; // resizeとは、textareaの右下にある、ドラッグでサイズ変更できる機能
-    box-shadow: 0 0 5px ${colorSchema.border};
-  }
-
-  // UPLOAD IMAGE TITLE
-  .uploadImgTitle {
-    margin: 8rem 0 4rem 0;
-  }
-
-  // label caption
-  h3 {
-    font-size: 1.4rem;
-    margin: 4rem 0 1rem 0;
-    color: #616161;
-  }
-
-  .imageWrap {
-    margin: 3rem 0;
-
-    img {
-      width: 50%;
-      height: auto;
-      aspect-ratio: 1/1;
-      border-radius: 5px;
-      box-shadow: 0 0 5px #ccc;
-      margin: 0 auto;
-      display: block;
-
-      // 1px〜479px
-      ${min[0] + max[0]} {
-        width: 80%;
-      }
-    }
-  }
-
-  // Select Image Form
-  .imgChooseBtn {
-    width: 60%;
-    outline: 1px solid #ccc;
-    color: #616161;
-    margin-bottom: 5rem;
-
-    // 1px〜479px
-    ${min[0] + max[0]} {
-      width: 100%;
-    }
-
-    &:focus {
-      border: 1px solid #323232;
-      box-shadow: 0 0 8px #ccc;
-    }
-
-    &:hover {
-      transition: all 0.3s ease-in-out;
-      transform: translate(0, 4px);
-      box-shadow: 0 0 8px #ccc;
-    }
-  }
-
-  //! UPDATE Button (Props に渡すCSS)
-  .submitBtn {
-    width: 80%;
-    font-size: 2rem;
-    margin: 3rem auto;
-    display: block;
-    letter-spacing: 0.1rem;
-    position: relative;
-    overflow: hidden;
-
-    // For Animation
-    &:before {
-      position: absolute;
-      top: -50%;
-      left: -30%;
-      transform: rotate(30deg);
-      width: 50px;
-      height: 100px;
-      content: "";
-      background-image: linear-gradient(
-        left,
-        rgba(255, 255, 255, 0) 0%,
-        rgba(255, 255, 255, 1) 50%,
-        rgba(255, 255, 255, 0) 100%
-      );
-      background-image: -webkit-gradient(
-        linear,
-        left bottom,
-        right bottom,
-        color-stop(0%, rgba(255, 255, 255, 0)),
-        color-stop(50%, rgba(255, 255, 255, 1)),
-        color-stop(100%, rgba(255, 255, 255, 0))
-      );
-      animation: submitBtn 5s infinite linear;
-    }
-
-    &:hover {
-      transition: all 0.3s ease-in-out;
-      transform: translate(0, 4px);
-    }
-
-    @keyframes submitBtn {
-      10% {
-        left: 120%;
-      }
-      100% {
-        left: 120%;
-      }
-    }
-  }
-
-  // 送信中のボタンのスタイル (loadingState が true の時)
-  .submitBtn.loading {
-    opacity: 0.3;
-    cursor: not-allowed;
-  }
-
-  //! Paste Image URL Form
-  .pasteImgUrl {
-    padding: 1rem 1rem;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    outline: none;
-    font-size: 1rem;
-    letter-spacing: 0.1rem;
-    width: 60%;
-    margin-bottom: 4rem;
-
-    &:focus {
-      border: 1px solid #323232;
-      box-shadow: 0 0 8px #ccc;
-    }
-
-    // 1px〜479px
-    ${min[0] + max[0]} {
-      width: 100%;
-    }
-  }
-
-  // NO POST MESSAGE
-  .noPostMessage {
-    text-align: center;
-    font-size: 3rem;
-    margin: 2rem 0;
-  }
-`;
-
-//! ======================================================
-//! Main
-//! ======================================================
 const EditPostPage = () => {
   // useParam
   const { id: idUrl } = useParams<{ id: string }>();
@@ -428,10 +193,8 @@ const EditPostPage = () => {
       });
       // reset selected image value
       resetLocalFileSelectValue();
-
       // reset local selected file in useState
       setSelectedLocalFile(null);
-
       // setDisplayImg(image64);
     } else {
       console.log("Too Big");
@@ -559,7 +322,8 @@ const EditPostPage = () => {
   //! JSX
   //! ======================================================
   return (
-    <main css={EditPostCss}>
+    // <main css={EditPostCss}>
+    <main css={formStylesCSS}>
       <div className="container">
         <BackButton />
         <div className="row">
@@ -567,7 +331,6 @@ const EditPostPage = () => {
           {!currentData ||
           Object.keys(currentData).length === 0 ||
           !currentData.id ? (
-            // <h2 className="noPostMessage">No Post Found...</h2>
             <LoadingSpinner loading={true} />
           ) : (
             <form onSubmit={handleSubmit} className="detailItem">
@@ -678,15 +441,16 @@ const EditPostPage = () => {
 
               {/*//* Paste Image URL */}
               <h3>Paste Image URL</h3>
-              <input
-                name="imgUrl"
-                type="text"
-                placeholder="Paste the image URL here"
-                className="pasteImgUrl"
-                onChange={pasteImage}
-              />
-              {/* //! COMPONENT */}
-              <GoogleSearch />
+              <div className="googleImgSearchForms">
+                <input
+                  name="imgUrl"
+                  type="text"
+                  placeholder="Paste the image URL here"
+                  className="pasteImgUrl"
+                  onChange={pasteImage}
+                />
+                <GoogleSearch />
+              </div>
 
               {/* Button COMPONENT*/}
               <CommonBtn
