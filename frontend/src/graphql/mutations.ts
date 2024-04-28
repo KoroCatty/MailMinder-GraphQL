@@ -96,7 +96,9 @@ export const DELETE_CLOUDINARY_IMAGE_FILE = gql`
 export const CREATE_USER_PROFILE_IMAGE_MONGO = gql`
   mutation create_profile_img_mongo($userId: String!) {
     create_profile_img_mongo(userId: $userId) {
-      imageUrl
+      userId
+      imgCloudinaryUrl: String
+      imgCloudinaryId: String
     }
   }
 `;

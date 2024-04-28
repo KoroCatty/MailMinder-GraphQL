@@ -263,9 +263,6 @@ function Header({
                   <Nav.Link as={Link} to="/postlist" onClick={() => toTop()}>
                     All Posts
                   </Nav.Link>
-                  {/* <Nav.Link as={Link} to="/settings" onClick={() => toTop()} >
-                    Settings
-                  </Nav.Link> */}
                   <Nav.Link as={Link} to="/contact" onClick={() => toTop()}>
                     Contact
                   </Nav.Link>

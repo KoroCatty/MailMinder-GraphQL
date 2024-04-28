@@ -91,7 +91,7 @@ function fileFilter(req, file, cb) {
 // multerの設定を適用して、アップロード機能を初期化
 const upload = multer({ storage: LocalStorage, fileFilter });
 
-// 'img' という名前の単一の画像をアップロードするためのミドルウェアを設定
+// 'img' という名前の単一の画像をアップロードするためのミドルウェアを設定 (//! 注意: 'img' はフロントエンドの formData.append("img", selectedFile); と一致させる)
 const uploadSingleImage = upload.single("img");
 
 // 画像をアップロードするためのエンドポイントを追加
@@ -110,10 +110,11 @@ app.post("/uploads", uploadSingleImage, async (req, res) => {
 
     // Cloudinaryの設定
     const result = await cloudinaryConfig.uploader.upload(compressedFilePath, {
-      folder: "My Folder",
+      folder: "MailMinder",
       allowedFormats: ["jpg", "jpeg", "png", "webp", "gif"],
       transformation: [{ width: 800, height: 800, crop: "limit" }],
     });
+    console.log("Upload Result:", result);
 
     // Cloudinary が返してくれるもの
     // Response to FrontEnd (Frontendから POST でアクセスできるようにする)

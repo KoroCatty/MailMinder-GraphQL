@@ -13,6 +13,8 @@ const typeDefs = gql`
 
   type Image {
     imageUrl: String
+    imgCloudinaryUrl: String
+    imgCloudinaryId: String
   }
 
   # QUERY
@@ -94,6 +96,8 @@ const typeDefs = gql`
   input UserProfileImgInput {
     userId: ID!
     imageUrl: String!
+    imgCloudinaryUrl: String!
+    imgCloudinaryId: String!
   }
 
   # MUTATION (これらを resolver で使う)

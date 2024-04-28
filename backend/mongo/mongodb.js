@@ -1,4 +1,10 @@
 import mongoose from "mongoose";
+// CLOUDINARY
+// import cloudinaryConfig from "../cloudinary.js";
+
+// Sharp (Image compressor)
+import sharp from "sharp";
+
 import dotenv from "dotenv";
 dotenv.config();
 

@@ -36,9 +36,9 @@ async function deleteFile(filePath) {
 //! ==========================================================
 const resolvers = {
   Query: {
-    //* -----------------------------------------------
-    //* MongoDB - GET USER IMAGE
-    //* -----------------------------------------------
+    //! -----------------------------------------------
+    //! MongoDB - GET USER IMAGE
+    //! -----------------------------------------------
     getUserImgByUserId: async (_, args, context) => {
       // ログイン確認
       if (!context.userId) throw Error("You must be logged in 😱");

@@ -200,7 +200,6 @@ const HomeForms = ({ refetch }: RefetchProps) => {
     // Check if image64 is not null before reading its length
     if (image64 && image64.length > 10000) {
       setSelectedImage(image64);
-      // Handle error - maybe return a user-friendly error message
       setFormData({
         ...formData,
         imgUrl: image64,

@@ -1,22 +1,20 @@
 import { useState } from "react";
-
-// Emotion
+import axios from "axios";
 import { css } from "@emotion/react";
 import { min, max } from "../../../utils/mediaQueries";
+import { useMutation } from "@apollo/client";
+import { CREATE_USER_PROFILE_IMAGE_MONGO } from "../../../graphql/mutations";
 
 const settingAvatarStyles = css`
   display: flex;
-  /* text-align: center; */
   justify-content: space-between;
   align-items: center;
 
-  // 1px〜479px
   ${min[0] + max[0]} {
     flex-direction: column-reverse;
     margin-bottom: 4rem;
   }
 
-  // 480px〜767px
   ${min[1] + max[1]} {
     flex-direction: column-reverse;
     margin-bottom: 4rem;
@@ -32,6 +30,7 @@ const settingAvatarStyles = css`
     background-color: #fff;
     cursor: pointer;
   }
+
   button {
     display: block;
     padding: 10px 20px;
@@ -41,8 +40,6 @@ const settingAvatarStyles = css`
     border-radius: 4px;
     background-color: #fff;
     cursor: pointer;
-
-    // 1px〜479px
     ${min[0] + max[0]} {
       margin: 0 auto;
     }
@@ -56,51 +53,73 @@ const settingAvatarStyles = css`
 `;
 
 const SettingsAvatar = () => {
-  const [selectedImage, setSelectedImage] = useState<string | null>(null);
+  const [selectedFile, setSelectedFile] = useState<File | null>(null);
+  const [loading, setLoading] = useState(false);
+  const [createUserProfileImage, { loading: mutationLoading, error }] =
+    useMutation(CREATE_USER_PROFILE_IMAGE_MONGO);
 
-  //* 画像を選択した時に発火する関数
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    // <input type="file">から選択されたファイルのリストを提供するFileListオブジェクトを返し、[0]は選択されたファイルのリストの最初のファイルを指し、あれば返す
-    const file = e.target.files && e.target.files[0];
-    if (file) {
-      // URL.createObjectURL(file)は、選択されたファイルのURLを生成。このURLは、<img>タグなどのsrc属性でファイルを直接参照するために使用できます。
-      setSelectedImage(URL.createObjectURL(file));
+    if (e.target.files && e.target.files[0]) {
+      setSelectedFile(e.target.files[0]);
     }
   };
 
-  //! CREATE A USER PROFILE IMAGE
-  // const logout = async () => {
-  //   try {
-  //     const { data } = await client.mutate({ mutation: LOGOUT_MUTATION });
-  //     if (data.logout) {
-  //       setIsLoggedIn(false); // Update the state
-  //       navigate("/login");
-  //     }
-  //   } catch (error) {
-  //     console.error("ログアウト中にエラーが発生しました:", error);
-  //   }
-  // };
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    if (!selectedFile) {
+      alert("Please select a file to upload.");
+      return;
+    }
+    setLoading(true);
+    const formData = new FormData();
+    formData.append("img", selectedFile); //! multer の設定した名前と一致させる
+
+    // cloudinary endpoint (defined in server.js)
+    const SERVER_URL =
+      import.meta.env.VITE_PUBLIC_SERVER_URL || "http://localhost:5001/uploads";
+
+    try {
+      const response = await axios.post(SERVER_URL, formData, {
+        headers: { "Content-Type": "multipart/form-data" },
+      });
+      console.log(response.data);
+
+      const { cloudinaryUrl, cloudinary_id } = response.data;
+      if (!cloudinaryUrl || !cloudinary_id) {
+        console.error("Cloudinary URL or ID is missing.");
+      } else {
+        // Save MongoDB
+        await createUserProfileImage({
+          variables: {
+            userId: "11",
+            imgCloudinaryUrl: cloudinaryUrl,
+            imgCloudinaryId: cloudinary_id,
+          },
+        });
+      }
+    } catch (error) {
+      console.error("Error uploading the file:", error);
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  if (mutationLoading) return <p>Loading...</p>;
+  if (error) return <p>Error occurred: {error.message}</p>;
 
   return (
     <div css={settingAvatarStyles}>
-      <form>
-        {/* accept="image/*" は、画像ファイルのみを選択できるようにするためのもの */}
-        <input
-          type="file"
-          accept="image/*"
-          onChange={handleImageChange}
-          className=""
-        />
-        {/* Button */}
-        <button type="submit" className="">
-          SAVE
+      <form onSubmit={handleSubmit}>
+        <input type="file" accept="image/*" onChange={handleImageChange} />
+        <button type="submit" disabled={loading}>
+          Save
         </button>
       </form>
-
-      {/* 画像があれば表示 */}
-      <div className="">
-        {!selectedImage && <img src="/imgs/noImg.jpeg" alt="no Image" />}
-        {selectedImage && <img src={selectedImage} alt="chosen Image" />}
+      <div>
+        {!selectedFile && <img src="/imgs/noImg.jpeg" alt="no Image" />}
+        {selectedFile && (
+          <img src={URL.createObjectURL(selectedFile)} alt="Selected" />
+        )}
       </div>
     </div>
   );
