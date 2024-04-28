@@ -1,6 +1,9 @@
 import colors from "colors";
 import { ApolloServer } from "@apollo/server";
 
+// MongoDB
+// import './mongo/mongodb.js';
+
 import express from "express";
 import path from "path";
 
@@ -229,7 +232,7 @@ console.log(`🚀 Server ready at http://localhost:${PORT}`.cyan.underline);
 async function connectDB() {
   try {
     await prisma.$connect();
-    console.log("connected to MySQL! - DB接続成功💾".yellow.underline);
+    console.log("connected to MySQL! - DB接続成功💾".bgYellow);
   } catch (error) {
     console.error(
       "Error connecting to the database - DB接続が失敗しました😢".red.underline,

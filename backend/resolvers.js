@@ -18,6 +18,9 @@ cloudinary.config({
 import { PrismaClient } from "../prisma/generated/client/index.js";
 const prisma = new PrismaClient();
 
+// MongoDB モデル
+import Image from "./mongo/mongodb.js";
+
 //!  DELETE FILE Function (Get the file path from Delete resolver)
 async function deleteFile(filePath) {
   try {
@@ -33,6 +36,30 @@ async function deleteFile(filePath) {
 //! ==========================================================
 const resolvers = {
   Query: {
+    //* -----------------------------------------------
+    //* MongoDB - GET USER IMAGE
+    //* -----------------------------------------------
+    getUserImgByUserId: async (_, args, context) => {
+      // ログイン確認
+      if (!context.userId) throw Error("You must be logged in 😱");
+
+      // MongoDBからユーザーの画像情報を取得
+      try {
+        const image = await Image.findOne({ userId: String(args.userId) });
+
+        if (!image) {
+          // throw new Error("No image found for this user😅");
+          return {
+            imageUrl: "./imgs/default_icon.png",
+          };
+        }
+        return image;
+      } catch (error) {
+        console.error("Error fetching image from MongoDB:", error);
+        throw new Error("Failed to retrieve image.");
+      }
+    },
+
     //* -----------------------------------------------
     //* CHECK LOGIN STATUS
     //* -----------------------------------------------
@@ -123,13 +150,33 @@ const resolvers = {
   },
 
   Mutation: {
+    //! -----------------------------------------------
+    //! MongoDB - CREATE A USER PROFILE IMAGE
+    //! -----------------------------------------------
+    create_profile_img_mongo: async (_, args) => {
+      if (!context.userId) throw Error("You must be logged in 😱");
+
+      // ユーザーIDと画像URLをMongoDBに保存するロジック
+      const { userId, imageUrl } = args.input;
+      console.log(userId, imageUrl);
+
+      // Save to MongoDB
+      try {
+        const image = await Image.create({ userId, imageUrl });
+        return image;
+      } catch (error) {
+        console.error("Error saving image to MongoDB:", error);
+        throw new Error("Failed to save image.");
+      }
+    },
+
     //* ===============================================
-    //* CREATE USER
+    //* CREATE A USER
     //* ===============================================
     signupUser: async (_, args) => {
       //! Joi Validation
       const schema = Joi.object({
-        firstName: Joi.string().required().min(3).max(30).alphanum(), // alphanum() は英数字のみ
+        firstName: Joi.string().required().min(3).max(30),
         lastName: Joi.string().required().min(1).max(30),
         email: Joi.string().email().required(),
         password: Joi.string()

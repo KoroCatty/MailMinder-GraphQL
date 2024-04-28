@@ -8,7 +8,6 @@ import { css } from "@emotion/react";
 import { min, max } from "../utils/mediaQueries";
 const settingPageCss = css`
   position: relative;
-  /* height: 80vh; */
 
   &:before {
     content: "";

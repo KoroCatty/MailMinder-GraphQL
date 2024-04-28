@@ -58,3 +58,14 @@ export const GET_LOGGEDIN_USER_DETAILS = gql`
     }
   }
 `;
+
+//! MongoDB - GET USER IMG By USER ID
+export const GET_USER_IMG_BY_USER_ID = gql`
+  query getUserImage($userId: ID!) {
+    getUserImgByUserId(userId: $userId) {
+      imageUrl
+      # imgCloudinaryUrl
+      # imgCloudinaryId
+    }
+  }
+`;

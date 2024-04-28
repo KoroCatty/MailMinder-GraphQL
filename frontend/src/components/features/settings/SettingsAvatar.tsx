@@ -68,6 +68,19 @@ const SettingsAvatar = () => {
     }
   };
 
+  //! CREATE A USER PROFILE IMAGE
+  // const logout = async () => {
+  //   try {
+  //     const { data } = await client.mutate({ mutation: LOGOUT_MUTATION });
+  //     if (data.logout) {
+  //       setIsLoggedIn(false); // Update the state
+  //       navigate("/login");
+  //     }
+  //   } catch (error) {
+  //     console.error("ログアウト中にエラーが発生しました:", error);
+  //   }
+  // };
+
   return (
     <div css={settingAvatarStyles}>
       <form>

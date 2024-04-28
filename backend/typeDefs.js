@@ -11,6 +11,10 @@ const typeDefs = gql`
     token: String
   }
 
+  type Image {
+    imageUrl: String
+  }
+
   # QUERY
   type Query {
     users: [User!]! # return an array
@@ -18,6 +22,7 @@ const typeDefs = gql`
     PostsByUserLimit(id: ID!, limit: Int!): [Post!]! # limit を使ったresolver関数
     isLoggedIn: Boolean! # login しているかどうか
     getLoggedInUserDetails: User # login しているユーザーの詳細情報
+    getUserImgByUserId(userId: ID!): Image
   }
 
   #//!  実際にクライエントに返すデータの型(これを使い回す)
@@ -85,6 +90,12 @@ const typeDefs = gql`
     updatedAt: Date
   }
 
+  # //! MONGO - CREATE A USER PROFILE IMAGE
+  input UserProfileImgInput {
+    userId: ID!
+    imageUrl: String!
+  }
+
   # MUTATION (これらを resolver で使う)
   type Mutation {
     # CREATE USER
@@ -107,6 +118,10 @@ const typeDefs = gql`
     logout: Boolean! # return a boolean
     # DELETE A CLOUDINARY IMAGE FILE ON SERVER
     deleteCloudinaryImage(publicId: String): Boolean
+
+    # MONGO - CREATE USER PROFILE IMAGE
+    # create_profile_img_mongo(userId: String): Image
+    create_profile_img_mongo(input: UserProfileImgInput!): Image!
   }
 `;
 

@@ -8,6 +8,7 @@ import { Navbar, Nav, Container } from "react-bootstrap";
 import { useApolloClient, useQuery } from "@apollo/client"; // Main.tsx で wrapしたもの
 import { LOGOUT_MUTATION } from "../../graphql/mutations";
 import { GET_LOGGEDIN_USER_DETAILS } from "../../graphql/queries";
+import { GET_USER_IMG_BY_USER_ID } from "../../graphql/queries";
 
 // TYPE
 type PropsType = {
@@ -227,8 +228,19 @@ function Header({
   const { data: userData, loading: userLoading } = useQuery(
     GET_LOGGEDIN_USER_DETAILS,
     {
-      skip: !isLoggedIn, // isLoggedInがfalseの場合はクエリをスキップ
+      skip: !isLoggedIn, // クエリをスキップ (前者が残ったまま更新されない事を防ぐ)
       fetchPolicy: "cache-and-network", // キャッシュから読み込みつつ、ネットワークからも更新を試みる
+    },
+  );
+
+  //! ユーザーのプロフィール画像を取得
+  const { data: userImgData, loading: userImgLoading } = useQuery(
+    GET_USER_IMG_BY_USER_ID,
+    {
+      // ログイン中のユーザーIDを渡し、それを引数にして GraphQLで MongoDB から取得
+      variables: { userId: userData?.getLoggedInUserDetails.id }, // ex) userId: 2
+      skip: !isLoggedIn,
+      fetchPolicy: "cache-and-network",
     },
   );
 
@@ -249,7 +261,7 @@ function Header({
                     Home
                   </Nav.Link>
                   <Nav.Link as={Link} to="/postlist" onClick={() => toTop()}>
-                    Posts
+                    All Posts
                   </Nav.Link>
                   {/* <Nav.Link as={Link} to="/settings" onClick={() => toTop()} >
                     Settings
@@ -279,6 +291,23 @@ function Header({
               </div>
             )}
 
+            {/* //! User Profile Image  */}
+            {userImgLoading && !isLoggedIn ? (
+              ""
+            ) : (
+              <Nav.Link as={Link} to={isLoggedIn ? `/settings` : `/login`}>
+                <img
+                  style={{ width: "52px", height: "52px" }}
+                  className="rounded-circle"
+                  src={
+                    userImgData?.getUserImgByUserId?.imageUrl ||
+                    "./imgs/default_icon.png"
+                  }
+                  alt="Profile Img"
+                />
+              </Nav.Link>
+            )}
+
             <div className="navRight">
               {/* //! TOGGLE BUTTON */}
               <div className="ToggleThemeBtn__SP">
@@ -287,20 +316,6 @@ function Header({
                   setDarkTheme={setDarkTheme}
                 />
               </div>
-
-              {/*//!  Avatar Icon */}
-              {isLoggedIn ? (
-                <Nav.Link as={Link} to="/settings">
-                  <img
-                    src="https://picsum.photos/200"
-                    alt="avatar"
-                    className="rounded-circle"
-                    style={{ width: "40px", height: "40px" }}
-                  />
-                </Nav.Link>
-              ) : (
-                ""
-              )}
 
               {/* //! LOGOUT / LOGIN */}
               {isLoggedIn ? (
