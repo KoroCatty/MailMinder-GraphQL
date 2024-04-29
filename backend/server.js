@@ -7,6 +7,8 @@ import { ApolloServer } from "@apollo/server";
 import express from "express";
 import path from "path";
 
+import fs from "fs";
+
 // StandAloneServer -> Express server に変更するために必要なモジュール
 import { expressMiddleware } from "@apollo/server/express4";
 import { ApolloServerPluginDrainHttpServer } from "@apollo/server/plugin/drainHttpServer";
@@ -38,6 +40,7 @@ import sharp from "sharp";
 
 // Initialize express
 const app = express();
+// app.use(express.static('images'));
 
 app.use(
   cors({
@@ -45,6 +48,9 @@ app.use(
     credentials: true, //! allow cookies
   }),
 );
+
+// Setup body-parser to handle JSON data
+app.use(bodyParser.json({ limit: "50mb" }));
 
 app.use(cookieParser());
 
@@ -96,38 +102,54 @@ const uploadSingleImage = upload.single("img");
 
 // 画像をアップロードするためのエンドポイントを追加
 app.post("/uploads", uploadSingleImage, async (req, res) => {
-  try {
-    // 画像を圧縮 (圧縮した画像のファイル名を生成 (接頭辞を付与)
-    const compressedFilename = `compressed-${req.file.filename}`;
-    const compressedFilePath = path.join("uploads/", compressedFilename);
-    console.log(compressedFilename); // compressed-img-1700445713500.png
+  console.log(req.file);
+  if (!req.file) {
+    const { imageBase64 } = req.body;
+    if (!imageBase64) {
+      return res.status(400).send({ message: "No image provided" });
+    }
 
-    // 画像を圧縮して、uploadsフォルダに保存
-    await sharp(req.file.path)
-      .resize(800, 800) // サイズの変更
-      .jpeg({ quality: 40 }) // 画像の品質を50%にし、jpeg 形式に変換
-      .toFile(compressedFilePath); // 圧縮された画像をファイルに保存
-
-    // Cloudinaryの設定
-    const result = await cloudinaryConfig.uploader.upload(compressedFilePath, {
-      folder: "MailMinder",
-      allowedFormats: ["jpg", "jpeg", "png", "webp", "gif"],
-      transformation: [{ width: 800, height: 800, crop: "limit" }],
+    // Base64の処理
+    const filename = `image-${Date.now()}.png`;
+    const filePath = path.join("uploads", filename);
+    const base64Data = imageBase64.replace(/^data:image\/png;base64,/, "");
+    const dataBuffer = Buffer.from(base64Data, "base64");
+    fs.writeFile(filePath, dataBuffer, (err) => {
+      if (err) {
+        return res
+          .status(500)
+          .send({ message: "Failed to save the image", error: err });
+      }
+      res.send({ message: "Image uploaded successfully", filePath }); // ここでレスポンス送信
     });
-    console.log("Upload Result:", result);
+  } else {
+    // ファイルの圧縮処理
+    try {
+      const compressedFilename = `compressed-${req.file.filename}`;
+      const compressedFilePath = path.join("uploads/", compressedFilename);
+      await sharp(req.file.path)
+        .resize(800, 800)
+        .jpeg({ quality: 40 })
+        .toFile(compressedFilePath);
 
-    // Cloudinary が返してくれるもの
-    // Response to FrontEnd (Frontendから POST でアクセスできるようにする)
-    res.json({
-      url: `/uploads/${compressedFilename}`, // 圧縮された画像のURL(local)
-      cloudinaryUrl: result.secure_url, // 画像のURLを返す(cloudinary)
-      cloudinary_id: result.public_id, // 画像のIDを返す(cloudinary)
-    });
-    console.log(
-      "画像を Cloudinary & uploads にアップロードしました🎉".green.underline,
-    );
-  } catch (error) {
-    res.status(500).send({ error: error.message });
+      // Cloudinaryの処理
+      const result = await cloudinaryConfig.uploader.upload(
+        compressedFilePath,
+        {
+          folder: "MailMinder",
+          allowedFormats: ["jpg", "jpeg", "png", "webp", "gif"],
+          transformation: [{ width: 800, height: 800, crop: "limit" }],
+        },
+      );
+
+      res.json({
+        url: `/uploads/${compressedFilename}`,
+        cloudinaryUrl: result.secure_url,
+        cloudinary_id: result.public_id,
+      }); // ここでレスポンス送信
+    } catch (error) {
+      res.status(500).send({ error: error.message }); // エラー時にレスポンス送信
+    }
   }
 });
 

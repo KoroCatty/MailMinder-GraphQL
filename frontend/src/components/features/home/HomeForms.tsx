@@ -41,6 +41,14 @@ const HomeForms = ({ refetch }: RefetchProps) => {
   // local selected image
   const [selectedLocalFile, setSelectedLocalFile] = useState<File | null>(null);
 
+  // Cloudinary URL & ID (response by selfieImage function)
+  const [cloudinaryUrlSelfie, setCloudinaryUrlSelfie] = useState<string | null>(
+    null,
+  );
+  const [cloudinaryIdSelfie, setCloudinaryIdSelfie] = useState<string | null>(
+    null,
+  );
+
   // Reset the local selected image input value
   const resetLocalFileSelectValue = () => {
     if (fileInputRef.current) {
@@ -80,7 +88,7 @@ const HomeForms = ({ refetch }: RefetchProps) => {
     e.preventDefault();
     setLoadingState(true); // 送信処理開始時に送信ボタンの loadingをtrueに設定
 
-    // SERVER URL
+    // SERVER URL (Cloudinary エンドポイント)
     const SERVER_URL =
       import.meta.env.VITE_PUBLIC_SERVER_URL || "http://localhost:5001/uploads";
 
@@ -90,10 +98,10 @@ const HomeForms = ({ refetch }: RefetchProps) => {
     let cloudinaryUrl;
     let cloudinaryId;
 
-    //! 1. Upload the image to the server using AXIOS
+    //! 1. Upload the image to the Cloudinary using AXIOS
     if (selectedLocalFile) {
       const formData = new FormData();
-      formData.append("img", selectedLocalFile);
+      formData.append("img", selectedLocalFile); // backend で img として受け取る
       try {
         const response = await axios.post(SERVER_URL, formData, {
           headers: { "Content-Type": "multipart/form-data" },
@@ -143,8 +151,13 @@ const HomeForms = ({ refetch }: RefetchProps) => {
             title: formData.title,
             content: formData.content,
             imgUrl: imageUrlForDB,
-            imgCloudinaryUrl: cloudinaryUrl,
-            imgCloudinaryId: cloudinaryId,
+            // Selfie を取った場合は状態にセットされているのでそれを使用（selfieImageで requestの結果をセットしここでサーバーに送りMySQL に画像のパスが保存）
+            imgCloudinaryUrl: cloudinaryUrlSelfie
+              ? cloudinaryUrlSelfie
+              : cloudinaryUrl,
+            imgCloudinaryId: cloudinaryIdSelfie
+              ? cloudinaryIdSelfie
+              : cloudinaryId,
           },
         },
       });
@@ -152,6 +165,9 @@ const HomeForms = ({ refetch }: RefetchProps) => {
       await refetch();
       console.log("Refetched!");
       window.alert("Reminder added Successfully!");
+
+      setSelectedLocalFile(null); // Reset the local selected file
+      setDisplayImg("/imgs/noImg.jpeg"); // Reset the display image
     } catch (error) {
       console.error("Error saving post to database🫡:", error);
       return;
@@ -194,24 +210,74 @@ const HomeForms = ({ refetch }: RefetchProps) => {
   };
 
   //* ===================================================
-  //*  Selfie Image
+  //*  Selfie Image (Uploading to Cloudinary)
   //* ===================================================
-  const selfieImage = (image64: string | null) => {
-    // Check if image64 is not null before reading its length
+  // const selfieImage = async (image64: string | null) => {
+  //   if (image64 && image64.length > 10000) {
+  //     // shallow copy & update the state
+  //     setFormData((prev) => ({ ...prev, imgUrl: image64 }));
+  //     resetLocalFileSelectValue();
+  //     setDisplayImg(image64);
+
+  //     // image64 を blob に変換
+  //     const blob = await fetch(image64).then((res) => res.blob());
+  //     const formData = new FormData();
+
+  //     // Add to formData and send to backend
+  //     formData.append("img", blob, "image.png");
+
+  //     // SERVER URL
+  //     const SERVER_URL =
+  //       import.meta.env.VITE_PUBLIC_SERVER_URL ||
+  //       "http://localhost:5001/uploads";
+
+  //     try {
+  //       // cloudinary のエンドポイントに POST リクエスト
+  //       const response = await axios.post(SERVER_URL, formData, {
+  //         headers: { "Content-Type": "multipart/form-data" },
+  //       });
+  //       console.log("Image uploaded successfully:", response.data.cloudinaryUrl);
+  //     } catch (error) {
+  //       console.error("Error uploading image:", error);
+  //     }
+  //   } else {
+  //     console.log("Image too large");
+  //     alert("Image too large");
+  //   }
+  // };
+
+  // useState に response の内容を保存し、上の handleSubmit 関数で使い、DB に保存
+  const selfieImage = async (image64: string | null) => {
     if (image64 && image64.length > 10000) {
-      setSelectedImage(image64);
-      setFormData({
-        ...formData,
-        imgUrl: image64,
-      });
-      // reset selected image value
+      setFormData((prev) => ({ ...prev, imgUrl: image64 }));
       resetLocalFileSelectValue();
-      // reset local selected file in useState
-      setSelectedLocalFile(null);
       setDisplayImg(image64);
+      const blob = await fetch(image64).then((res) => res.blob());
+      const formData = new FormData();
+      formData.append("img", blob, "image.png");
+
+      const SERVER_URL =
+        import.meta.env.VITE_PUBLIC_SERVER_URL ||
+        "http://localhost:5001/uploads";
+
+      try {
+        const response = await axios.post(SERVER_URL, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        if (response.data.cloudinaryUrl) {
+          setCloudinaryUrlSelfie(response.data.cloudinaryUrl);
+          setCloudinaryIdSelfie(response.data.cloudinary_id);
+        }
+        console.log(
+          "Image uploaded successfully:",
+          response.data.cloudinaryUrl,
+        );
+      } catch (error) {
+        console.error("Error uploading image:", error);
+      }
     } else {
-      console.log("Too Big");
-      window.alert("Too Big");
+      console.log("Image too large");
+      alert("Image too large");
     }
   };
 
@@ -246,6 +312,7 @@ const HomeForms = ({ refetch }: RefetchProps) => {
         <TitleSmall title="UPLOAD IMAGE" className="uploadImgTitle" />
 
         {/* SELFIE COMPONENT (Pass the function )*/}
+        {/* <Selfie selfieImage={selfieImage} /> */}
         <Selfie selfieImage={selfieImage} />
 
         {/*//* DISPLAY IMG  画像があれば表示 */}

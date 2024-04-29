@@ -1,6 +1,9 @@
 // To get the current directory path (ESM module)
-import { promises as fs } from "fs";
+// import { promises as fs } from "fs";
 import { URL, fileURLToPath } from "url";
+
+import fs from "fs";
+import path from "path";
 
 import bcrypt from "bcryptjs";
 import Joi from "joi"; // Validation
@@ -20,6 +23,23 @@ const prisma = new PrismaClient();
 
 // MongoDB モデル
 import Image from "./mongo/mongodb.js";
+
+//! Save Base64 Image to Local Storage (backend/selfieImg)
+function saveBase64AsImageFile(base64Str, filename, directory) {
+  return new Promise((resolve, reject) => {
+    const base64Data = base64Str.replace(/^data:image\/png;base64,/, "");
+    const dataBuffer = Buffer.from(base64Data, "base64");
+    const filePath = path.join(directory, `${filename}.png`);
+
+    fs.mkdirSync(directory, { recursive: true });
+    try {
+      fs.writeFileSync(filePath, dataBuffer);
+      resolve("http://localhost:5001/" + filePath);
+    } catch (error) {
+      reject(error);
+    }
+  });
+}
 
 //!  DELETE FILE Function (Get the file path from Delete resolver)
 async function deleteFile(filePath) {
@@ -289,7 +309,8 @@ const resolvers = {
     //* CREATE A POST
     //* ===============================================
     createPost: async (_, args, context) => {
-      // await console.log(args) // typeDefsで定義済み
+      await console.log(args); // typeDefsで定義済み
+      // console.log(context)
 
       // Joi Validation
       const schema = Joi.object({
@@ -315,26 +336,33 @@ const resolvers = {
           "You must be logged in (Contextにトークンがありません)😱",
         );
       }
-
-      // DEMO LOGGED IN USER
-      // if (context.userId === 25 || context.userId === 2) {
-      //   throw new Error("SORRY, DEMO USER CANNOT CREATE A POST🙏🏻");
-      // }
       //! save to DB
-      // post は prisma.schema で定義済みのモデル
-      const newPost = await prisma.post.create({
-        data: {
-          title: args.postNew.title,
-          content: args.postNew.content,
-          imgUrl: args.postNew.imgUrl
-            ? args.postNew.imgUrl
-            : "/imgs/noImg.jpeg", // use the uploaded file URL or default
-          imgCloudinaryUrl: args.postNew.imgCloudinaryUrl, // CLOUDINARY URL
-          imgCloudinaryId: args.postNew.imgCloudinaryId, // CLOUDINARY ID
-          userId: context.userId,
-        },
-      });
-      return newPost;
+      try {
+        //* これを入れると、必ず画像を選択しないとエラーになる。デフォルト画像使えない
+        // let filePath = await saveBase64AsImageFile(
+        //   args.postNew.imgUrl,
+        //   `${args.postNew.title}`,
+        //   "./backend/selfieImg",
+        // );
+        // console.log("uploaded img path🔥:", filePath);
+
+        // post は prisma.schema で定義済みのモデル
+        const newPost = await prisma.post.create({
+          data: {
+            title: args.postNew.title,
+            content: args.postNew.content,
+            imgUrl: args.postNew.imgUrl
+              ? args.postNew.imgUrl
+              : "/imgs/noImg.jpeg", // use the uploaded file URL or default
+            imgCloudinaryUrl: args.postNew.imgCloudinaryUrl, // CLOUDINARY URL
+            imgCloudinaryId: args.postNew.imgCloudinaryId, // CLOUDINARY ID
+            userId: context.userId,
+          },
+        });
+        return newPost;
+      } catch (error) {
+        console.log(error);
+      }
     },
 
     //* ===============================================

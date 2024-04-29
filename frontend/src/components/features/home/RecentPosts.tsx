@@ -1,9 +1,7 @@
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
-
 // components
 import { TitleLarge } from "../../common/Titles";
-
 // Loading
 import LoadingSpinner from "../../common/LoadingSpinner";
 
@@ -109,6 +107,7 @@ const recentPostsCss = css`
 const RecentPosts = (limitPostsProps: LimitPostsPropsType) => {
   // Destructure Props
   const { data, loading, error, refetch } = limitPostsProps;
+  // console.log(data.PostsByUserLimit)
 
   // refetch posts
   useEffect(() => {
@@ -136,7 +135,17 @@ const RecentPosts = (limitPostsProps: LimitPostsPropsType) => {
                   {/* uploads から画像ファイルが削除されても、CLOUDINARY から取得 */}
                   {/* onError で画像の読み込みに失敗したときの処理 */}
                   <img
-                    src={item.imgUrl}
+                    // imageUrl が image64 である data:image から始まる場合は、Cloudinary から取得
+                    src={
+                      // If Cloudinary URL exists, use it
+                      item.imgCloudinaryUrl
+                        ? item.imgCloudinaryUrl
+                        : // Else, check if there's another URL provided and use it
+                          item.imgUrl
+                          ? item.imgUrl
+                          : // If neither is available, use a local fallback image
+                            "./images/no-image.png"
+                    }
                     onError={(e) => {
                       const imgElement = e.target as HTMLImageElement;
                       if (imgElement.src !== item.imgCloudinaryUrl) {

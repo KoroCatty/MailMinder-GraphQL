@@ -204,6 +204,7 @@ const Selfie: React.FC<SelfieProps> = ({ selfieImage }) => {
     // 画像をキャプチャする関数
     const handleCapture = () => {
       context.drawImage(player, 0, 0, canvas.width, canvas.height);
+
       setImage64(canvas.toDataURL()); // canvasからBase64形式の画像データを取得
     };
 
