@@ -408,7 +408,16 @@ const EditPostPage = () => {
               <div className="imageWrap">
                 {!selectedImage && (
                   <img
-                    src={currentData.imgUrl}
+                    src={
+                      // If Cloudinary URL exists, use it
+                      currentData.imgCloudinaryUrl
+                        ? currentData.imgCloudinaryUrl
+                        : // Else, check if there's another URL provided and use it
+                          currentData.imgUrl
+                          ? currentData.imgUrl
+                          : // If neither is available, use a local fallback image
+                            "./images/no-image.png"
+                    }
                     onError={(e) => {
                       const imgElement = e.target as HTMLImageElement;
                       if (imgElement.src !== currentData.imgCloudinaryUrl) {
@@ -421,33 +430,32 @@ const EditPostPage = () => {
                 {selectedImage && (
                   <img src={selectedImage} alt="chosen Image" />
                 )}
-              </div>
 
-              {/*//* IMAGE SELECT */}
-              <Form.Group controlId="formFileLg">
-                <h3>From Your Local File</h3>
-                <Form.Control
-                  ref={fileInputRef}
-                  className="imgChooseBtn"
-                  type="file"
-                  size="lg"
-                  accept="image/*" // 画像ファイルのみを選択できるようにする
-                  onChange={handleImageUpload}
-                  name="img"
-                />
-              </Form.Group>
-
-              {/*//* Paste Image URL */}
-              <h3>Paste Image URL</h3>
-              <div className="googleImgSearchForms">
-                <input
-                  name="imgUrl"
-                  type="text"
-                  placeholder="Paste the image URL here"
-                  className="pasteImgUrl"
-                  onChange={pasteImage}
-                />
-                <GoogleSearch />
+                {/*//* IMAGE SELECT */}
+                <Form.Group controlId="formFileLg">
+                  <h3>From Your Local File</h3>
+                  <Form.Control
+                    ref={fileInputRef}
+                    className="imgChooseBtn"
+                    type="file"
+                    size="lg"
+                    accept="image/*" // 画像ファイルのみを選択できるようにする
+                    onChange={handleImageUpload}
+                    name="img"
+                  />
+                  {/*//* Paste Image URL */}
+                  <h3>Paste Image URL</h3>
+                  <div className="googleImgSearchForms">
+                    <input
+                      name="imgUrl"
+                      type="text"
+                      placeholder="Paste the image URL here"
+                      className="pasteImgUrl"
+                      onChange={pasteImage}
+                    />
+                    <GoogleSearch />
+                  </div>
+                </Form.Group>
               </div>
 
               {/* Button COMPONENT*/}

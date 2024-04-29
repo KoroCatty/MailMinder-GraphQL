@@ -1,9 +1,6 @@
 import colors from "colors";
 import { ApolloServer } from "@apollo/server";
 
-// MongoDB
-// import './mongo/mongodb.js';
-
 import express from "express";
 import path from "path";
 
@@ -20,7 +17,7 @@ import cookieParser from "cookie-parser";
 
 // Schema and Resolvers
 import typeDefs from "./typeDefs.js";
-import resolvers from "./resolvers.js";
+import resolvers from "./resolvers/resolvers.js";
 
 // Token
 import jwt from "jsonwebtoken";

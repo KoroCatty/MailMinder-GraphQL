@@ -161,6 +161,8 @@ const HomeForms = ({ refetch }: RefetchProps) => {
           },
         },
       });
+      setCloudinaryUrlSelfie(null); // Reset the cloudinary URL
+      setCloudinaryIdSelfie(null); // Reset the cloudinary ID
       refetch(); // Props で受け取った refetch を実行
       await refetch();
       console.log("Refetched!");
@@ -210,57 +212,24 @@ const HomeForms = ({ refetch }: RefetchProps) => {
   };
 
   //* ===================================================
-  //*  Selfie Image (Uploading to Cloudinary)
+  //*  Selfie Image (Uploading to Cloudinary & save response to state)
   //* ===================================================
-  // const selfieImage = async (image64: string | null) => {
-  //   if (image64 && image64.length > 10000) {
-  //     // shallow copy & update the state
-  //     setFormData((prev) => ({ ...prev, imgUrl: image64 }));
-  //     resetLocalFileSelectValue();
-  //     setDisplayImg(image64);
-
-  //     // image64 を blob に変換
-  //     const blob = await fetch(image64).then((res) => res.blob());
-  //     const formData = new FormData();
-
-  //     // Add to formData and send to backend
-  //     formData.append("img", blob, "image.png");
-
-  //     // SERVER URL
-  //     const SERVER_URL =
-  //       import.meta.env.VITE_PUBLIC_SERVER_URL ||
-  //       "http://localhost:5001/uploads";
-
-  //     try {
-  //       // cloudinary のエンドポイントに POST リクエスト
-  //       const response = await axios.post(SERVER_URL, formData, {
-  //         headers: { "Content-Type": "multipart/form-data" },
-  //       });
-  //       console.log("Image uploaded successfully:", response.data.cloudinaryUrl);
-  //     } catch (error) {
-  //       console.error("Error uploading image:", error);
-  //     }
-  //   } else {
-  //     console.log("Image too large");
-  //     alert("Image too large");
-  //   }
-  // };
-
-  // useState に response の内容を保存し、上の handleSubmit 関数で使い、DB に保存
   const selfieImage = async (image64: string | null) => {
     if (image64 && image64.length > 10000) {
       setFormData((prev) => ({ ...prev, imgUrl: image64 }));
       resetLocalFileSelectValue();
       setDisplayImg(image64);
+      // blob に変換し、フォームデータに追加
       const blob = await fetch(image64).then((res) => res.blob());
       const formData = new FormData();
-      formData.append("img", blob, "image.png");
+      formData.append("img", blob, "image.png"); // img はバックエンドと一致させる
 
       const SERVER_URL =
         import.meta.env.VITE_PUBLIC_SERVER_URL ||
         "http://localhost:5001/uploads";
 
       try {
+        //! Save to Cloudinary
         const response = await axios.post(SERVER_URL, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
@@ -312,39 +281,38 @@ const HomeForms = ({ refetch }: RefetchProps) => {
         <TitleSmall title="UPLOAD IMAGE" className="uploadImgTitle" />
 
         {/* SELFIE COMPONENT (Pass the function )*/}
-        {/* <Selfie selfieImage={selfieImage} /> */}
         <Selfie selfieImage={selfieImage} />
 
         {/*//* DISPLAY IMG  画像があれば表示 */}
         <div className="imageWrap">
           <img src={displayImg} alt="Displayed Image" />
-        </div>
 
-        {/*//* IMAGE SELECT */}
-        <Form.Group controlId="formFileLg">
-          <h3>From Your Local File</h3>
-          <Form.Control
-            ref={fileInputRef}
-            className="imgChooseBtn"
-            type="file"
-            size="lg"
-            accept="image/*" // 画像ファイルのみを選択できるようにする
-            onChange={handleImageUpload}
-            name="img"
-          />
-        </Form.Group>
+          {/*//* IMAGE SELECT */}
+          <Form.Group controlId="formFileLg" className="forms">
+            <h3>From Your Local File</h3>
+            <Form.Control
+              ref={fileInputRef}
+              className="imgChooseBtn"
+              type="file"
+              size="lg"
+              accept="image/*" // 画像ファイルのみを選択できるようにする
+              onChange={handleImageUpload}
+              name="img"
+            />
 
-        {/*//* Paste Image URL */}
-        <h3>Paste Image URL</h3>
-        <div className="googleImgSearchForms">
-          <input
-            name="imgUrl"
-            type="text"
-            placeholder="Paste the image URL here"
-            className="pasteImgUrl"
-            onChange={pasteImage}
-          />
-          <GoogleSearch />
+            {/*//* Paste Image URL */}
+            <h3>Paste Image URL</h3>
+            <div className="googleImgSearchForms">
+              <input
+                name="imgUrl"
+                type="text"
+                placeholder="Paste the image URL here"
+                className="pasteImgUrl"
+                onChange={pasteImage}
+              />
+              <GoogleSearch />
+            </div>
+          </Form.Group>
         </div>
 
         {/* Button COMPONENT*/}

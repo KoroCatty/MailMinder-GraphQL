@@ -2,9 +2,6 @@
 // import { promises as fs } from "fs";
 import { URL, fileURLToPath } from "url";
 
-import fs from "fs";
-import path from "path";
-
 import bcrypt from "bcryptjs";
 import Joi from "joi"; // Validation
 import jwt from "jsonwebtoken";
@@ -18,28 +15,11 @@ cloudinary.config({
 });
 
 // プリズマクライエントのインスタンスを格納
-import { PrismaClient } from "../prisma/generated/client/index.js";
+import { PrismaClient } from "../../prisma/generated/client/index.js";
 const prisma = new PrismaClient();
 
 // MongoDB モデル
-import Image from "./mongo/mongodb.js";
-
-//! Save Base64 Image to Local Storage (backend/selfieImg)
-function saveBase64AsImageFile(base64Str, filename, directory) {
-  return new Promise((resolve, reject) => {
-    const base64Data = base64Str.replace(/^data:image\/png;base64,/, "");
-    const dataBuffer = Buffer.from(base64Data, "base64");
-    const filePath = path.join(directory, `${filename}.png`);
-
-    fs.mkdirSync(directory, { recursive: true });
-    try {
-      fs.writeFileSync(filePath, dataBuffer);
-      resolve("http://localhost:5001/" + filePath);
-    } catch (error) {
-      reject(error);
-    }
-  });
-}
+import Image from "../mongo/mongodb.js";
 
 //!  DELETE FILE Function (Get the file path from Delete resolver)
 async function deleteFile(filePath) {
@@ -51,124 +31,7 @@ async function deleteFile(filePath) {
   }
 }
 
-//! ==========================================================
-//! Resolvers
-//! ==========================================================
-const resolvers = {
-  Query: {
-    //! -----------------------------------------------
-    //! MongoDB - GET USER IMAGE
-    //! -----------------------------------------------
-    getUserImgByUserId: async (_, args, context) => {
-      // ログイン確認
-      if (!context.userId) throw Error("You must be logged in 😱");
-
-      // MongoDBからユーザーの画像情報を取得
-      try {
-        const image = await Image.findOne({ userId: String(args.userId) });
-
-        if (!image) {
-          // throw new Error("No image found for this user😅");
-          return {
-            imageUrl: "./imgs/default_icon.png",
-          };
-        }
-        return image;
-      } catch (error) {
-        console.error("Error fetching image from MongoDB:", error);
-        throw new Error("Failed to retrieve image.");
-      }
-    },
-
-    //* -----------------------------------------------
-    //* CHECK LOGIN STATUS
-    //* -----------------------------------------------
-    isLoggedIn: (_, args, context) => {
-      return Boolean(context.userId); // httpOnly で取得したトークンがあるかどうか
-    },
-
-    //* -----------------------------------------------
-    //* GET LOGGED IN USER INFO
-    //* -----------------------------------------------
-    getLoggedInUserDetails: async (_, args, context) => {
-      // forbidden error means you are not allowed to do this
-      if (!context.userId) throw Error("You must be logged in 😱");
-
-      // 自分の情報を取得
-      const LoggedInUser = await prisma.user.findUnique({
-        where: {
-          id: context.userId,
-        },
-      });
-      return LoggedInUser;
-    },
-
-    //* -----------------------------------------------
-    //* GET ALL USERS
-    //* -----------------------------------------------
-    // context は server.js で定義済みで、ログインしていると、そのユーザーの情報が入っている
-    users: async (_, args, context) => {
-      // forbidden error means you are not allowed to do this
-      if (!context.userId) throw Error("You must be logged in 😱");
-
-      // 自分以外のユーザーを全て取得
-      const users = await prisma.user.findMany({
-        orderBy: { createdAt: "desc" }, // 新しい順に並べる
-        where: {
-          id: {
-            not: context.userId, // 自分以外のユーザーを取得
-          },
-        },
-      });
-      return users;
-    },
-
-    //* -----------------------------------------------
-    //* GET ALL POSTS BY USER ID
-    //* -----------------------------------------------
-    PostsByUser: async (_, args, context) => {
-      // Error means you are not allowed to do this
-      if (!context.userId) throw Error("You must be logged in 😱");
-      // 自分の投稿を全て取得 (postはPostモデル in typeDefs.js)
-      const posts = await prisma.post.findMany({
-        take: args.first, // 取得する投稿の数
-        skip: args.skip, // スキップする投稿の数
-        totalCount: args.totalCount, // 全ての投稿の数
-        orderBy: { updatedAt: "desc" }, // 更新された順（または新しく作成された順）に並べる
-        where: {
-          userId: context.userId, // 自分の投稿を取得(ログイン者)
-        },
-      });
-
-      // 全投稿数をDBから取得
-      const totalCount = await prisma.post.count({
-        where: { userId: context.userId },
-      });
-      return {
-        items: posts,
-        totalCount: totalCount,
-      };
-    },
-
-    //* -----------------------------------------------
-    //* GET ALL POSTS BY USER ID LIMIT 4
-    //* -----------------------------------------------
-    PostsByUserLimit: async (_, args, context) => {
-      // Error means you are not allowed to do this
-      if (!context.userId) throw Error("You must be logged in 😱");
-
-      // 自分の投稿を全て取得 (postはPostモデル in typeDefs.js)
-      const posts = await prisma.post.findMany({
-        orderBy: { updatedAt: "desc" }, // 更新された順（または新しく作成された順）に並べる
-        where: {
-          userId: context.userId, // 自分の投稿を取得(ログイン者)
-        },
-        take: args.limit, // limitの適用
-      });
-      return posts;
-    },
-  },
-
+const mutations = {
   Mutation: {
     //! -----------------------------------------------
     //! MongoDB - CREATE A USER PROFILE IMAGE
@@ -338,14 +201,6 @@ const resolvers = {
       }
       //! save to DB
       try {
-        //* これを入れると、必ず画像を選択しないとエラーになる。デフォルト画像使えない
-        // let filePath = await saveBase64AsImageFile(
-        //   args.postNew.imgUrl,
-        //   `${args.postNew.title}`,
-        //   "./backend/selfieImg",
-        // );
-        // console.log("uploaded img path🔥:", filePath);
-
         // post は prisma.schema で定義済みのモデル
         const newPost = await prisma.post.create({
           data: {
@@ -377,12 +232,6 @@ const resolvers = {
           "You must be logged in (Contextにトークンがありません)😱",
         );
       }
-
-      // DEMO LOGGED IN USER
-      // if (context.userId === 25 || context.userId === 2) {
-      //   throw new Error("SORRY, DEMO USER CANNOT DELETE A POST🙏🏻");
-      // }
-
       console.log(args.id + " - PostID 👆🏻");
 
       // post は prisma.schema で定義済みのモデル
@@ -454,11 +303,6 @@ const resolvers = {
         );
       }
 
-      // DEMO LOGGED IN USER
-      // if (context.userId === 25 || context.userId === 2) {
-      //   throw new Error("SORRY, DEMO USER CANNOT UPDATE A POST🙏🏻");
-      // }
-
       // post は prisma.schema で定義済みのモデル
       const updatedPost = await prisma.post.update({
         where: {
@@ -487,11 +331,6 @@ const resolvers = {
           "You must be logged in (Contextにトークンがありません)😱",
         );
       }
-
-      // DEMO LOGGED IN USER
-      // if (context.userId === 25 || context.userId === 2) {
-      //   return;
-      // }
 
       // postモデルから投稿を取得
       const post = await prisma.post.findUnique({
@@ -531,11 +370,6 @@ const resolvers = {
     //* DELETE CLOUDINARY IMAGE FILE ON SERVER
     //* ===============================================
     deleteCloudinaryImage: async (_, { publicId }, context) => {
-      // DEMO LOGGED IN USER
-      // if (context.userId === 25 || context.userId === 2) {
-      //   return;
-      // }
-
       try {
         const result = await cloudinary.uploader.destroy(publicId);
         return result.result === "ok";
@@ -548,4 +382,4 @@ const resolvers = {
   },
 };
 
-export default resolvers;
+export default mutations;

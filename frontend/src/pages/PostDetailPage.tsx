@@ -307,7 +307,16 @@ const PostsDetailPage = () => {
               {/* TITLE */}
               <h1>{filteredItem.title}</h1>
               <img
-                src={filteredItem.imgUrl}
+                src={
+                  // If Cloudinary URL exists, use it
+                  filteredItem.imgCloudinaryUrl
+                    ? filteredItem.imgCloudinaryUrl
+                    : // Else, check if there's another URL provided and use it
+                      filteredItem.imgUrl
+                      ? filteredItem.imgUrl
+                      : // If neither is available, use a local fallback image
+                        "./images/no-image.png"
+                }
                 onError={(e) => {
                   const imgElement = e.target as HTMLImageElement;
                   if (imgElement.src !== filteredItem.imgCloudinaryUrl) {

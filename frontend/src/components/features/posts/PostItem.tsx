@@ -142,7 +142,16 @@ const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
         ) : (
           <Link to={`/postdetails/${postProp.id}`} className="card">
             <img
-              src={postProp.imgUrl}
+              src={
+                // If Cloudinary URL exists, use it
+                postProp.imgCloudinaryUrl
+                  ? postProp.imgCloudinaryUrl
+                  : // Else, check if there's another URL provided and use it
+                    postProp.imgUrl
+                    ? postProp.imgUrl
+                    : // If neither is available, use a local fallback image
+                      "./images/no-image.png"
+              }
               onError={(e) => {
                 const imgElement = e.target as HTMLImageElement;
                 if (imgElement.src !== postProp.imgCloudinaryUrl) {

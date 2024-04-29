@@ -5,9 +5,12 @@ import { min, max } from "../utils/mediaQueries";
 import colorSchema from "../utils/colorSchema";
 export const formStylesCSS = css`
   position: relative;
+  max-width: 1080px;
+  margin: 0 auto;
 
   // 1px〜479px
   ${min[0] + max[0]} {
+    width: 90%;
   }
   // 480px〜767px
   ${min[1] + max[1]} {
@@ -52,13 +55,23 @@ export const formStylesCSS = css`
   // label caption
   h3 {
     font-size: 1.4rem;
-    margin: 4rem 0 1rem 0;
+    margin-bottom: 1rem;
     color: #616161;
+
+    // 1px〜479px
+    ${min[0] + max[0]} {
+      margin: 2rem 0 1rem 0;
+    }
+
+    // 480px〜767px
+    ${min[1] + max[1]} {
+      margin: 2rem 0 1rem 0;
+    }
   }
 
   // Select Image Form
   .imgChooseBtn {
-    width: 60%;
+    width: 100%;
     outline: 1px solid #ccc;
     color: #616161;
     margin-bottom: 5rem;
@@ -76,26 +89,77 @@ export const formStylesCSS = css`
 
     // 1px〜479px
     ${min[0] + max[0]} {
-      width: 100%;
+      margin-bottom: 3.5rem;
+    }
+    // 480px〜767px
+    ${min[1] + max[1]} {
+      margin-bottom: 3.5rem;
     }
   }
 
   .imageWrap {
-    margin: 3rem 0;
+    display: flex;
+    gap: 5rem;
+    padding-bottom: 3rem;
 
     // 1px〜479px
     ${min[0] + max[0]} {
-      margin: 2rem 0 0 0;
+      display: block;
+      margin-top: 1rem;
+      padding-bottom: 2rem;
+    }
+
+    // 480px〜767px
+    ${min[1] + max[1]} {
+      display: block;
+      margin-top: 2rem;
+      padding-bottom: 2rem;
+    }
+
+    // 768px
+    ${min[2] + max[2]} {
+      gap: 2rem;
+    }
+
+    //
+    ${min[3] + max[3]} {
+      gap: 2rem;
     }
 
     img {
-      width: 50%;
+      width: 40%;
       height: auto;
-      aspect-ratio: 1/1;
       border-radius: 5px;
       box-shadow: 0 0 5px #ccc;
-      margin: 0 auto;
       display: block;
+
+      // 1px〜479px
+      ${min[0] + max[0]} {
+        width: 70%;
+        margin: 0 auto;
+      }
+
+      // 480px〜767px
+      ${min[1] + max[1]} {
+        width: 80%;
+        margin: 0 auto;
+      }
+    }
+
+    .forms {
+      width: 41%;
+
+      // 1px〜479px
+      ${min[0] + max[0]} {
+        width: 90%;
+        margin: 0 auto;
+      }
+
+      // 480px〜767px
+      ${min[1] + max[1]} {
+        width: 90%;
+        margin: 0 auto;
+      }
     }
   }
 
@@ -109,6 +173,11 @@ export const formStylesCSS = css`
     position: relative;
     overflow: hidden;
 
+    // 480px〜767px
+    ${min[0] + max[0]} {
+      margin: 0 auto 2rem auto;
+    }
+
     &:hover {
       transition: all 0.3s ease-in-out;
       transform: translate(0, 4px);
@@ -117,20 +186,8 @@ export const formStylesCSS = css`
   }
 
   .googleImgSearchForms {
-    display: flex;
-    align-items: center;
     height: 60px;
-    gap: 1rem;
     margin-bottom: 6rem;
-
-    // 1px〜479px
-    ${min[0] + max[0]} {
-      display: block;
-    }
-    // 480px〜767px
-    ${min[1] + max[1]} {
-      display: block;
-    }
   }
 
   // 送信中のボタンのスタイル (loadingState が true の時)
@@ -147,7 +204,7 @@ export const formStylesCSS = css`
     outline: none;
     font-size: 1rem;
     letter-spacing: 0.1rem;
-    width: 50%;
+    width: 100%;
 
     &:focus {
       border: 1px solid #323232;

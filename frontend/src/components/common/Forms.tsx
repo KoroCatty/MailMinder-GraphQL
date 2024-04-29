@@ -45,7 +45,7 @@ const formsCss = css`
 
         // 1px〜479px
         ${min[0] + max[0]} {
-          transform: translateY(-40px);
+          transform: translateY(-60px);
         }
       }
       + .label.textArea {

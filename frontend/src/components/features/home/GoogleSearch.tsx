@@ -8,8 +8,9 @@ import { css } from "@emotion/react";
 import { min, max } from "../../../utils/mediaQueries";
 const googleSearchStyles = css`
   display: flex;
-  align-items: flex-end;
   width: fit-content;
+  margin: 2rem 0;
+  width: 100%;
 
   // 1px〜479px
   ${min[0] + max[0]} {
