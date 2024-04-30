@@ -41,6 +41,8 @@ const mutations = {
       const { userId, imgCloudinaryUrl, imgCloudinaryId } = args.input;
       // Save to MongoDB
       try {
+        const existingImage = await Image.findOne({ userId });
+        if (existingImage) return existingImage;
         const image = await Image.create({
           userId,
           imgCloudinaryUrl,
@@ -388,6 +390,29 @@ const mutations = {
         console.error(error);
         console.log("This public_id missing error is not a problem.");
         return false;
+      }
+    },
+
+    //* ===============================================
+    //* CHANGE EMAIL ADDRESS
+    //* ===============================================
+    updateUserEmail: async (_, args, context) => {
+      if (!context.userId) throw Error("You must be logged in 😱");
+      const { email } = args;
+      // Save to DB
+      try {
+        const updatedUser = await prisma.user.update({
+          where: {
+            id: context.userId,
+          },
+          data: {
+            email,
+          },
+        });
+        return updatedUser;
+      } catch (error) {
+        console.error(error);
+        throw new Error("Failed to update email.");
       }
     },
   },

@@ -387,7 +387,6 @@ const PostsDetailPage = () => {
                     cloudinaryId_muchWithPostId.imgCloudinaryId,
                   );
                 }
-                window.location.reload();
               }}
             >
               {deleteLoading ? "Deleting..." : "Delete"}

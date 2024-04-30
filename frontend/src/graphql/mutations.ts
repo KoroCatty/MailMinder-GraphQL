@@ -66,6 +66,16 @@ export const UPDATE_POST_BY_ID = gql`
   }
 `;
 
+//! UPDATE A USER EMAIL
+export const UPDATE_USER_EMAIL = gql`
+  mutation updateUserEmail($email: String!, $userId: ID!) {
+    updateUserEmail(email: $email, userId: $userId) {
+      id
+      email
+    }
+  }
+`;
+
 //! LOGOUT USER
 export const LOGOUT_MUTATION = gql`
   mutation Logout {

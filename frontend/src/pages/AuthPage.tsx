@@ -46,6 +46,7 @@ const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
         window.scrollTo(0, 0);
         setIsLoggedIn(true); // Update the state
 
+        // セッションストレージに保存
         const setSessionStorageWithExpiry = (
           key: string,
           value: string,
@@ -60,23 +61,28 @@ const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
           sessionStorage.setItem(key, JSON.stringify(item));
         };
 
+        const removeSessionStorageItem = (key: string) => {
+          sessionStorage.removeItem(key);
+        };
+
         // セッションストレージにパスを保存
         const path = sessionStorage.getItem("postPath");
         if (path) {
-          setSessionStorageWithExpiry("postPath", path, 86400000); // 24時間後に期限切れ
+          // 3時間後に期限切れ
+          setSessionStorageWithExpiry("postPath", path, 1000 * 60 * 60 * 3);
           navigate(path);
         } else {
           navigate("/");
         }
-      },
 
-      // if there is a path in sessionStorage, go to that path (Emailパス対応)
-      //   if (sessionStorage.getItem("postPath")) {
-      //     navigate(sessionStorage.getItem("postPath")!);
-      //   } else {
-      //     navigate("/");
-      //   }
-      // },
+        // 3時間後にセッションストレージから削除
+        setTimeout(
+          () => {
+            removeSessionStorageItem("postPath");
+          },
+          1000 * 60 * 60 * 3,
+        );
+      },
     },
   );
 

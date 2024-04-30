@@ -131,15 +131,14 @@ const SettingsAvatar = () => {
           },
         });
       }
-      console.log(userImgData.getUserImgByUserId.imgCloudinaryId);
 
       //! REST API
       const response = await axios.post(SERVER_URL, formData, {
         headers: { "Content-Type": "multipart/form-data" },
       });
-      console.log(response.data);
-      // destructuring the response data
-      const { cloudinaryUrl, cloudinary_id } = response.data;
+      // console.log(response.data); // debug
+
+      const { cloudinaryUrl, cloudinary_id } = response.data; // destructuring the response data
 
       const input = {
         userId: userData.getLoggedInUserDetails.id,
@@ -151,23 +150,22 @@ const SettingsAvatar = () => {
         console.error("Cloudinary URL or ID is missing.");
         return;
       }
-
       //! GraphQL UPDATE
       // DB 内にすでに画像がある場合、それをupdateする
-      if (userImgData) {
+      if (userImgData?.getUserImgByUserId?.imgCloudinaryUrl) {
         await updateUserProfileImage({
           variables: { input },
         });
+        window.alert("Profile image uploaded successfully.");
         window.location.reload();
-        window.alert("Profile image updated successfully.");
       } else {
         //! GraphQL CREATE
         //! Save Response data to MongoDB
         await createUserProfileImage({
           variables: { input },
         });
-        window.location.reload();
         window.alert("Profile image created successfully.");
+        window.location.reload();
       }
     } catch (error) {
       console.error("Error uploading the file:", error);
@@ -197,7 +195,8 @@ const SettingsAvatar = () => {
               <img
                 src={
                   userImgData
-                    ? userImgData.getUserImgByUserId.imgCloudinaryUrl
+                    ? userImgData.getUserImgByUserId.imgCloudinaryUrl ||
+                      "/imgs/noImg.jpeg"
                     : "/imgs/noImg.jpeg"
                 }
                 onError={(e) => {

@@ -183,8 +183,7 @@ const HomeForms = ({ refetch }: RefetchProps) => {
     // Create a local URL for the file to display it in an img tag
     const localImageUrl = URL.createObjectURL(file);
     // console.log(localImageUrl) // blob:http://localhost:3000/9ad32e0f-6952-45c7-99c9-051430a562a9
-    // Update the display image
-    setDisplayImg(localImageUrl);
+    setDisplayImg(localImageUrl); // Update the display image
   };
 
   //* ===================================================
