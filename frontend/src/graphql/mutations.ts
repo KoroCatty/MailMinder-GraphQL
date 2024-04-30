@@ -94,11 +94,22 @@ export const DELETE_CLOUDINARY_IMAGE_FILE = gql`
 
 //! MongoDB - CREATE A USER PROFILE IMAGE
 export const CREATE_USER_PROFILE_IMAGE_MONGO = gql`
-  mutation create_profile_img_mongo($userId: String!) {
-    create_profile_img_mongo(userId: $userId) {
+  mutation CreateUserProfileImage($input: UserProfileImgInput!) {
+    create_profile_img_mongo(input: $input) {
       userId
-      imgCloudinaryUrl: String
-      imgCloudinaryId: String
+      imgCloudinaryUrl
+      imgCloudinaryId
+    }
+  }
+`;
+
+//! MongoDB - UPDATE A USER PROFILE IMAGE
+export const UPDATE_USER_PROFILE_IMAGE_MONGO = gql`
+  mutation UpdateUserProfileImage($input: UserProfileImgInput!) {
+    update_profile_img_mongo(input: $input) {
+      userId
+      imgCloudinaryUrl
+      imgCloudinaryId
     }
   }
 `;

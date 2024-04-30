@@ -204,6 +204,7 @@ const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
               }
               //! Delete Cloudinary Image File that much with Post ID
               handleCloudinary_deleteImg(postProp.imgCloudinaryId);
+              window.location.reload();
             }}
           >
             {loading ? "Deleting..." : "Delete"}

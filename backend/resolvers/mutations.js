@@ -36,21 +36,35 @@ const mutations = {
     //! -----------------------------------------------
     //! MongoDB - CREATE A USER PROFILE IMAGE
     //! -----------------------------------------------
-    create_profile_img_mongo: async (_, args) => {
+    create_profile_img_mongo: async (_, args, context) => {
       if (!context.userId) throw Error("You must be logged in 😱");
-
-      // ユーザーIDと画像URLをMongoDBに保存するロジック
-      const { userId, imageUrl } = args.input;
-      console.log(userId, imageUrl);
-
+      const { userId, imgCloudinaryUrl, imgCloudinaryId } = args.input;
       // Save to MongoDB
       try {
-        const image = await Image.create({ userId, imageUrl });
+        const image = await Image.create({
+          userId,
+          imgCloudinaryUrl,
+          imgCloudinaryId,
+        });
         return image;
       } catch (error) {
         console.error("Error saving image to MongoDB:", error);
         throw new Error("Failed to save image.");
       }
+    },
+
+    //! -----------------------------------------------
+    //! MongoDB - UPDATE A USER PROFILE IMAGE
+    //! -----------------------------------------------
+    update_profile_img_mongo: async (_, args, context) => {
+      if (!context.userId) throw Error("You must be logged in 😱");
+
+      const { userId, imgCloudinaryUrl, imgCloudinaryId } = args.input;
+      return await Image.updateOne(
+        { userId: userId }, // MongoDB内のuserIdフィールドを指定
+        { imgCloudinaryUrl, imgCloudinaryId },
+        { new: true }, // 更新後のドキュメントを返す
+      );
     },
 
     //* ===============================================
@@ -173,8 +187,6 @@ const mutations = {
     //* ===============================================
     createPost: async (_, args, context) => {
       await console.log(args); // typeDefsで定義済み
-      // console.log(context)
-
       // Joi Validation
       const schema = Joi.object({
         title: Joi.string().required().max(255).messages({
@@ -244,13 +256,10 @@ const mutations = {
       // Delete the actual Image File if the post exists
       if (deletedPost) {
         const url = deletedPost.imgUrl;
-        // console.log(url); // ex) http://localhost:5001/uploads/img-1698041204833.jpg
-
         // 実際の画像ファイルが存在しないpostがある場合処理をここで停止 (エラー対策)
         if (url.includes("noImg.jpeg")) {
           return deletedPost;
         }
-
         // Get the current directory path (ESM module)
         // '.' は現在のディレクトリを示し、それを import.meta.url の基準として解釈することで、ディレクトリのフルURLが得られる
         const __dirname = fileURLToPath(new URL(".", import.meta.url));
@@ -261,7 +270,6 @@ const mutations = {
         // 正規表現 ^\/+ を使用して、文字列の先頭にある1つ以上のスラッシュ (/) を検出し、currentURL に置き換える
         const path = new URL(url).pathname.replace(/^\/+/, currentURL);
         // ex)  /Full-Stack/MailMinder-GraphQL/backend/../uploads/img-1698041204305.jpg
-
         // Pass the path defined above to the Function
         deleteFile(path);
       }
@@ -370,6 +378,7 @@ const mutations = {
     //* DELETE CLOUDINARY IMAGE FILE ON SERVER
     //* ===============================================
     deleteCloudinaryImage: async (_, { publicId }, context) => {
+      if (!context.userId) throw Error("You must be logged in 😱");
       try {
         const result = await cloudinary.uploader.destroy(publicId);
         return result.result === "ok";

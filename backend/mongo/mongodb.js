@@ -29,6 +29,8 @@ mongoose
 const imageSchema = new mongoose.Schema({
   userId: String, // MySQLのユーザーIDと連携
   imageUrl: String,
+  imgCloudinaryUrl: String,
+  imgCloudinaryId: String,
 });
 const Image = mongoose.model("Image", imageSchema);
 

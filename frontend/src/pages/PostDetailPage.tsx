@@ -264,8 +264,8 @@ const PostsDetailPage = () => {
           <LoadingSpinner loading={true} />
         ) : error ? (
           <p>Error: {error.message}</p>
-        ) : filteredPosts && filteredPosts.length > 0 ? (
-          filteredPosts.map((filteredItem: postProp) => (
+        ) : filteredPosts && filteredPosts?.length > 0 ? (
+          filteredPosts?.map((filteredItem: postProp) => (
             <div key={filteredItem.id} className="detailItem">
               {/*  CREATED & UPDATED DATE */}
               <div className="timeContainer">
@@ -375,7 +375,7 @@ const PostsDetailPage = () => {
 
                 setTimeout(() => {
                   navigate("/postlist");
-                }, 500);
+                }, 1500);
 
                 //! Delete Cloudinary Image File that much with Post ID
                 const cloudinaryId_muchWithPostId = data.PostsByUser.items.find(

@@ -12,6 +12,7 @@ const typeDefs = gql`
   }
 
   type Image {
+    userId: ID
     imageUrl: String
     imgCloudinaryUrl: String
     imgCloudinaryId: String
@@ -74,10 +75,7 @@ const typeDefs = gql`
   input PostInput {
     title: String!
     content: String!
-    # imgUrl: String
-    # imgUrl: File
     imgUrl: Upload
-    # imgFile: Upload
     imgCloudinaryUrl: String
     imgCloudinaryId: String
   }
@@ -92,10 +90,9 @@ const typeDefs = gql`
     updatedAt: Date
   }
 
-  # //! MONGO - CREATE A USER PROFILE IMAGE
+  # //! MONGO - CREATE A USER PROFILE IMAGE (Client to Server)
   input UserProfileImgInput {
     userId: ID!
-    imageUrl: String!
     imgCloudinaryUrl: String!
     imgCloudinaryId: String!
   }
@@ -123,9 +120,9 @@ const typeDefs = gql`
     # DELETE A CLOUDINARY IMAGE FILE ON SERVER
     deleteCloudinaryImage(publicId: String): Boolean
 
-    # MONGO - CREATE USER PROFILE IMAGE
-    # create_profile_img_mongo(userId: String): Image
+    # MONGO - CRUD For USER PROFILE IMAGE
     create_profile_img_mongo(input: UserProfileImgInput!): Image!
+    update_profile_img_mongo(input: UserProfileImgInput!): Image!
   }
 `;
 

@@ -29,7 +29,7 @@ const queries = {
         if (!image) {
           // throw new Error("No image found for this user😅");
           return {
-            imageUrl: "./imgs/default_icon.png",
+            imageUrl: "/imgs/default_icon.png",
           };
         }
         return image;

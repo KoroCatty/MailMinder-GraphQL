@@ -297,9 +297,17 @@ function Header({
                   style={{ width: "52px", height: "52px" }}
                   className="rounded-circle"
                   src={
-                    userImgData?.getUserImgByUserId?.imageUrl ||
-                    "./imgs/default_icon.png"
+                    userImgData?.getUserImgByUserId?.imgCloudinaryUrl ||
+                    // "/imgs/noImg.jpeg"
+                    "/imgs/default_icon.png"
                   }
+                  onError={(e) => {
+                    const imgElement = e.target as HTMLImageElement;
+                    if (imgElement) {
+                      // imgElement.src = "/imgs/noImg.jpeg";
+                      ("/imgs/default_icon.png");
+                    }
+                  }}
                   alt="Profile Img"
                 />
               </Nav.Link>

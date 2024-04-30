@@ -106,14 +106,8 @@ const HomeForms = ({ refetch }: RefetchProps) => {
         const response = await axios.post(SERVER_URL, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-        // console.log(response.data.url); // /uploads/img-1697934272148.jpg
 
-        // CLOUDINARY ID (Backend から返したもの)
-        await console.log(response.data.cloudinary_id);
-
-        //  CLOUDINARY URL  (Backend から返したもの)
-        await console.log(response.data.cloudinaryUrl);
-
+        // CLOUDINARY ID & URL (Backend から返したもの)
         // 初期化した変数に値を代入
         cloudinaryUrl = await response.data.cloudinaryUrl;
         cloudinaryId = await response.data.cloudinary_id;

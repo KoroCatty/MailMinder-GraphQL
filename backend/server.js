@@ -37,8 +37,6 @@ import sharp from "sharp";
 
 // Initialize express
 const app = express();
-// app.use(express.static('images'));
-
 app.use(
   cors({
     origin: true,
@@ -48,7 +46,6 @@ app.use(
 
 // Setup body-parser to handle JSON data
 app.use(bodyParser.json({ limit: "50mb" }));
-
 app.use(cookieParser());
 
 //* ==============================================================
@@ -74,7 +71,7 @@ const LocalStorage = multer.diskStorage({
 // check file type
 function fileFilter(req, file, cb) {
   // 受け入れられるファイルの拡張子を正規表現で定義
-  const filetypes = /jpe?g|png|gif|webp/;
+  const filetypes = /jpe?g|jpg|png|gif|webp/;
   // 受け入れられるMIMEタイプ（ファイルの種類）を正規表現で定義
   const mimetypes = /image\/jpe?g|image\/png|image\/gif|image\/webp/;
 
