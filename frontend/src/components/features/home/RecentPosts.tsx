@@ -148,8 +148,8 @@ const RecentPosts = (limitPostsProps: LimitPostsPropsType) => {
                     }
                     onError={(e) => {
                       const imgElement = e.target as HTMLImageElement;
-                      if (imgElement.src !== item.imgCloudinaryUrl) {
-                        imgElement.src = item.imgCloudinaryUrl;
+                      if (imgElement.src !== item.imgUrl) {
+                        imgElement.src = item.imgUrl;
                       }
                     }}
                     alt={item.title}

@@ -23,13 +23,15 @@ export const authPageCss = css`
   }
 
   input {
-    padding: 10px;
+    padding: 12px;
     margin: 10px;
     border-radius: 5px;
     border: 1px solid #ddd;
     outline: none;
     width: 50%;
     margin-bottom: 32px;
+    font-size: 1.4rem;
+    letter-spacing: 1px;
 
     // 1 px 〜 479 px
     ${min[0] + max[0]} {
@@ -68,6 +70,7 @@ export const authPageCss = css`
     margin: 0 auto;
     font-size: 1.4rem;
     color: #5358d0;
+    margin-top: 1rem;
 
     &:hover {
       transform: scale(1.05);
@@ -76,7 +79,7 @@ export const authPageCss = css`
   }
 
   .linkBtn {
-    margin: 3rem auto 2rem auto;
+    margin: 4rem auto 4rem auto;
     font-size: 1.2rem;
     width: fit-content;
 

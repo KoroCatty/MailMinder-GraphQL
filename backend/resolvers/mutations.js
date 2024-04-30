@@ -280,6 +280,8 @@ const mutations = {
     //* UPDATE A POST
     //* ===============================================
     updatePost: async (_, args, context) => {
+      await console.log("😾", args); // typeDefsで定義済み
+
       await console.log(
         args.postUpdate.imgCloudinaryUrl + "- imgCloudinaryUrl -",
       );

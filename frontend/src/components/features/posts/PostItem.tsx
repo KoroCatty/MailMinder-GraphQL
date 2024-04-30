@@ -154,8 +154,8 @@ const PostCard: React.FC<PostPropTypeComponent> = ({ postProp }) => {
               }
               onError={(e) => {
                 const imgElement = e.target as HTMLImageElement;
-                if (imgElement.src !== postProp.imgCloudinaryUrl) {
-                  imgElement.src = postProp.imgCloudinaryUrl;
+                if (imgElement.src !== postProp.imgUrl) {
+                  imgElement.src = postProp.imgUrl;
                 }
               }}
             />

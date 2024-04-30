@@ -46,13 +46,37 @@ const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
         window.scrollTo(0, 0);
         setIsLoggedIn(true); // Update the state
 
-        // if there is a path in sessionStorage, go to that path (Emailパス対応)
-        if (sessionStorage.getItem("postPath")) {
-          navigate(sessionStorage.getItem("postPath")!);
+        const setSessionStorageWithExpiry = (
+          key: string,
+          value: string,
+          ttl: number,
+        ) => {
+          const now = new Date();
+          // `ttl` はミリ秒で有効期限を設定
+          const item = {
+            value: value,
+            expiry: now.getTime() + ttl,
+          };
+          sessionStorage.setItem(key, JSON.stringify(item));
+        };
+
+        // セッションストレージにパスを保存
+        const path = sessionStorage.getItem("postPath");
+        if (path) {
+          setSessionStorageWithExpiry("postPath", path, 86400000); // 24時間後に期限切れ
+          navigate(path);
         } else {
           navigate("/");
         }
       },
+
+      // if there is a path in sessionStorage, go to that path (Emailパス対応)
+      //   if (sessionStorage.getItem("postPath")) {
+      //     navigate(sessionStorage.getItem("postPath")!);
+      //   } else {
+      //     navigate("/");
+      //   }
+      // },
     },
   );
 

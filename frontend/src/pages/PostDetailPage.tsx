@@ -319,8 +319,8 @@ const PostsDetailPage = () => {
                 }
                 onError={(e) => {
                   const imgElement = e.target as HTMLImageElement;
-                  if (imgElement.src !== filteredItem.imgCloudinaryUrl) {
-                    imgElement.src = filteredItem.imgCloudinaryUrl;
+                  if (imgElement.src !== filteredItem.imgUrl) {
+                    imgElement.src = filteredItem.imgUrl;
                   }
                 }}
                 alt={`post image ${id}`}
@@ -375,7 +375,8 @@ const PostsDetailPage = () => {
 
                 setTimeout(() => {
                   navigate("/postlist");
-                }, 1500);
+                  return <LoadingSpinner loading={true} />;
+                }, 2500);
 
                 //! Delete Cloudinary Image File that much with Post ID
                 const cloudinaryId_muchWithPostId = data.PostsByUser.items.find(
@@ -386,6 +387,7 @@ const PostsDetailPage = () => {
                     cloudinaryId_muchWithPostId.imgCloudinaryId,
                   );
                 }
+                window.location.reload();
               }}
             >
               {deleteLoading ? "Deleting..." : "Delete"}

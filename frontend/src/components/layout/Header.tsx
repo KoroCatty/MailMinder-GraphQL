@@ -22,6 +22,14 @@ type PropsType = {
 import { css } from "@emotion/react";
 import { min, max } from "../../utils/mediaQueries";
 const headerCss = css`
+  // MENU LINK
+  .nav-link {
+    &:hover {
+      transform: scale(1.25);
+      transition: all 0.3s ease-in-out;
+    }
+  }
+
   @media screen and (min-width: 1201px) {
     background-color: #fdfdfd;
     height: 100vh;
@@ -54,14 +62,6 @@ const headerCss = css`
       align-items: center;
       gap: 2rem;
       margin-right: 0;
-
-      // MENU LINK
-      .nav-link {
-        &:hover {
-          transform: scale(1.25);
-          transition: all 0.3s ease-in-out;
-        }
-      }
     }
 
     // MENU ITEMS WRAPPER

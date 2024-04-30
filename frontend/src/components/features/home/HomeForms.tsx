@@ -144,7 +144,7 @@ const HomeForms = ({ refetch }: RefetchProps) => {
           postNew: {
             title: formData.title,
             content: formData.content,
-            imgUrl: imageUrlForDB,
+            imgUrl: imageUrlForDB?.slice(0, 300), // 300文字まで (image64対策)
             // Selfie を取った場合は状態にセットされているのでそれを使用（selfieImageで requestの結果をセットしここでサーバーに送りMySQL に画像のパスが保存）
             imgCloudinaryUrl: cloudinaryUrlSelfie
               ? cloudinaryUrlSelfie
@@ -223,7 +223,7 @@ const HomeForms = ({ refetch }: RefetchProps) => {
         "http://localhost:5001/uploads";
 
       try {
-        //! Save to Cloudinary
+        //! Save to Cloudinary REST API
         const response = await axios.post(SERVER_URL, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
