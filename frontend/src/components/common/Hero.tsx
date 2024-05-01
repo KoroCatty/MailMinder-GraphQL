@@ -1,6 +1,8 @@
 import Image from "react-bootstrap/Image";
 import { useLocation } from "react-router-dom";
 
+import { Link } from "react-router-dom";
+
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
 import { min, max } from "../../utils/mediaQueries";
@@ -9,13 +11,15 @@ const Hero = () => {
   const location = useLocation();
   // console.log(location.pathname); // ex) /about
   const HeroStyles = css`
-    @media screen and (min-width: 991px) {
+    @media screen and (min-width: 1200px) {
       position: relative;
       width: 100%;
 
       img {
-        width: 100vw;
+        width: 85%;
         object-fit: cover;
+        margin-left: auto;
+        display: block;
       }
     }
 
@@ -78,6 +82,54 @@ const Hero = () => {
         }
       }
     }
+
+    .heroWrap {
+      position: relative;
+
+      .loginBtn {
+        position: absolute;
+        top: 69%;
+        left: 31%;
+        transform: translate(-31%, -69%);
+        padding: 1rem 4rem;
+        color: #ffffff;
+        background-color: #000000;
+        letter-spacing: 0.1rem;
+
+        // 1px〜479px
+        ${min[0] + max[0]} {
+          font-size: 0.7rem;
+          padding: 0.4rem 1rem;
+          top: 75% !important;
+          left: 15% !important;
+        }
+        // 480px〜767px
+        ${min[1] + max[1]} {
+          font-size: 0.8rem;
+          padding: 0.7rem 2rem;
+        }
+        // 768px〜1023px
+        ${min[2] + max[2]} {
+          font-size: 1rem;
+          padding: 1rem 2.6rem;
+        }
+
+        @media screen and (max-width: 1200px) {
+          top: 68%;
+          left: 16%;
+          transform: translate(-17%, -68%);
+        }
+
+        @media screen and (min-width: 1000px) {
+          &:hover {
+            transition: all 0.3s ease-in-out;
+            color: black;
+            background-color: #ffffff;
+            border: 1px solid #000000;
+          }
+        }
+      }
+    }
   `;
 
   return (
@@ -85,10 +137,19 @@ const Hero = () => {
       <section css={HeroStyles}>
         {/* Display in '/' Page */}
         {location.pathname === "/" && (
-          <>
-            <Image src="/imgs/hero.jpg" fluid className="homeHero" />
-            <Image src="/imgs/hero_sub2.jpg" fluid className="homeHero__sp" />
-          </>
+          <div className="heroWrap">
+            <Image src="/imgs/mainMinder_hero.jpg" fluid className="homeHero" />
+            <Image
+              src="/imgs/mainMinder_hero.jpg"
+              fluid
+              className="homeHero__sp"
+            />
+
+            <Link to="/login" className="loginBtn">
+              LOGIN
+            </Link>
+            {/* <Image src="/imgs/hero_sub2.jpg" fluid className="homeHero__sp" /> */}
+          </div>
         )}
 
         {/* Display in '/postlist' Page */}

@@ -21,7 +21,20 @@ type PropsType = {
 // Emotion CSS (Responsive Design)
 import { css } from "@emotion/react";
 import { min, max } from "../../utils/mediaQueries";
-const headerCss = css`
+
+function Header({
+  isLoggedIn,
+  setIsLoggedIn,
+  darkTheme,
+  setDarkTheme,
+}: PropsType) {
+
+
+  const navigate = useNavigate();
+  const client = useApolloClient(); // main.tsx で wrapしたもの
+
+
+  const headerCss = css`
   // MENU LINK
   .nav-link {
     &:hover {
@@ -70,7 +83,7 @@ const headerCss = css`
       flex-direction: column;
       align-items: center;
       justify-content: space-between;
-      gap: 2rem;
+      ${isLoggedIn ? "gap: 1.5rem;" : "gap: 0"} 
     }
   }
 
@@ -190,17 +203,8 @@ const headerCss = css`
     @media screen and (min-width: 1201px) {
       display: none;
     }
-  }
+  } 
 `;
-
-function Header({
-  isLoggedIn,
-  setIsLoggedIn,
-  darkTheme,
-  setDarkTheme,
-}: PropsType) {
-  const navigate = useNavigate();
-  const client = useApolloClient(); // main.tsx で wrapしたもの
 
   // Scroll to Top
   const toTop = () => {
@@ -234,15 +238,12 @@ function Header({
   );
 
   //! ユーザーのプロフィール画像を取得
-  const { data: userImgData, loading: userImgLoading } = useQuery(
-    GET_USER_IMG_BY_USER_ID,
-    {
-      // ログイン中のユーザーIDを渡し、それを引数にして GraphQLで MongoDB から取得
-      variables: { userId: userData?.getLoggedInUserDetails.id }, // ex) userId: 2
-      skip: !isLoggedIn,
-      fetchPolicy: "cache-and-network",
-    },
-  );
+  const { data: userImgData } = useQuery(GET_USER_IMG_BY_USER_ID, {
+    // ログイン中のユーザーIDを渡し、それを引数にして GraphQLで MongoDB から取得
+    variables: { userId: userData?.getLoggedInUserDetails.id }, // ex) userId: 2
+    skip: !isLoggedIn,
+    fetchPolicy: "cache-and-network",
+  });
 
   return (
     <>
@@ -289,7 +290,7 @@ function Header({
             )}
 
             {/* //! User Profile Image  */}
-            {userImgLoading && !isLoggedIn ? (
+            {!isLoggedIn ? (
               ""
             ) : (
               <Nav.Link as={Link} to={isLoggedIn ? `/settings` : `/login`}>

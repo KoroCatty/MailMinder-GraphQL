@@ -100,6 +100,11 @@ const recentPostsCss = css`
       padding: 0.3rem 0;
     }
   }
+  .caption {
+    font-size: 0.9rem;
+    color: rgba(0, 0, 0, 0.5);
+    margin-top: 1rem;
+  }
 `;
 
 //! =========================================================
@@ -174,6 +179,9 @@ const RecentPosts = (limitPostsProps: LimitPostsPropsType) => {
                 </Link>
               </div>
             ))}
+            <div className="caption">
+              * Reminder sent at 10AM every day (Random 5 posts)
+            </div>
           </div>
         </>
       ) : (

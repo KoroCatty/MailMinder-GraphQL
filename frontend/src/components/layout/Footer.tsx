@@ -22,7 +22,7 @@ const FooterCSS = css`
   .footer {
     font-family: freight-display-pro, STKaiti, essonnes-display, serif;
     color: #ffffff;
-    padding: 4rem 0 3rem 1rem;
+    padding: 3rem 0 3rem 1rem;
     // gradient
     background-image: linear-gradient(
       145deg,
@@ -43,7 +43,13 @@ const FooterCSS = css`
     &__title {
       letter-spacing: -1px;
       margin-bottom: 40px;
-      font-size: 2rem;
+      font-size: 1.9rem;
+
+      // 1px〜479px
+      ${min[0] + max[0]} {
+        font-size: 1.4rem;
+        margin-bottom: 20px;
+      }
     }
 
     .row {
@@ -81,15 +87,15 @@ const FooterCSS = css`
     }
 
     &__logo {
-      font-size: 2.6rem;
-      margin-top: 100px;
+      font-size: 1.8rem;
+      margin-top: 40px;
       margin-bottom: 40px;
       text-shadow: 0 0 10px rgba(255, 255, 255, 0.8);
 
       // 1px〜479px
       ${min[0] + max[0]} {
-        font-size: 2rem;
-        margin-top: 60px;
+        font-size: 1.4rem;
+        margin-top: 30px;
       }
     }
 

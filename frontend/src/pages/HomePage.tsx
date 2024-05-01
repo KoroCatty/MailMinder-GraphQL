@@ -1,10 +1,6 @@
-// import { useState, useEffect } from "react";
-import { Link } from "react-router-dom";
-
 // Home components
 import HomeForms from "../components/features/home/HomeForms";
 import RecentPosts from "../components/features/home/RecentPosts";
-import { CommonBtn } from "../components/common/CommonBtn";
 
 // Apollo client
 import { GET_POSTS_BY_ID_LIMIT } from "../graphql/queries";
@@ -76,16 +72,9 @@ const HomePage = ({ isLoggedIn }: IsLoggedInPropType) => {
             refetch={refetch}
           />
           <HomeForms refetch={refetch} />
-          {/* <MonthPosts /> */}
         </Container>
       ) : (
-        <Container className="homeContainer">
-          <Link to="/login" className="loginBtn">
-            <CommonBtn type="button" className="loginBtn__item">
-              LOGIN
-            </CommonBtn>
-          </Link>
-        </Container>
+        <></>
       )}
     </main>
   );
