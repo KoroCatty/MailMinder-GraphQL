@@ -1,5 +1,9 @@
 import React, { useState } from "react";
 
+import { UPDATE_EMAIL_SEND_STATUS } from "../../graphql/mutations";
+import { GET_LOGGEDIN_USER_DETAILS } from "../../graphql/queries";
+import { useMutation, useQuery } from "@apollo/client";
+
 // Emotion
 import { css } from "@emotion/react";
 const toggleSwitch = css`
@@ -26,7 +30,7 @@ const toggleSwitch = css`
     width: 80px;
     height: 40px;
     cursor: pointer;
-    background: red;
+    background: rgba(60, 60, 60, 0.6);
     border-radius: 20px;
     -webkit-transition: 0.3s;
     transition: 0.3s;
@@ -61,22 +65,35 @@ const toggleSwitch = css`
 interface ToggleSwitchProps {
   id: string;
   initial?: boolean;
-  onChange?: (checked: boolean) => void;
 }
 
-const ToggleBtn: React.FC<ToggleSwitchProps> = ({
-  id,
-  initial = false,
-  onChange,
-}) => {
+const ToggleBtn: React.FC<ToggleSwitchProps> = ({ id, initial = false }) => {
   const [checked, setChecked] = useState(initial);
+  const [updateEmailSendStatus, { loading: toggleLoading }] = useMutation(
+    UPDATE_EMAIL_SEND_STATUS,
+  );
 
+  //! ログイン中のユーザー情報を取得
+  const { data: userData } = useQuery(GET_LOGGEDIN_USER_DETAILS, {
+    fetchPolicy: "cache-and-network",
+  });
+
+  //! When toggled
   const handleToggle = () => {
     const newChecked = !checked;
     setChecked(newChecked);
+    console.log(newChecked);
 
-    if (onChange) {
-      onChange(newChecked);
+    try {
+      updateEmailSendStatus({
+        variables: {
+          sendEmail: newChecked, // true or false
+          userId: userData?.getLoggedInUserDetails.id, // mutation に user id を渡す
+        },
+      });
+      window.alert("Email notifications have been turned off.");
+    } catch (error) {
+      console.log(error);
     }
   };
   return (
@@ -87,6 +104,7 @@ const ToggleBtn: React.FC<ToggleSwitchProps> = ({
         className="toggleButton_input"
         type="checkbox"
         checked={checked}
+        disabled={toggleLoading}
       />
       <label htmlFor={id} className="toggleButton_label"></label>
 

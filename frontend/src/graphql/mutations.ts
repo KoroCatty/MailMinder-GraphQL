@@ -76,6 +76,16 @@ export const UPDATE_USER_EMAIL = gql`
   }
 `;
 
+//! UPDATE EMAIL SEND STATUS
+export const UPDATE_EMAIL_SEND_STATUS = gql`
+  mutation updateEmailSendStatus($sendEmail: Boolean!, $userId: ID!) {
+    updateEmailSendStatus(sendEmail: $sendEmail, userId: $userId) {
+      userId
+      sendEmail
+    }
+  }
+`;
+
 //! LOGOUT USER
 export const LOGOUT_MUTATION = gql`
   mutation Logout {

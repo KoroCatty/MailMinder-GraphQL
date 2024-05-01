@@ -70,6 +70,20 @@ const mutations = {
     },
 
     //* ===============================================
+    //* UPDATE EMAIL SEND STATUS
+    //* ===============================================
+    updateEmailSendStatus: async (_, args, context) => {
+      if (!context.userId) throw Error("You must be logged in 😱");
+      console.log(args);
+      const { userId, emailSendStatus } = args.input;
+      return await Image.updateOne(
+        { userId: userId }, // MongoDB内のuserIdフィールドを指定
+        { emailSendStatus },
+        { new: true },
+      );
+    },
+
+    //* ===============================================
     //* CREATE A USER
     //* ===============================================
     signupUser: async (_, args) => {

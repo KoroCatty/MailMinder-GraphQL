@@ -115,6 +115,9 @@ const typeDefs = gql`
     # UPDATE A USER EMAIL
     updateUserEmail(userId: ID!, email: String!): User!
 
+    # UPDATE A SEND EMAIL STATUS
+    updateEmailSendStatus(userId: ID!, emailSendStatus: Boolean!): User!
+
     # DELETE A POST IMAGE FILE
     deletePostImage(id: ID!): Post!
 

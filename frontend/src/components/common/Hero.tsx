@@ -102,11 +102,13 @@ const Hero = () => {
           padding: 0.4rem 1rem;
           top: 75% !important;
           left: 15% !important;
+          display: none;
         }
         // 480px〜767px
         ${min[1] + max[1]} {
           font-size: 0.8rem;
           padding: 0.7rem 2rem;
+          display: none;
         }
         // 768px〜1023px
         ${min[2] + max[2]} {
@@ -122,9 +124,9 @@ const Hero = () => {
 
         @media screen and (min-width: 1000px) {
           &:hover {
+            opacity: 0.8;
             transition: all 0.3s ease-in-out;
             color: black;
-            background-color: #ffffff;
             border: 1px solid #000000;
           }
         }
@@ -140,7 +142,7 @@ const Hero = () => {
           <div className="heroWrap">
             <Image src="/imgs/mainMinder_hero.jpg" fluid className="homeHero" />
             <Image
-              src="/imgs/mainMinder_hero.jpg"
+              src="/imgs/mainMinder_hero_sp.jpg"
               fluid
               className="homeHero__sp"
             />
