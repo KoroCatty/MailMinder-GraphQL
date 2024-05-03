@@ -21,8 +21,6 @@ import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Contact from "./pages/Contact";
 import RegisterPage from "./pages/RegisterPage";
 
-// Loading
-import LoadingSpinner from "./components/common/LoadingSpinner";
 // bootstrap
 import "bootstrap/dist/css/bootstrap.min.css";
 // react-bootstrap
@@ -32,17 +30,9 @@ import "react-bootstrap/dist/react-bootstrap.min.js";
 import { useQuery } from "@apollo/client";
 import { IS_LOGGED_IN_QUERY } from "./graphql/queries";
 
-// Custom CSS Props for LoadingSpinner
-const center: React.CSSProperties = {
-  position: "fixed",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-};
-
 function App() {
   // Login Check
-  const { data, loading, error } = useQuery(IS_LOGGED_IN_QUERY, {
+  const { data, error } = useQuery(IS_LOGGED_IN_QUERY, {
     fetchPolicy: "network-only", // キャッシュを使わない
     //   onCompleted: (data) => setIsLoggedIn(data.isLoggedIn)// ログイン状態を更新
   });
@@ -67,7 +57,7 @@ function App() {
     }
   }, []);
 
-  if (loading) return <LoadingSpinner loading={true} center={center} />;
+  // if (loading) return <LoadingSpinner loading={true} center={center} />;
   if (error) return <p>Error: {error.message}</p>;
 
   return (

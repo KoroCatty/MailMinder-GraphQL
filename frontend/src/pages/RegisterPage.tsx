@@ -18,10 +18,25 @@ type IsLoggedInPropsType = {
   setIsLoggedIn: (isLoggedIn: boolean) => void;
 };
 
+// Form TYPE 
+type FormDataType = {
+  firstName: string;
+  lastName: string;
+  email: string;
+  password: string;
+  confirmPassword: string;
+};
+
 const RegisterPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
   const navigate = useNavigate();
 
-  const [formData, setFormData] = useState({});
+  const [formData, setFormData] = useState<FormDataType>({
+    firstName: '',
+    lastName: '',
+    email: '',
+    password: '',
+    confirmPassword: ''
+  });
   const [submitLoading, setSubmitLoading] = useState(false);
 
   // Mutations (Sign Up)
@@ -38,7 +53,6 @@ const RegisterPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
     onCompleted() {
       window.scrollTo(0, 0);
       setIsLoggedIn(true); // Update the state
-
       // if there is a path in sessionStorage, go to that path (Emailパス対応)
       if (sessionStorage.getItem("postPath")) {
         navigate(sessionStorage.getItem("postPath")!);
@@ -86,11 +100,21 @@ const RegisterPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
     setSubmitLoading(true);
     e.preventDefault();
 
+    if (formData.password !== formData.confirmPassword) {
+      alert("Password does not match");
+      setSubmitLoading(false);
+      return;
+    }
+
+    // confirmPassword を除外 (QraphQL に送らないため)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
+    const { confirmPassword, ...rest } = formData; 
+
     try {
       // Signup
       signupUser({
         variables: {
-          userNew: formData, // mutation.ts で定義したもの
+          userNew: rest, // mutation.ts で定義したもの
         },
       });
       navigate("/login");
@@ -119,6 +143,7 @@ const RegisterPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
                 type="text"
                 placeholder="First Name"
                 onChange={(e) => handleChange(e)}
+                required
               />
               <input
                 name="lastName"
@@ -132,6 +157,7 @@ const RegisterPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
                 type="email"
                 placeholder="Email"
                 onChange={(e) => handleChange(e)}
+                required
               />
               {/* Password */}
               <input
@@ -140,7 +166,18 @@ const RegisterPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
                 autoComplete="on"
                 placeholder="Password"
                 onChange={(e) => handleChange(e)}
+                required
               />
+              {/* Confirm Password */}
+            <input
+              name="confirmPassword"
+              type="password"
+              autoComplete="on"
+              placeholder="Confirm Password"
+              onChange={handleChange}
+              required
+            />
+
               {/* //! DEMO */}
               <div
                 onClick={() => {

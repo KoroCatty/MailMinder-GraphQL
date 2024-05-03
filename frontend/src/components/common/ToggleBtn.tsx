@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 
 import { UPDATE_EMAIL_SEND_STATUS } from "../../graphql/mutations";
 import { GET_LOGGEDIN_USER_DETAILS } from "../../graphql/queries";
@@ -58,6 +58,9 @@ const toggleSwitch = css`
     -webkit-user-select: none; /* Safari */
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* Internet Explorer/Edge */
+    margin-left: 10px;
+    font-size: 1.8rem;
+    letter-spacing: 1px;
   }
 `;
 
@@ -77,25 +80,32 @@ const ToggleBtn: React.FC<ToggleSwitchProps> = ({ id, initial = false }) => {
   const { data: userData } = useQuery(GET_LOGGEDIN_USER_DETAILS, {
     fetchPolicy: "cache-and-network",
   });
+  // console.log(userData?.getLoggedInUserDetails.emailSend); // true / false
+
+useEffect(() => {
+  if (userData) {
+    setChecked(userData.getLoggedInUserDetails.emailSend);
+  }
+},[ userData])
 
   //! When toggled
-  const handleToggle = () => {
+  const handleToggle = async () => {
     const newChecked = !checked;
     setChecked(newChecked);
-    console.log(newChecked);
-
     try {
-      updateEmailSendStatus({
+      await updateEmailSendStatus({
         variables: {
-          sendEmail: newChecked, // true or false
-          userId: userData?.getLoggedInUserDetails.id, // mutation に user id を渡す
+          emailSend: newChecked, // true or false
+          userId: userData.getLoggedInUserDetails.id, // mutation にuserId を渡す
         },
       });
-      window.alert("Email notifications have been turned off.");
+      window.alert(`Email notifications have been ${newChecked ? "turned on" : "turned off"}.`);
     } catch (error) {
       console.log(error);
+      window.alert("Failed to update email notification settings😞");
     }
   };
+
   return (
     <label css={toggleSwitch}>
       <input
@@ -107,8 +117,7 @@ const ToggleBtn: React.FC<ToggleSwitchProps> = ({ id, initial = false }) => {
         disabled={toggleLoading}
       />
       <label htmlFor={id} className="toggleButton_label"></label>
-
-      <span className="onOff">{checked ? "On" : "Off"}</span>
+      <span className="onOff">{checked ? "ON" : "OFF"}</span>
     </label>
   );
 };

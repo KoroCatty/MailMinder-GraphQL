@@ -8,7 +8,7 @@ export const GET_POSTS_BY_ID = gql`
       # resolver で定義した名前
       # 以下はフロント側で使えるように定義(consoleで確認可能になる)
       items {
-        id
+        id # MySQL の id
         title
         content
         imgUrl
@@ -55,6 +55,7 @@ export const GET_LOGGEDIN_USER_DETAILS = gql`
       firstName
       lastName
       email
+      emailSend
     }
   }
 `;

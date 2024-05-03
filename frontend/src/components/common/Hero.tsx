@@ -88,13 +88,14 @@ const Hero = () => {
 
       .loginBtn {
         position: absolute;
-        top: 69%;
+        top: 75%;
         left: 31%;
-        transform: translate(-31%, -69%);
-        padding: 1rem 4rem;
+        transform: translate(-31%, -75%);
+        padding: 1.6rem 4rem;
         color: #ffffff;
         background-color: #000000;
         letter-spacing: 0.1rem;
+        font-size: 1.2rem;
 
         // 1px〜479px
         ${min[0] + max[0]} {
@@ -117,9 +118,9 @@ const Hero = () => {
         }
 
         @media screen and (max-width: 1200px) {
-          top: 68%;
+          top: 75%;
           left: 16%;
-          transform: translate(-17%, -68%);
+          transform: translate(-17%, -73%);
         }
 
         @media screen and (min-width: 1000px) {
@@ -127,7 +128,6 @@ const Hero = () => {
             opacity: 0.8;
             transition: all 0.3s ease-in-out;
             color: black;
-            border: 1px solid #000000;
           }
         }
       }
@@ -140,9 +140,9 @@ const Hero = () => {
         {/* Display in '/' Page */}
         {location.pathname === "/" && (
           <div className="heroWrap">
-            <Image src="/imgs/mainMinder_hero.jpg" fluid className="homeHero" />
+            <Image src="/imgs/mailMinder_hero_pc.jpg" fluid className="homeHero" />
             <Image
-              src="/imgs/mainMinder_hero_sp.jpg"
+              src="/imgs/mailMinder_hero_sp.jpg"
               fluid
               className="homeHero__sp"
             />

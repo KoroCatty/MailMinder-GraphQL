@@ -7,10 +7,12 @@ export const authPageCss = css`
   flex-direction: column;
   justify-content: center;
   padding-bottom: 6rem;
+  padding-top: 8rem;
 
   // 1 px 〜 479 px
   ${min[0] + max[0]} {
     padding-bottom: 2rem;
+    padding-top: 4rem;
   }
   // 480 px 〜 767 px
   ${min[1] + max[1]} {

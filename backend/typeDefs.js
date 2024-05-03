@@ -34,6 +34,7 @@ const typeDefs = gql`
     firstName: String!
     lastName: String!
     email: String
+    emailSend: Boolean
     # password: String # never return password to client
   }
 
@@ -116,7 +117,7 @@ const typeDefs = gql`
     updateUserEmail(userId: ID!, email: String!): User!
 
     # UPDATE A SEND EMAIL STATUS
-    updateEmailSendStatus(userId: ID!, emailSendStatus: Boolean!): User!
+    updateEmailSendStatus(userId: ID!, emailSend: Boolean!): User
 
     # DELETE A POST IMAGE FILE
     deletePostImage(id: ID!): Post!

@@ -61,7 +61,7 @@ const Settings = () => {
   return (
     <main css={settingPageCss}>
       <Container>
-        <h1 className="text-center">Settings</h1>
+        <h1 className="text-center">SETTINGS</h1>
         <SettingsForms />
         <EmailToggle />
         <SettingsAvatar />

@@ -62,6 +62,7 @@ const mutations = {
       if (!context.userId) throw Error("You must be logged in 😱");
 
       const { userId, imgCloudinaryUrl, imgCloudinaryId } = args.input;
+      // Save to MongoDB
       return await Image.updateOne(
         { userId: userId }, // MongoDB内のuserIdフィールドを指定
         { imgCloudinaryUrl, imgCloudinaryId },
@@ -74,13 +75,21 @@ const mutations = {
     //* ===============================================
     updateEmailSendStatus: async (_, args, context) => {
       if (!context.userId) throw Error("You must be logged in 😱");
-      console.log(args);
-      const { userId, emailSendStatus } = args.input;
-      return await Image.updateOne(
-        { userId: userId }, // MongoDB内のuserIdフィールドを指定
-        { emailSendStatus },
-        { new: true },
-      );
+      const { userId, emailSend } = args;
+      //! save to MySQL DB
+      try {
+        const updatedUser = await prisma.user.update({
+          where: {
+            id: parseInt(userId), // MySQLは Int で保存されているので parseInt
+          },
+          data: {
+            emailSend: emailSend,
+          },
+        });
+        return updatedUser;
+      } catch (error) {
+        console.log(error);
+      }
     },
 
     //* ===============================================

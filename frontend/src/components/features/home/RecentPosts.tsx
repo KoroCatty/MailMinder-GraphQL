@@ -102,7 +102,6 @@ const recentPostsCss = css`
   }
   .caption {
     font-size: 0.9rem;
-    color: rgba(0, 0, 0, 0.5);
     margin-top: 1rem;
   }
 `;
@@ -112,8 +111,6 @@ const recentPostsCss = css`
 const RecentPosts = (limitPostsProps: LimitPostsPropsType) => {
   // Destructure Props
   const { data, loading, error, refetch } = limitPostsProps;
-  // console.log(data.PostsByUserLimit)
-
   // refetch posts
   useEffect(() => {
     refetch();
@@ -146,10 +143,10 @@ const RecentPosts = (limitPostsProps: LimitPostsPropsType) => {
                       item.imgCloudinaryUrl
                         ? item.imgCloudinaryUrl
                         : // Else, check if there's another URL provided and use it
-                          item.imgUrl
+                        item.imgUrl
                           ? item.imgUrl
                           : // If neither is available, use a local fallback image
-                            "./images/no-image.png"
+                          "./images/no-image.png"
                     }
                     onError={(e) => {
                       const imgElement = e.target as HTMLImageElement;
@@ -179,9 +176,11 @@ const RecentPosts = (limitPostsProps: LimitPostsPropsType) => {
                 </Link>
               </div>
             ))}
-            <div className="caption">
-              * Reminder sent at 10AM every day (Random 5 posts)
-            </div>
+            {data.PostsByUserLimit.length !== 0 && (
+              <div className="caption">
+                * Reminder sent at 10AM every day (Random 5 posts)
+              </div>
+            )}
           </div>
         </>
       ) : (
