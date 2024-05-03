@@ -143,10 +143,10 @@ const RecentPosts = (limitPostsProps: LimitPostsPropsType) => {
                       item.imgCloudinaryUrl
                         ? item.imgCloudinaryUrl
                         : // Else, check if there's another URL provided and use it
-                        item.imgUrl
+                          item.imgUrl
                           ? item.imgUrl
                           : // If neither is available, use a local fallback image
-                          "./images/no-image.png"
+                            "./images/no-image.png"
                     }
                     onError={(e) => {
                       const imgElement = e.target as HTMLImageElement;

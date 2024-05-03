@@ -82,11 +82,11 @@ const ToggleBtn: React.FC<ToggleSwitchProps> = ({ id, initial = false }) => {
   });
   // console.log(userData?.getLoggedInUserDetails.emailSend); // true / false
 
-useEffect(() => {
-  if (userData) {
-    setChecked(userData.getLoggedInUserDetails.emailSend);
-  }
-},[ userData])
+  useEffect(() => {
+    if (userData) {
+      setChecked(userData.getLoggedInUserDetails.emailSend);
+    }
+  }, [userData]);
 
   //! When toggled
   const handleToggle = async () => {
@@ -99,7 +99,9 @@ useEffect(() => {
           userId: userData.getLoggedInUserDetails.id, // mutation にuserId を渡す
         },
       });
-      window.alert(`Email notifications have been ${newChecked ? "turned on" : "turned off"}.`);
+      window.alert(
+        `Email notifications have been ${newChecked ? "turned on" : "turned off"}.`,
+      );
     } catch (error) {
       console.log(error);
       window.alert("Failed to update email notification settings😞");

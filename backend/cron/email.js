@@ -21,7 +21,9 @@ import cron from "node-cron";
 // const sendEmail = cron.schedule('*/1 * * * *', async () => {
 
 //! Send Email at 10:00 AM JST every day (日本時間の毎朝10時に)
-const sendEmail = cron.schedule("0 1 * * *", async () => {
+const sendEmail = cron.schedule(
+  "0 1 * * *",
+  async () => {
     try {
       const transporter = nodemailer.createTransport({
         service: process.env.EMAIL_SERVICE,

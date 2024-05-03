@@ -189,7 +189,6 @@ function PaginationBar({
         &#x25B6;
       </button>
 
-
       {/* Page Links */}
       <ul className="pagination-list">
         {pages.map((page) => (

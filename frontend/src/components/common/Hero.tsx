@@ -139,7 +139,11 @@ const Hero = () => {
         {/* Display in '/' Page */}
         {location.pathname === "/" && (
           <div className="heroWrap">
-            <Image src="/imgs/mailMinder_hero_pc.jpg" fluid className="homeHero" />
+            <Image
+              src="/imgs/mailMinder_hero_pc.jpg"
+              fluid
+              className="homeHero"
+            />
             <Image
               src="/imgs/mailMinder_hero_sp.jpg"
               fluid

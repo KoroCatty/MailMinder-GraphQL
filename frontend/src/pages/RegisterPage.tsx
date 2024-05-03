@@ -18,7 +18,7 @@ type IsLoggedInPropsType = {
   setIsLoggedIn: (isLoggedIn: boolean) => void;
 };
 
-// Form TYPE 
+// Form TYPE
 type FormDataType = {
   firstName: string;
   lastName: string;
@@ -31,11 +31,11 @@ const RegisterPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
   const navigate = useNavigate();
 
   const [formData, setFormData] = useState<FormDataType>({
-    firstName: '',
-    lastName: '',
-    email: '',
-    password: '',
-    confirmPassword: ''
+    firstName: "",
+    lastName: "",
+    email: "",
+    password: "",
+    confirmPassword: "",
   });
   const [submitLoading, setSubmitLoading] = useState(false);
 
@@ -108,7 +108,7 @@ const RegisterPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
 
     // confirmPassword を除外 (QraphQL に送らないため)
     // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    const { confirmPassword, ...rest } = formData; 
+    const { confirmPassword, ...rest } = formData;
 
     try {
       // Signup
@@ -169,14 +169,14 @@ const RegisterPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
                 required
               />
               {/* Confirm Password */}
-            <input
-              name="confirmPassword"
-              type="password"
-              autoComplete="on"
-              placeholder="Confirm Password"
-              onChange={handleChange}
-              required
-            />
+              <input
+                name="confirmPassword"
+                type="password"
+                autoComplete="on"
+                placeholder="Confirm Password"
+                onChange={handleChange}
+                required
+              />
 
               {/* //! DEMO */}
               <div
