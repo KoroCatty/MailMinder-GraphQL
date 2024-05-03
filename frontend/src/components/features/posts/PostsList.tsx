@@ -52,7 +52,7 @@ const PostListCss = css`
 
 //! ============================================================
 function PostsList() {
-  const POSTS_PER_PAGE = 4;
+  const POSTS_PER_PAGE = 6;
 
   // pagination
   // 第二引数はoffsetで、何件目から取得するかを指定する

@@ -16,7 +16,7 @@ const Hero = () => {
       width: 100%;
 
       img {
-        width: 85%;
+        width: 84%;
         object-fit: cover;
         margin-left: auto;
         display: block;
@@ -127,7 +127,6 @@ const Hero = () => {
           &:hover {
             opacity: 0.8;
             transition: all 0.3s ease-in-out;
-            color: black;
           }
         }
       }
