@@ -3,7 +3,7 @@
 import { URL, fileURLToPath } from "url";
 
 import bcrypt from "bcryptjs";
-import Joi from "joi"; // Validation
+import Joi from "joi"; 
 import jwt from "jsonwebtoken";
 
 import cloudinary from "cloudinary";
