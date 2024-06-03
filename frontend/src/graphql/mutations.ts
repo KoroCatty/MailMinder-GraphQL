@@ -66,6 +66,26 @@ export const UPDATE_POST_BY_ID = gql`
   }
 `;
 
+//! UPDATE A USER EMAIL
+export const UPDATE_USER_EMAIL = gql`
+  mutation updateUserEmail($email: String!, $userId: ID!) {
+    updateUserEmail(email: $email, userId: $userId) {
+      id
+      email
+    }
+  }
+`;
+
+//! UPDATE EMAIL SEND STATUS
+export const UPDATE_EMAIL_SEND_STATUS = gql`
+  mutation updateEmailSendStatus($emailSend: Boolean!, $userId: ID!) {
+    updateEmailSendStatus(emailSend: $emailSend, userId: $userId) {
+      id # MySQL の id
+      emailSend
+    }
+  }
+`;
+
 //! LOGOUT USER
 export const LOGOUT_MUTATION = gql`
   mutation Logout {
@@ -89,5 +109,27 @@ export const DELETE_POST_IMAGE_FILE = gql`
 export const DELETE_CLOUDINARY_IMAGE_FILE = gql`
   mutation deleteCloudinaryImage($publicId: String) {
     deleteCloudinaryImage(publicId: $publicId)
+  }
+`;
+
+//! MongoDB - CREATE A USER PROFILE IMAGE
+export const CREATE_USER_PROFILE_IMAGE_MONGO = gql`
+  mutation CreateUserProfileImage($input: UserProfileImgInput!) {
+    create_profile_img_mongo(input: $input) {
+      userId
+      imgCloudinaryUrl
+      imgCloudinaryId
+    }
+  }
+`;
+
+//! MongoDB - UPDATE A USER PROFILE IMAGE
+export const UPDATE_USER_PROFILE_IMAGE_MONGO = gql`
+  mutation UpdateUserProfileImage($input: UserProfileImgInput!) {
+    update_profile_img_mongo(input: $input) {
+      userId
+      imgCloudinaryUrl
+      imgCloudinaryId
+    }
   }
 `;

@@ -11,15 +11,10 @@ import { TitleLarge, TitleSmall } from "../../common/Titles";
 import { CommonForm, CommonTextarea } from "../../common/Forms";
 import { CommonBtn } from "../../common/CommonBtn";
 import LoadingSpinner from "../../common/LoadingSpinner";
-
 // bootstrap
 import { Form } from "react-bootstrap";
-
 // CSS
 import { formStylesCSS } from "../../../styles/FormsCSS";
-
-// functions
-// import { handleSubmit, handleChange, handleImageUpload, pasteImage, selfieImage } from "./formFunctions";
 
 // TYPES
 interface RefetchProps {
@@ -45,6 +40,14 @@ const HomeForms = ({ refetch }: RefetchProps) => {
   const fileInputRef = useRef<HTMLInputElement>(null);
   // local selected image
   const [selectedLocalFile, setSelectedLocalFile] = useState<File | null>(null);
+
+  // Cloudinary URL & ID (response by selfieImage function)
+  const [cloudinaryUrlSelfie, setCloudinaryUrlSelfie] = useState<string | null>(
+    null,
+  );
+  const [cloudinaryIdSelfie, setCloudinaryIdSelfie] = useState<string | null>(
+    null,
+  );
 
   // Reset the local selected image input value
   const resetLocalFileSelectValue = () => {
@@ -85,35 +88,26 @@ const HomeForms = ({ refetch }: RefetchProps) => {
     e.preventDefault();
     setLoadingState(true); // 送信処理開始時に送信ボタンの loadingをtrueに設定
 
-    // SERVER URL
+    // SERVER URL (Cloudinary エンドポイント)
     const SERVER_URL =
       import.meta.env.VITE_PUBLIC_SERVER_URL || "http://localhost:5001/uploads";
-    // console.log(SERVER_URL + "🫡") // http://localhost:5001/uploads
 
     // Define a variable for asyncronous data to save DB
     let imageUrlForDB: string | undefined = formData.imgUrl;
-
     // 初期化
     let cloudinaryUrl;
     let cloudinaryId;
 
-    //! 1. Upload the image to the server using AXIOS
+    //! 1. Upload the image to the Cloudinary using AXIOS
     if (selectedLocalFile) {
       const formData = new FormData();
-      formData.append("img", selectedLocalFile);
-
+      formData.append("img", selectedLocalFile); // backend で img として受け取る
       try {
         const response = await axios.post(SERVER_URL, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-        // console.log(response.data.url); // /uploads/img-1697934272148.jpg
 
-        // CLOUDINARY ID (Backend から返したもの)
-        await console.log(response.data.cloudinary_id);
-
-        //  CLOUDINARY URL  (Backend から返したもの)
-        await console.log(response.data.cloudinaryUrl);
-
+        // CLOUDINARY ID & URL (Backend から返したもの)
         // 初期化した変数に値を代入
         cloudinaryUrl = await response.data.cloudinaryUrl;
         cloudinaryId = await response.data.cloudinary_id;
@@ -123,15 +117,12 @@ const HomeForms = ({ refetch }: RefetchProps) => {
           await console.error("Error: Cloudinary URL is missing ありません.😿");
           return;
         }
-
         if (!cloudinaryId) {
           await console.error("Error: Cloudinary ID is missing ありません.😿");
           return;
         }
-
         // make tis absolute path and get rid of double 'uploads/'
         imageUrlForDB = `${SERVER_URL}${response.data.url.replace("uploads/", "")}`;
-
         // get rid of double '//' in a server (Local is fine)
         imageUrlForDB = imageUrlForDB.replace("uploads//", "uploads/");
         setFormData((prevFormData) => ({
@@ -153,16 +144,26 @@ const HomeForms = ({ refetch }: RefetchProps) => {
           postNew: {
             title: formData.title,
             content: formData.content,
-            imgUrl: imageUrlForDB,
-            imgCloudinaryUrl: cloudinaryUrl,
-            imgCloudinaryId: cloudinaryId,
+            imgUrl: imageUrlForDB?.slice(0, 300), // 300文字まで (image64対策)
+            // Selfie を取った場合は状態にセットされているのでそれを使用（selfieImageで requestの結果をセットしここでサーバーに送りMySQL に画像のパスが保存）
+            imgCloudinaryUrl: cloudinaryUrlSelfie
+              ? cloudinaryUrlSelfie
+              : cloudinaryUrl,
+            imgCloudinaryId: cloudinaryIdSelfie
+              ? cloudinaryIdSelfie
+              : cloudinaryId,
           },
         },
       });
+      setCloudinaryUrlSelfie(null); // Reset the cloudinary URL
+      setCloudinaryIdSelfie(null); // Reset the cloudinary ID
       refetch(); // Props で受け取った refetch を実行
       await refetch();
       console.log("Refetched!");
       window.alert("Reminder added Successfully!");
+
+      setSelectedLocalFile(null); // Reset the local selected file
+      setDisplayImg("/imgs/noImg.jpeg"); // Reset the display image
     } catch (error) {
       console.error("Error saving post to database🫡:", error);
       return;
@@ -179,13 +180,10 @@ const HomeForms = ({ refetch }: RefetchProps) => {
 
     // Set the selected file to state for later use in handleSubmit
     setSelectedLocalFile(file);
-
     // Create a local URL for the file to display it in an img tag
     const localImageUrl = URL.createObjectURL(file);
     // console.log(localImageUrl) // blob:http://localhost:3000/9ad32e0f-6952-45c7-99c9-051430a562a9
-
-    // Update the display image
-    setDisplayImg(localImageUrl);
+    setDisplayImg(localImageUrl); // Update the display image
   };
 
   //* ===================================================
@@ -207,25 +205,41 @@ const HomeForms = ({ refetch }: RefetchProps) => {
   };
 
   //* ===================================================
-  //*  Selfie Image
+  //*  Selfie Image (Uploading to Cloudinary & save response to state)
   //* ===================================================
-  const selfieImage = (image64: string | null) => {
-    // Check if image64 is not null before reading its length
+  const selfieImage = async (image64: string | null) => {
     if (image64 && image64.length > 10000) {
-      setSelectedImage(image64);
-      // Handle error - maybe return a user-friendly error message
-      setFormData({
-        ...formData,
-        imgUrl: image64,
-      });
-      // reset selected image value
+      setFormData((prev) => ({ ...prev, imgUrl: image64 }));
       resetLocalFileSelectValue();
-      // reset local selected file in useState
-      setSelectedLocalFile(null);
       setDisplayImg(image64);
+      // blob に変換し、フォームデータに追加
+      const blob = await fetch(image64).then((res) => res.blob());
+      const formData = new FormData();
+      formData.append("img", blob, "image.png"); // img はバックエンドと一致させる
+
+      const SERVER_URL =
+        import.meta.env.VITE_PUBLIC_SERVER_URL ||
+        "http://localhost:5001/uploads";
+
+      try {
+        //! Save to Cloudinary REST API
+        const response = await axios.post(SERVER_URL, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        if (response.data.cloudinaryUrl) {
+          setCloudinaryUrlSelfie(response.data.cloudinaryUrl);
+          setCloudinaryIdSelfie(response.data.cloudinary_id);
+        }
+        console.log(
+          "Image uploaded successfully:",
+          response.data.cloudinaryUrl,
+        );
+      } catch (error) {
+        console.error("Error uploading image:", error);
+      }
     } else {
-      console.log("Too Big");
-      window.alert("Too Big");
+      console.log("Image too large");
+      alert("Image too large");
     }
   };
 
@@ -233,7 +247,6 @@ const HomeForms = ({ refetch }: RefetchProps) => {
   //! JSX
   //! ======================================================
   return (
-    // <section css={homeFormsStyles}>
     <section css={formStylesCSS}>
       {/* COMPONENT */}
       <TitleLarge title="YOUR REMINDER" />
@@ -266,33 +279,33 @@ const HomeForms = ({ refetch }: RefetchProps) => {
         {/*//* DISPLAY IMG  画像があれば表示 */}
         <div className="imageWrap">
           <img src={displayImg} alt="Displayed Image" />
-        </div>
 
-        {/*//* IMAGE SELECT */}
-        <Form.Group controlId="formFileLg">
-          <h3>From Your Local File</h3>
-          <Form.Control
-            ref={fileInputRef}
-            className="imgChooseBtn"
-            type="file"
-            size="lg"
-            accept="image/*" // 画像ファイルのみを選択できるようにする
-            onChange={handleImageUpload}
-            name="img"
-          />
-        </Form.Group>
+          {/*//* IMAGE SELECT */}
+          <Form.Group controlId="formFileLg" className="forms">
+            <h3>From Your Local File</h3>
+            <Form.Control
+              ref={fileInputRef}
+              className="imgChooseBtn"
+              type="file"
+              size="lg"
+              accept="image/*" // 画像ファイルのみを選択できるようにする
+              onChange={handleImageUpload}
+              name="img"
+            />
 
-        {/*//* Paste Image URL */}
-        <h3>Paste Image URL</h3>
-        <div className="googleImgSearchForms">
-          <input
-            name="imgUrl"
-            type="text"
-            placeholder="Paste the image URL here"
-            className="pasteImgUrl"
-            onChange={pasteImage}
-          />
-          <GoogleSearch />
+            {/*//* Paste Image URL */}
+            <h3>Paste Image URL</h3>
+            <div className="googleImgSearchForms">
+              <input
+                name="imgUrl"
+                type="text"
+                placeholder="Paste the image URL here"
+                className="pasteImgUrl"
+                onChange={pasteImage}
+              />
+              <GoogleSearch />
+            </div>
+          </Form.Group>
         </div>
 
         {/* Button COMPONENT*/}

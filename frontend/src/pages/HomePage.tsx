@@ -1,14 +1,10 @@
-// import { useState, useEffect } from "react";
 import { Link } from "react-router-dom";
-
-// Home components
+//  components
 import HomeForms from "../components/features/home/HomeForms";
 import RecentPosts from "../components/features/home/RecentPosts";
-// import MonthPosts from '../components/features/home/MonthPosts';
 import { CommonBtn } from "../components/common/CommonBtn";
 
 // Apollo client
-// import { GET_POSTS_BY_ID } from "../graphql/queries";
 import { GET_POSTS_BY_ID_LIMIT } from "../graphql/queries";
 import { useQuery } from "@apollo/client";
 
@@ -28,7 +24,19 @@ const HomePageCss = css`
   }
 
   .loginBtn {
+    display: none;
     text-decoration: none;
+
+    // 1px〜479px
+    ${min[0] + max[0]} {
+      display: block;
+      margin: 2rem auto;
+    }
+    // 480px〜767px
+    ${min[1] + max[1]} {
+      display: block;
+      margin: 2rem auto;
+    }
 
     &__item {
       background-color: #000000;
@@ -42,7 +50,15 @@ const HomePageCss = css`
       // 1px〜479px
       ${min[0] + max[0]} {
         margin: 1rem auto;
-        padding: 0.8rem 2rem;
+        padding: 0.8rem 5rem;
+        font-size: 1rem;
+        text-align: center;
+        width: fit-content;
+      }
+      // 480px〜767px
+      ${min[1] + max[1]} {
+        margin: 1rem auto;
+        padding: 1.1rem 8rem;
         font-size: 1rem;
         text-align: center;
         width: fit-content;
@@ -78,7 +94,6 @@ const HomePage = ({ isLoggedIn }: IsLoggedInPropType) => {
             refetch={refetch}
           />
           <HomeForms refetch={refetch} />
-          {/* <MonthPosts /> */}
         </Container>
       ) : (
         <Container className="homeContainer">

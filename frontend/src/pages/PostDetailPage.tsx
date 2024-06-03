@@ -264,8 +264,8 @@ const PostsDetailPage = () => {
           <LoadingSpinner loading={true} />
         ) : error ? (
           <p>Error: {error.message}</p>
-        ) : filteredPosts && filteredPosts.length > 0 ? (
-          filteredPosts.map((filteredItem: postProp) => (
+        ) : filteredPosts && filteredPosts?.length > 0 ? (
+          filteredPosts?.map((filteredItem: postProp) => (
             <div key={filteredItem.id} className="detailItem">
               {/*  CREATED & UPDATED DATE */}
               <div className="timeContainer">
@@ -307,11 +307,20 @@ const PostsDetailPage = () => {
               {/* TITLE */}
               <h1>{filteredItem.title}</h1>
               <img
-                src={filteredItem.imgUrl}
+                src={
+                  // If Cloudinary URL exists, use it
+                  filteredItem.imgCloudinaryUrl
+                    ? filteredItem.imgCloudinaryUrl
+                    : // Else, check if there's another URL provided and use it
+                      filteredItem.imgUrl
+                      ? filteredItem.imgUrl
+                      : // If neither is available, use a local fallback image
+                        "./images/no-image.png"
+                }
                 onError={(e) => {
                   const imgElement = e.target as HTMLImageElement;
-                  if (imgElement.src !== filteredItem.imgCloudinaryUrl) {
-                    imgElement.src = filteredItem.imgCloudinaryUrl;
+                  if (imgElement.src !== filteredItem.imgUrl) {
+                    imgElement.src = filteredItem.imgUrl;
                   }
                 }}
                 alt={`post image ${id}`}
@@ -366,7 +375,8 @@ const PostsDetailPage = () => {
 
                 setTimeout(() => {
                   navigate("/postlist");
-                }, 500);
+                  return <LoadingSpinner loading={true} />;
+                }, 2500);
 
                 //! Delete Cloudinary Image File that much with Post ID
                 const cloudinaryId_muchWithPostId = data.PostsByUser.items.find(

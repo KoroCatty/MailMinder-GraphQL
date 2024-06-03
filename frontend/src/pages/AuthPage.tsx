@@ -1,6 +1,8 @@
+//! LOGIN PAGE
 import { useState, useRef, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-
+import { Link } from "react-router-dom";
+import LoadingSpinner from "../components/common/LoadingSpinner";
 // components
 import { CommonBtn } from "../components/common/CommonBtn";
 
@@ -8,92 +10,21 @@ import { CommonBtn } from "../components/common/CommonBtn";
 import { useMutation } from "@apollo/client";
 
 // mutation queries
-import { SIGNUP_USER } from "../graphql/mutations";
 import { LOGIN_USER } from "../graphql/mutations";
+
 // TYPE
 type IsLoggedInPropsType = {
   isLoggedIn: boolean;
   setIsLoggedIn: (isLoggedIn: boolean) => void;
 };
 
-// Emotion CSS (Responsive Design)
-import { css } from "@emotion/react";
-import { min, max } from "../utils/mediaQueries";
-const authPageCss = css`
-  text-align: center;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  margin: 4rem 0;
-  height: 600px;
-
-  h1 {
-    font-size: 2.5rem;
-    margin-bottom: 40px;
-    letter-spacing: 1px;
-  }
-
-  input {
-    padding: 10px;
-    margin: 10px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    outline: none;
-    width: 50%;
-
-    &:focus {
-      border: 1px solid #323232;
-    }
-  }
-
-  // 1 px 〜 479 px
-  ${min[0] + max[0]} {
-  }
-  // 480 px 〜 767 px
-  ${min[1] + max[1]} {
-  }
-  // 768 px 〜 989 px
-  ${min[2] + max[2]} {
-  }
-  // 990 px 〜
-  ${min[3] + max[3]} {
-  }
-
-  .authLink {
-    color: #4d4d4d;
-    cursor: pointer;
-    text-decoration: underline;
-    margin: 60px auto;
-    font-size: 1.2rem;
-    width: fit-content;
-
-    &:hover {
-      color: #5358d0;
-      transform: scale(1.05);
-      transition: all 0.3s ease-in-out;
-    }
-  }
-
-  .demoLogin {
-    cursor: pointer;
-    text-decoration: underline;
-    width: fit-content;
-    margin: 0 auto;
-    font-size: 1.2rem;
-    color: #5358d0;
-
-    &:hover {
-      transform: scale(1.05);
-      transition: all 0.3s ease-in-out;
-    }
-  }
-`;
+// CSS
+import { authPageCss } from "../styles/authPageCSS";
 
 //! ======================================================
 const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
-  // HOOKS
-  const [showLoginPage, setShowLoginPage] = useState(true); // true = login, false = signup
   const [formData, setFormData] = useState({});
+  const [submitLoading, setSubmitLoading] = useState(false);
 
   // useRef
   const authForm = useRef<HTMLFormElement>(null);
@@ -107,29 +38,53 @@ const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
     }
   }, [isLoggedIn, navigate]);
 
-  // Mutations (Sign Up)
-  const [signupUser, { data: signupData, loading, error }] =
-    useMutation(SIGNUP_USER);
-
   // Mutations (Login)
-  const [
-    loginUser,
-    { data: loginData, loading: loginLoading, error: loginError },
-  ] = useMutation(LOGIN_USER, {
-    // onCompleted は mutation が完了した後に実行される
-    // onCompleted(data) {
-    onCompleted() {
-      window.scrollTo(0, 0);
-      setIsLoggedIn(true); // Update the state
+  const [loginUser, { data: loginData, error: loginError }] = useMutation(
+    LOGIN_USER,
+    {
+      onCompleted() {
+        window.scrollTo(0, 0);
+        setIsLoggedIn(true); // Update the state
 
-      // if there is a path in sessionStorage, go to that path (Emailパス対応)
-      if (sessionStorage.getItem("postPath")) {
-        navigate(sessionStorage.getItem("postPath")!);
-      } else {
-        navigate("/");
-      }
+        // セッションストレージに保存
+        const setSessionStorageWithExpiry = (
+          key: string,
+          value: string,
+          ttl: number,
+        ) => {
+          const now = new Date();
+          // `ttl` はミリ秒で有効期限を設定
+          const item = {
+            value: value,
+            expiry: now.getTime() + ttl,
+          };
+          sessionStorage.setItem(key, JSON.stringify(item));
+        };
+
+        const removeSessionStorageItem = (key: string) => {
+          sessionStorage.removeItem(key);
+        };
+
+        // セッションストレージにパスを保存
+        const path = sessionStorage.getItem("postPath");
+        if (path) {
+          // 3時間後に期限切れ
+          setSessionStorageWithExpiry("postPath", path, 1000 * 60 * 60 * 3);
+          navigate(path);
+        } else {
+          navigate("/");
+        }
+
+        // 3時間後にセッションストレージから削除
+        setTimeout(
+          () => {
+            removeSessionStorageItem("postPath");
+          },
+          1000 * 60 * 60 * 3,
+        );
+      },
     },
-  });
+  );
 
   //! ======================================================
   //! DEMO ACCOUNT LOGIN
@@ -144,14 +99,6 @@ const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
       },
     });
   };
-
-  //! ======================================================
-  //! When loading
-  //! ======================================================
-  if (loading || loginLoading) {
-    <h1>Loading...</h1>;
-  }
-
   //! ======================================================
   //! When forms typed
   //! ======================================================
@@ -165,87 +112,38 @@ const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
   //! ======================================================
   //! When form submitted
   //! ======================================================
-  const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
+  const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
+    setSubmitLoading(true);
     e.preventDefault();
-    // setShowLoginPage((preValue) => !preValue); // toggle login/signup
-
-    if (showLoginPage) {
+    try {
       // login
-      loginUser({
+      await loginUser({
         variables: {
           userSignin: formData, // フォームに入力されたデータを送る (mutation.ts 定義)
         },
       });
-    } else {
-      // Signup
-      signupUser({
-        variables: {
-          userNew: formData, // mutation.ts で定義したもの
-        },
-      });
-    }
-
-    // switch to Login forms (reset form data then,  show login forms)
-    if (!isLoggedIn) {
-      // sign up しただけで、ログイン状態ではないので下記が実行
-      setFormData({}); // clear form data
-      authForm?.current?.reset(); // clear form inputs
-      setShowLoginPage(true);
+    } catch (error) {
+      console.error("Error during form submission:", error);
+    } finally {
+      setSubmitLoading(false);
     }
   };
 
-  return (
+  return submitLoading ? (
+    <div style={{ margin: "8rem 0" }}>
+      <LoadingSpinner loading={true} />
+    </div>
+  ) : (
     <div css={authPageCss}>
-      {showLoginPage && <h1 style={{ marginTop: "2rem" }}>LOGIN</h1>}
-      {!showLoginPage && <h1>SIGN UP</h1>}
-
+      <h1 style={{ marginTop: "2rem" }}>LOGIN</h1>
       <div>
-        {/* サインアップ時 */}
-        {signupData && (
-          <>
-            <h1>
-              <span>"{signupData.signupUser.firstName}" </span>You Signed Up!
-            </h1>
-          </>
-        )}
-
         {/* ログイン時 */}
         {loginData && <h1>{loginData.signinUser.firstName}You Logged In!</h1>}
-
-        {/* sign up エラー時 */}
-        {/* {error && <div>{error.message}</div>} */}
-        {error && (
-          <div style={{ color: "red" }}>{"Please fill out the forms"}</div>
-        )}
-
-        {/* Login エラー時 */}
-        {/* {loginError && <div>{loginError.message}</div>} */}
         {loginError && (
           <div style={{ color: "red" }}>{"Credential is incorrect..."}</div>
         )}
 
         <form onSubmit={handleSubmit} ref={authForm}>
-          {!showLoginPage && (
-            <>
-              <input
-                name="firstName"
-                type="text"
-                placeholder="First Name"
-                onChange={(e) => handleChange(e)}
-              />
-              <br />
-              <br />
-              <input
-                name="lastName"
-                type="text"
-                placeholder="Last Name"
-                onChange={(e) => handleChange(e)}
-              />
-              <br />
-              <br />
-            </>
-          )}
-
           {/* email */}
           <input
             name="email"
@@ -253,8 +151,7 @@ const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
             placeholder="Email"
             onChange={(e) => handleChange(e)}
           />
-          <br />
-          <br />
+
           {/* Password */}
           <input
             name="password"
@@ -263,32 +160,25 @@ const AuthPage = ({ isLoggedIn, setIsLoggedIn }: IsLoggedInPropsType) => {
             placeholder="Password"
             onChange={(e) => handleChange(e)}
           />
-          <br />
-          <br />
 
           {/* //! DEMO */}
-          <div onClick={demoCredential} className="demoLogin">
+          <div
+            onClick={() => {
+              demoCredential();
+              setSubmitLoading(true);
+            }}
+            className="demoLogin"
+          >
             DEMO LOGIN
           </div>
 
           {/* link */}
-          <div
-            onClick={() => {
-              setShowLoginPage((preValue) => !preValue); // toggle login/signup
-              setFormData({}); // clear form data
-              authForm?.current?.reset(); // clear form inputs
-            }}
-            className="authLink"
-          >
-            {showLoginPage
-              ? "Don't have an account? Sign up"
-              : "Already have an account? Login"}
+          <div className="linkBtn">
+            <Link to="/register">Don't have an account? Sign up</Link>
           </div>
 
           {/* BUTTON */}
-          <CommonBtn type="submit">
-            {showLoginPage ? "Login" : "Sign Up"}
-          </CommonBtn>
+          <CommonBtn type="submit">Login</CommonBtn>
         </form>
       </div>
     </div>

@@ -76,8 +76,7 @@ const selfieCss = css`
 
   .videosContainer {
     display: flex;
-    justify-content: center;
-    gap: 2rem;
+    justify-content: space-between;
     align-items: center;
 
     // 1px〜479px
@@ -97,7 +96,7 @@ const selfieCss = css`
     display: flex;
     flex-direction: column;
     justify-content: space-around;
-    width: 45%;
+    /* width: 45%; */
 
     // 768px〜989px
     ${min[1] + max[1]} {
@@ -123,11 +122,17 @@ const selfieCss = css`
         width: 340px;
         height: 240px;
       }
+      // 990px〜
+      ${min[3] + max[3]} {
+        width: 400px;
+        height: 300px;
+      }
     }
 
     canvas {
       width: 400px;
       height: 300px;
+      margin: 0 auto;
 
       // 1px〜479px
       ${min[0] + max[0]} {
@@ -143,6 +148,20 @@ const selfieCss = css`
       ${min[2] + max[2]} {
         width: 340px;
         height: 240px;
+      }
+    }
+
+    .btn {
+      font-size: 1.2rem;
+      letter-spacing: 0.1rem;
+      margin: 1rem auto;
+      width: 160px;
+      padding: 0.5rem 1rem;
+
+      &:hover {
+        transform: scale(1.1);
+        transition: 0.3s ease-in-out;
+        background-color: #4c4c4c;
       }
     }
   }
@@ -204,6 +223,7 @@ const Selfie: React.FC<SelfieProps> = ({ selfieImage }) => {
     // 画像をキャプチャする関数
     const handleCapture = () => {
       context.drawImage(player, 0, 0, canvas.width, canvas.height);
+
       setImage64(canvas.toDataURL()); // canvasからBase64形式の画像データを取得
     };
 

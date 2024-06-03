@@ -25,8 +25,8 @@ The application is deployed on Render.com. Fully responsive design, mobile frien
 - Dark mode switch is available
 
 <!-- Image -->
-## Structure
-![Structure](./structure.jpg)
+## Architecture
+![Architecture](./architecture.jpg)
 
 <!-- Image -->
 ## Sitemap

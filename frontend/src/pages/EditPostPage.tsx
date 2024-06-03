@@ -30,10 +30,8 @@ import { Form } from "react-bootstrap";
 import { formStylesCSS } from "../styles/FormsCSS";
 
 const EditPostPage = () => {
-  // useParam
   const { id: idUrl } = useParams<{ id: string }>();
 
-  // useRef
   // Get local selected image value
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -100,18 +98,23 @@ const EditPostPage = () => {
 
   //* useState
   const [selectedImage, setSelectedImage] = useState<string | null>(null);
-
   const [formData, setFormData] = useState<FormDataProps>({});
-
   // local selected image
   const [selectedLocalFile, setSelectedLocalFile] = useState<File | null>(null);
-
   // Reset the local selected image input value
   const resetLocalFileSelectValue = () => {
     if (fileInputRef.current) {
       fileInputRef.current.value = "";
     }
   };
+
+  // Cloudinary URL & ID (response by selfieImage function)
+  const [cloudinaryUrlSelfie, setCloudinaryUrlSelfie] = useState<string | null>(
+    null,
+  );
+  const [cloudinaryIdSelfie, setCloudinaryIdSelfie] = useState<string | null>(
+    null,
+  );
 
   //* useEffect
   // DB から post id と同じ 投稿データを取得
@@ -150,15 +153,10 @@ const EditPostPage = () => {
 
     // Set the selected file to state for later use in handleSubmit
     setSelectedLocalFile(file);
-
     // Create a local URL for the file to display it in an img tag
     const localImageUrl = URL.createObjectURL(file);
     console.log(localImageUrl); // blob:http://localhost:3000/9ad32e0f-6952-45c7-99c9-051430a562a9
-
     setSelectedImage(localImageUrl);
-    // resetLocalFileSelectValue();
-
-    // e.target.value = '';
   };
 
   //* ===================================================
@@ -174,32 +172,8 @@ const EditPostPage = () => {
 
     // reset local selected file in useState
     setSelectedLocalFile(null);
-
     // reset selected image input value
     resetLocalFileSelectValue();
-  };
-
-  //* ===================================================
-  //*  Selfie Image
-  //* ===================================================
-  const selfieImage = (image64: string | null) => {
-    // Check if image64 is not null before reading its length
-    if (image64 && image64.length > 10000) {
-      setSelectedImage(image64);
-      // Handle error - maybe return a user-friendly error message
-      setFormData({
-        ...formData,
-        imgUrl: image64,
-      });
-      // reset selected image value
-      resetLocalFileSelectValue();
-      // reset local selected file in useState
-      setSelectedLocalFile(null);
-      // setDisplayImg(image64);
-    } else {
-      console.log("Too Big");
-      window.alert("Too Big");
-    }
   };
 
   //! ================================================
@@ -215,10 +189,8 @@ const EditPostPage = () => {
     //  console.log(SERVER_URL + "🫡") // http://localhost:5001/uploads
 
     // Define a variable for asyncronous data to save DB
-    let imageUrlForDB: string | undefined = formData.imgUrl;
-    // console.log(imageUrlForDB)
-
     // 初期化
+    let imageUrlForDB: string | undefined = formData.imgUrl;
     let cloudinaryUrl;
     let cloudinaryId;
 
@@ -226,20 +198,29 @@ const EditPostPage = () => {
     if (selectedLocalFile) {
       const formData = new FormData();
       formData.append("img", selectedLocalFile);
-
       try {
         const response = await axios.post(SERVER_URL, formData, {
           headers: { "Content-Type": "multipart/form-data" },
         });
-        console.log(response.data.url); // /uploads/img-1697934272148.jpg
+        console.log("😂", response.data.url); // /uploads/img-1697934272148.jpg
 
         // CLOUDINARY Image URL (backendから返したもの)
-        console.log(response.data.cloudinaryUrl);
-        console.log(response.data.cloudinary_id);
+        // console.log(response.data.cloudinaryUrl);
+        // console.log(response.data.cloudinary_id);
 
         // 初期化してた変数に値を入れる
         cloudinaryUrl = response.data.cloudinaryUrl;
         cloudinaryId = response.data.cloudinary_id;
+
+        // 値がない場合はエラー
+        if (!cloudinaryUrl) {
+          await console.error("Error: Cloudinary URL is missing ありません.😿");
+          return;
+        }
+        if (!cloudinaryId) {
+          await console.error("Error: Cloudinary ID is missing ありません.😿");
+          return;
+        }
 
         // make this absolute path and get rid of double 'uploads/'
         imageUrlForDB = `${SERVER_URL}${response.data.url.replace("uploads/", "")}`;
@@ -268,6 +249,12 @@ const EditPostPage = () => {
       },
     });
 
+    // If an image URL was pasted, Cloudinary URL and ID are pointless
+    if (selectedImage && !selectedLocalFile) {
+      cloudinaryUrl = "nothing"; // not allowed empty so set "nothing"
+      cloudinaryId = "nothing";
+    }
+
     //! 2. Update the post in the database
     try {
       const response = await updatePostById({
@@ -277,10 +264,17 @@ const EditPostPage = () => {
             // typeDefs.jsで定義
             title: currentData.title,
             content: currentData.content,
-            imgUrl: imageUrlForDB || currentData.imgUrl, // Use selectedImage if it's available, else use currentData.imgUrl
-            imgCloudinaryUrl: cloudinaryUrl,
-            imgCloudinaryId: cloudinaryId,
+            // 300文字までにし、MySQLのDB保存の容量を減らす (image64対策)
+            imgUrl:
+              imageUrlForDB?.slice(0, 300) || currentData.imgUrl.slice(0, 300),
             updatedAt: new Date().toISOString(),
+            // Selfie を取った場合は状態にセットされているのでそれを使用（selfieImageで requestの結果をセットしここでサーバーに送りMySQL に画像のパスが保存）
+            imgCloudinaryUrl: cloudinaryUrlSelfie
+              ? cloudinaryUrlSelfie
+              : cloudinaryUrl,
+            imgCloudinaryId: cloudinaryIdSelfie
+              ? cloudinaryIdSelfie
+              : cloudinaryId,
           },
         },
       });
@@ -311,11 +305,49 @@ const EditPostPage = () => {
         handleCloudinary_deleteImg(cloudinaryId_muchWithPostId.imgCloudinaryId);
       }
     } catch (error) {
-      // window.alert("Error updating post");
       console.error("Error updating post - アップデートエラー:", error);
       setLoadingState(false); // 処理が完了したらloadingをfalseに設定
     }
     setLoadingState(false); // 処理が完了したらloadingをfalseに設定
+  };
+
+  //* ===================================================
+  //*  Selfie Image
+  //* ===================================================
+  const selfieImage = async (image64: string | null) => {
+    if (image64 && image64.length > 10000) {
+      setFormData((prev) => ({ ...prev, imgUrl: image64 }));
+      resetLocalFileSelectValue();
+      setSelectedImage(image64);
+      // blob に変換し、フォームデータに追加
+      const blob = await fetch(image64).then((res) => res.blob());
+      const formData = new FormData();
+      formData.append("img", blob, "image.png"); // img はバックエンドと一致させる
+
+      const SERVER_URL =
+        import.meta.env.VITE_PUBLIC_SERVER_URL ||
+        "http://localhost:5001/uploads";
+
+      try {
+        //! Save to Cloudinary REST API
+        const response = await axios.post(SERVER_URL, formData, {
+          headers: { "Content-Type": "multipart/form-data" },
+        });
+        if (response.data.cloudinaryUrl) {
+          setCloudinaryUrlSelfie(response.data.cloudinaryUrl);
+          setCloudinaryIdSelfie(response.data.cloudinary_id);
+        }
+        console.log(
+          "Image uploaded successfully:",
+          response.data.cloudinaryUrl,
+        );
+      } catch (error) {
+        console.error("Error uploading image:", error);
+      }
+    } else {
+      console.log("Image too large");
+      alert("Image too large");
+    }
   };
 
   //! ======================================================
@@ -410,11 +442,20 @@ const EditPostPage = () => {
               <div className="imageWrap">
                 {!selectedImage && (
                   <img
-                    src={currentData.imgUrl}
+                    src={
+                      // If Cloudinary URL exists, use it
+                      currentData.imgCloudinaryUrl
+                        ? currentData.imgCloudinaryUrl
+                        : // Else, check if there's another URL provided and use it
+                          currentData.imgUrl
+                          ? currentData.imgUrl
+                          : // If neither is available, use a local fallback image
+                            "./images/no-image.png"
+                    }
                     onError={(e) => {
                       const imgElement = e.target as HTMLImageElement;
-                      if (imgElement.src !== currentData.imgCloudinaryUrl) {
-                        imgElement.src = currentData.imgCloudinaryUrl;
+                      if (imgElement.src !== currentData.imgUrl) {
+                        imgElement.src = currentData.imgUrl;
                       }
                     }}
                     alt="no Image"
@@ -423,33 +464,32 @@ const EditPostPage = () => {
                 {selectedImage && (
                   <img src={selectedImage} alt="chosen Image" />
                 )}
-              </div>
 
-              {/*//* IMAGE SELECT */}
-              <Form.Group controlId="formFileLg">
-                <h3>From Your Local File</h3>
-                <Form.Control
-                  ref={fileInputRef}
-                  className="imgChooseBtn"
-                  type="file"
-                  size="lg"
-                  accept="image/*" // 画像ファイルのみを選択できるようにする
-                  onChange={handleImageUpload}
-                  name="img"
-                />
-              </Form.Group>
-
-              {/*//* Paste Image URL */}
-              <h3>Paste Image URL</h3>
-              <div className="googleImgSearchForms">
-                <input
-                  name="imgUrl"
-                  type="text"
-                  placeholder="Paste the image URL here"
-                  className="pasteImgUrl"
-                  onChange={pasteImage}
-                />
-                <GoogleSearch />
+                {/*//* IMAGE SELECT */}
+                <Form.Group controlId="formFileLg">
+                  <h3>From Your Local File</h3>
+                  <Form.Control
+                    ref={fileInputRef}
+                    className="imgChooseBtn"
+                    type="file"
+                    size="lg"
+                    accept="image/*" // 画像ファイルのみを選択できるようにする
+                    onChange={handleImageUpload}
+                    name="img"
+                  />
+                  {/*//* Paste Image URL */}
+                  <h3>Paste Image URL</h3>
+                  <div className="googleImgSearchForms">
+                    <input
+                      name="imgUrl"
+                      type="text"
+                      placeholder="Paste the image URL here"
+                      className="pasteImgUrl"
+                      onChange={pasteImage}
+                    />
+                    <GoogleSearch />
+                  </div>
+                </Form.Group>
               </div>
 
               {/* Button COMPONENT*/}

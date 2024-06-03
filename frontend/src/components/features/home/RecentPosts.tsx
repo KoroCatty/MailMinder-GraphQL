@@ -1,9 +1,7 @@
 import { Link } from "react-router-dom";
 import { useEffect } from "react";
-
 // components
 import { TitleLarge } from "../../common/Titles";
-
 // Loading
 import LoadingSpinner from "../../common/LoadingSpinner";
 
@@ -34,6 +32,13 @@ interface LimitPostsPropsType {
 import { css } from "@emotion/react";
 const recentPostsCss = css`
   padding: 3rem 0 3rem 0;
+
+  .noCardMsg {
+    text-align: center;
+    margin-top: 2rem;
+    font-size: 1.5rem;
+    color: #333;
+  }
 
   .eachCard {
     margin-bottom: 2.5rem;
@@ -95,6 +100,10 @@ const recentPostsCss = css`
       padding: 0.3rem 0;
     }
   }
+  .caption {
+    font-size: 0.9rem;
+    margin-top: 1rem;
+  }
 `;
 
 //! =========================================================
@@ -102,7 +111,6 @@ const recentPostsCss = css`
 const RecentPosts = (limitPostsProps: LimitPostsPropsType) => {
   // Destructure Props
   const { data, loading, error, refetch } = limitPostsProps;
-
   // refetch posts
   useEffect(() => {
     refetch();
@@ -112,11 +120,13 @@ const RecentPosts = (limitPostsProps: LimitPostsPropsType) => {
   const postsByUserLimit: PostType[] = data?.PostsByUserLimit || [];
 
   if (error) return <p>Sever Error occurred</p>;
-  if (data && !postsByUserLimit) return <p>No posts found.</p>;
 
   return (
     <div css={recentPostsCss}>
       <TitleLarge title="RECENT CARDS" />
+      {!loading && data.PostsByUserLimit.length === 0 && (
+        <p className="noCardMsg">No cards found.</p>
+      )}
       {loading && <LoadingSpinner loading={true} />}
       {data ? (
         <>
@@ -127,11 +137,21 @@ const RecentPosts = (limitPostsProps: LimitPostsPropsType) => {
                   {/* uploads から画像ファイルが削除されても、CLOUDINARY から取得 */}
                   {/* onError で画像の読み込みに失敗したときの処理 */}
                   <img
-                    src={item.imgUrl}
+                    // imageUrl が image64 である data:image から始まる場合は、Cloudinary から取得
+                    src={
+                      // If Cloudinary URL exists, use it
+                      item.imgCloudinaryUrl
+                        ? item.imgCloudinaryUrl
+                        : // Else, check if there's another URL provided and use it
+                          item.imgUrl
+                          ? item.imgUrl
+                          : // If neither is available, use a local fallback image
+                            "./images/no-image.png"
+                    }
                     onError={(e) => {
                       const imgElement = e.target as HTMLImageElement;
-                      if (imgElement.src !== item.imgCloudinaryUrl) {
-                        imgElement.src = item.imgCloudinaryUrl;
+                      if (imgElement.src !== item.imgUrl) {
+                        imgElement.src = item.imgUrl;
                       }
                     }}
                     alt={item.title}
@@ -156,6 +176,11 @@ const RecentPosts = (limitPostsProps: LimitPostsPropsType) => {
                 </Link>
               </div>
             ))}
+            {data.PostsByUserLimit.length !== 0 && (
+              <div className="caption">
+                * Reminder sent at 10AM every day (Random 5 posts)
+              </div>
+            )}
           </div>
         </>
       ) : (

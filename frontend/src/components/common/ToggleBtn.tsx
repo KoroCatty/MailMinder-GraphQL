@@ -1,4 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
+
+import { UPDATE_EMAIL_SEND_STATUS } from "../../graphql/mutations";
+import { GET_LOGGEDIN_USER_DETAILS } from "../../graphql/queries";
+import { useMutation, useQuery } from "@apollo/client";
 
 // Emotion
 import { css } from "@emotion/react";
@@ -26,7 +30,7 @@ const toggleSwitch = css`
     width: 80px;
     height: 40px;
     cursor: pointer;
-    background: red;
+    background: rgba(60, 60, 60, 0.6);
     border-radius: 20px;
     -webkit-transition: 0.3s;
     transition: 0.3s;
@@ -54,6 +58,9 @@ const toggleSwitch = css`
     -webkit-user-select: none; /* Safari */
     -moz-user-select: none; /* Firefox */
     -ms-user-select: none; /* Internet Explorer/Edge */
+    margin-left: 10px;
+    font-size: 1.8rem;
+    letter-spacing: 1px;
   }
 `;
 
@@ -61,24 +68,46 @@ const toggleSwitch = css`
 interface ToggleSwitchProps {
   id: string;
   initial?: boolean;
-  onChange?: (checked: boolean) => void;
 }
 
-const ToggleBtn: React.FC<ToggleSwitchProps> = ({
-  id,
-  initial = false,
-  onChange,
-}) => {
+const ToggleBtn: React.FC<ToggleSwitchProps> = ({ id, initial = false }) => {
   const [checked, setChecked] = useState(initial);
+  const [updateEmailSendStatus, { loading: toggleLoading }] = useMutation(
+    UPDATE_EMAIL_SEND_STATUS,
+  );
 
-  const handleToggle = () => {
+  //! ログイン中のユーザー情報を取得
+  const { data: userData } = useQuery(GET_LOGGEDIN_USER_DETAILS, {
+    fetchPolicy: "cache-and-network",
+  });
+  // console.log(userData?.getLoggedInUserDetails.emailSend); // true / false
+
+  useEffect(() => {
+    if (userData) {
+      setChecked(userData.getLoggedInUserDetails.emailSend);
+    }
+  }, [userData]);
+
+  //! When toggled
+  const handleToggle = async () => {
     const newChecked = !checked;
     setChecked(newChecked);
-
-    if (onChange) {
-      onChange(newChecked);
+    try {
+      await updateEmailSendStatus({
+        variables: {
+          emailSend: newChecked, // true or false
+          userId: userData.getLoggedInUserDetails.id, // mutation にuserId を渡す
+        },
+      });
+      window.alert(
+        `Email notifications have been ${newChecked ? "turned on" : "turned off"}.`,
+      );
+    } catch (error) {
+      console.log(error);
+      window.alert("Failed to update email notification settings😞");
     }
   };
+
   return (
     <label css={toggleSwitch}>
       <input
@@ -87,10 +116,10 @@ const ToggleBtn: React.FC<ToggleSwitchProps> = ({
         className="toggleButton_input"
         type="checkbox"
         checked={checked}
+        disabled={toggleLoading}
       />
       <label htmlFor={id} className="toggleButton_label"></label>
-
-      <span className="onOff">{checked ? "On" : "Off"}</span>
+      <span className="onOff">{checked ? "ON" : "OFF"}</span>
     </label>
   );
 };

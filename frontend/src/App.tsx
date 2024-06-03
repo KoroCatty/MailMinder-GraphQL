@@ -14,19 +14,15 @@ import AuthPage from "./pages/AuthPage";
 import HomePage from "./pages/HomePage";
 import NotFound from "./pages/NotFound";
 import PostsPage from "./pages/PostsPage";
-import PostsDays from "./pages/PostsDays";
 import SettingsPage from "./pages/SettingsPage";
 import PostsDetailPage from "./pages/PostDetailPage";
 import EditPostPage from "./pages/EditPostPage";
 import PrivacyPolicy from "./pages/PrivacyPolicy";
 import Contact from "./pages/Contact";
-
-// Loading
-import LoadingSpinner from "./components/common/LoadingSpinner";
+import RegisterPage from "./pages/RegisterPage";
 
 // bootstrap
 import "bootstrap/dist/css/bootstrap.min.css";
-
 // react-bootstrap
 import "react-bootstrap/dist/react-bootstrap.min.js";
 
@@ -34,17 +30,9 @@ import "react-bootstrap/dist/react-bootstrap.min.js";
 import { useQuery } from "@apollo/client";
 import { IS_LOGGED_IN_QUERY } from "./graphql/queries";
 
-// Custom CSS Props for LoadingSpinner
-const center: React.CSSProperties = {
-  position: "fixed",
-  top: "50%",
-  left: "50%",
-  transform: "translate(-50%, -50%)",
-};
-
 function App() {
   // Login Check
-  const { data, loading, error } = useQuery(IS_LOGGED_IN_QUERY, {
+  const { data, error } = useQuery(IS_LOGGED_IN_QUERY, {
     fetchPolicy: "network-only", // キャッシュを使わない
     //   onCompleted: (data) => setIsLoggedIn(data.isLoggedIn)// ログイン状態を更新
   });
@@ -69,7 +57,7 @@ function App() {
     }
   }, []);
 
-  if (loading) return <LoadingSpinner loading={true} center={center} />;
+  // if (loading) return <LoadingSpinner loading={true} center={center} />;
   if (error) return <p>Error: {error.message}</p>;
 
   return (
@@ -83,7 +71,6 @@ function App() {
           darkTheme={darkTheme}
           setDarkTheme={setDarkTheme}
         />
-
         <>
           <Routes>
             <Route
@@ -104,6 +91,15 @@ function App() {
                   />
                 }
               />
+              <Route
+                path="/register"
+                element={
+                  <RegisterPage
+                    isLoggedIn={isLoggedIn}
+                    setIsLoggedIn={setIsLoggedIn}
+                  />
+                }
+              />
               <Route path="/contact" element={<Contact />} />
               <Route path="/privacy" element={<PrivacyPolicy />} />
 
@@ -113,7 +109,6 @@ function App() {
                 element={<PrivateRoutes isLoggedIn={isLoggedIn} />}
               >
                 <Route path="/postlist" element={<PostsPage />} />
-                <Route path="/postsDays" element={<PostsDays />} />
                 <Route path="/postdetails/:id" element={<PostsDetailPage />} />
                 <Route path="/settings" element={<SettingsPage />} />
                 <Route path="/editpost/:id" element={<EditPostPage />} />
@@ -123,7 +118,6 @@ function App() {
             <Route path="*" element={<NotFound />} />
           </Routes>
         </>
-
         <Footer isLoggedIn={isLoggedIn} />
       </BrowserRouter>
     </>

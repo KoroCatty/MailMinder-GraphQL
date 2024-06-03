@@ -42,9 +42,19 @@ const formsCss = css`
       + .label {
         // 現在の要素の直後の兄弟要素で、.labelクラスを持つ要素をターゲット
         transform: translateY(-60px);
+
+        // 1px〜479px
+        ${min[0] + max[0]} {
+          transform: translateY(-60px);
+        }
       }
       + .label.textArea {
         transform: translateY(-80px);
+
+        // 1px〜479px
+        ${min[0] + max[0]} {
+          transform: translateY(-60px);
+        }
       }
     }
   }
@@ -58,10 +68,9 @@ const formsCss = css`
   .input-textArea {
     min-height: 240px;
     font-family: Lusitana, serif;
-    font-size: 18px;
+    font-size: 16px;
     line-height: 26px;
     font-weight: 400;
-    font-size: 2rem;
     letter-spacing: 0.1rem;
     color: #454545;
     line-height: 1.2;
@@ -70,6 +79,8 @@ const formsCss = css`
     // 1px〜479px
     ${min[0] + max[0]} {
       border-width: 1px 1px 2px 1px; // BORDER
+      min-height: 160px;
+      font-size: 1rem;
     }
   }
 
@@ -89,6 +100,11 @@ const formsCss = css`
   .label.textArea {
     bottom: 190px;
     letter-spacing: 0.3rem;
+
+    // 1px〜479px
+    ${min[0] + max[0]} {
+      bottom: 120px;
+    }
   }
 
   // 1px〜479px

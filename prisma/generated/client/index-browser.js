@@ -113,7 +113,8 @@ exports.Prisma.UserScalarFieldEnum = {
   lastName: 'lastName',
   email: 'email',
   password: 'password',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  emailSend: 'emailSend'
 };
 
 exports.Prisma.PostScalarFieldEnum = {

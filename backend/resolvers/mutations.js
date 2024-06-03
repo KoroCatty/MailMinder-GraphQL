@@ -1,9 +1,9 @@
 // To get the current directory path (ESM module)
-import { promises as fs } from "fs";
+// import { promises as fs } from "fs";
 import { URL, fileURLToPath } from "url";
 
 import bcrypt from "bcryptjs";
-import Joi from "joi"; // Validation
+import Joi from "joi"; 
 import jwt from "jsonwebtoken";
 
 import cloudinary from "cloudinary";
@@ -15,8 +15,11 @@ cloudinary.config({
 });
 
 // プリズマクライエントのインスタンスを格納
-import { PrismaClient } from "../prisma/generated/client/index.js";
+import { PrismaClient } from "../../prisma/generated/client/index.js";
 const prisma = new PrismaClient();
+
+// MongoDB モデル
+import Image from "../mongo/mongodb.js";
 
 //!  DELETE FILE Function (Get the file path from Delete resolver)
 async function deleteFile(filePath) {
@@ -28,92 +31,74 @@ async function deleteFile(filePath) {
   }
 }
 
-//! ==========================================================
-//! Resolvers
-//! ==========================================================
-const resolvers = {
-  Query: {
-    //* -----------------------------------------------
-    //* CHECK LOGIN STATUS
-    //* -----------------------------------------------
-    isLoggedIn: (_, __, context) => {
-      return Boolean(context.userId); // httpOnly で取得したトークンがあるかどうか
-    },
-
-    //* -----------------------------------------------
-    //* GET ALL USERS
-    //* -----------------------------------------------
-    // context は server.js で定義済みで、ログインしていると、そのユーザーの情報が入っている
-    users: async (_, args, context) => {
-      // forbidden error means you are not allowed to do this
-      if (!context.userId) throw Error("You must be logged in 😱");
-
-      // 自分以外のユーザーを全て取得
-      const users = await prisma.user.findMany({
-        orderBy: { createdAt: "desc" }, // 新しい順に並べる
-        where: {
-          id: {
-            not: context.userId, // 自分以外のユーザーを取得
-          },
-        },
-      });
-      return users;
-    },
-
-    //* -----------------------------------------------
-    //* GET ALL POSTS BY USER ID
-    //* -----------------------------------------------
-    PostsByUser: async (_, args, context) => {
-      // Error means you are not allowed to do this
-      if (!context.userId) throw Error("You must be logged in 😱");
-      // 自分の投稿を全て取得 (postはPostモデル in typeDefs.js)
-      const posts = await prisma.post.findMany({
-        take: args.first, // 取得する投稿の数
-        skip: args.skip, // スキップする投稿の数
-        totalCount: args.totalCount, // 全ての投稿の数
-        orderBy: { updatedAt: "desc" }, // 更新された順（または新しく作成された順）に並べる
-        where: {
-          userId: context.userId, // 自分の投稿を取得(ログイン者)
-        },
-      });
-
-      // 全投稿数をDBから取得
-      const totalCount = await prisma.post.count({
-        where: { userId: context.userId },
-      });
-      return {
-        items: posts,
-        totalCount: totalCount,
-      };
-    },
-
-    //* -----------------------------------------------
-    //* GET ALL POSTS BY USER ID LIMIT 4
-    //* -----------------------------------------------
-    PostsByUserLimit: async (_, args, context) => {
-      // Error means you are not allowed to do this
-      if (!context.userId) throw Error("You must be logged in 😱");
-
-      // 自分の投稿を全て取得 (postはPostモデル in typeDefs.js)
-      const posts = await prisma.post.findMany({
-        orderBy: { updatedAt: "desc" }, // 更新された順（または新しく作成された順）に並べる
-        where: {
-          userId: context.userId, // 自分の投稿を取得(ログイン者)
-        },
-        take: args.limit, // limitの適用
-      });
-      return posts;
-    },
-  },
-
+const mutations = {
   Mutation: {
+    //! -----------------------------------------------
+    //! MongoDB - CREATE A USER PROFILE IMAGE
+    //! -----------------------------------------------
+    create_profile_img_mongo: async (_, args, context) => {
+      if (!context.userId) throw Error("You must be logged in 😱");
+      const { userId, imgCloudinaryUrl, imgCloudinaryId } = args.input;
+      // Save to MongoDB
+      try {
+        const existingImage = await Image.findOne({ userId });
+        if (existingImage) return existingImage;
+        const image = await Image.create({
+          userId,
+          imgCloudinaryUrl,
+          imgCloudinaryId,
+        });
+        return image;
+      } catch (error) {
+        console.error("Error saving image to MongoDB:", error);
+        throw new Error("Failed to save image.");
+      }
+    },
+
+    //! -----------------------------------------------
+    //! MongoDB - UPDATE A USER PROFILE IMAGE
+    //! -----------------------------------------------
+    update_profile_img_mongo: async (_, args, context) => {
+      if (!context.userId) throw Error("You must be logged in 😱");
+
+      const { userId, imgCloudinaryUrl, imgCloudinaryId } = args.input;
+      // Save to MongoDB
+      return await Image.updateOne(
+        { userId: userId }, // MongoDB内のuserIdフィールドを指定
+        { imgCloudinaryUrl, imgCloudinaryId },
+        { new: true }, // 更新後のドキュメントを返す
+      );
+    },
+
     //* ===============================================
-    //* CREATE USER
+    //* UPDATE EMAIL SEND STATUS
+    //* ===============================================
+    updateEmailSendStatus: async (_, args, context) => {
+      if (!context.userId) throw Error("You must be logged in 😱");
+      const { userId, emailSend } = args;
+      //! save to MySQL DB
+      try {
+        const updatedUser = await prisma.user.update({
+          where: {
+            id: parseInt(userId), // MySQLは Int で保存されているので parseInt
+          },
+          data: {
+            emailSend: emailSend,
+          },
+        });
+        return updatedUser;
+      } catch (error) {
+        console.log(error);
+      }
+    },
+
+    //* ===============================================
+    //* CREATE A USER
     //* ===============================================
     signupUser: async (_, args) => {
       //! Joi Validation
       const schema = Joi.object({
-        firstName: Joi.string().required().min(3).max(30).alphanum(), // alphanum() は英数字のみ
+        firstName: Joi.string().required().min(3).max(30),
         lastName: Joi.string().required().min(1).max(30),
         email: Joi.string().email().required(),
         password: Joi.string()
@@ -226,8 +211,7 @@ const resolvers = {
     //* CREATE A POST
     //* ===============================================
     createPost: async (_, args, context) => {
-      // await console.log(args) // typeDefsで定義済み
-
+      await console.log(args); // typeDefsで定義済み
       // Joi Validation
       const schema = Joi.object({
         title: Joi.string().required().max(255).messages({
@@ -252,26 +236,25 @@ const resolvers = {
           "You must be logged in (Contextにトークンがありません)😱",
         );
       }
-
-      // DEMO LOGGED IN USER
-      // if (context.userId === 25 || context.userId === 2) {
-      //   throw new Error("SORRY, DEMO USER CANNOT CREATE A POST🙏🏻");
-      // }
       //! save to DB
-      // post は prisma.schema で定義済みのモデル
-      const newPost = await prisma.post.create({
-        data: {
-          title: args.postNew.title,
-          content: args.postNew.content,
-          imgUrl: args.postNew.imgUrl
-            ? args.postNew.imgUrl
-            : "/imgs/noImg.jpeg", // use the uploaded file URL or default
-          imgCloudinaryUrl: args.postNew.imgCloudinaryUrl, // CLOUDINARY URL
-          imgCloudinaryId: args.postNew.imgCloudinaryId, // CLOUDINARY ID
-          userId: context.userId,
-        },
-      });
-      return newPost;
+      try {
+        // post は prisma.schema で定義済みのモデル
+        const newPost = await prisma.post.create({
+          data: {
+            title: args.postNew.title,
+            content: args.postNew.content,
+            imgUrl: args.postNew.imgUrl
+              ? args.postNew.imgUrl
+              : "/imgs/noImg.jpeg", // use the uploaded file URL or default
+            imgCloudinaryUrl: args.postNew.imgCloudinaryUrl, // CLOUDINARY URL
+            imgCloudinaryId: args.postNew.imgCloudinaryId, // CLOUDINARY ID
+            userId: context.userId,
+          },
+        });
+        return newPost;
+      } catch (error) {
+        console.log(error);
+      }
     },
 
     //* ===============================================
@@ -286,12 +269,6 @@ const resolvers = {
           "You must be logged in (Contextにトークンがありません)😱",
         );
       }
-
-      // DEMO LOGGED IN USER
-      // if (context.userId === 25 || context.userId === 2) {
-      //   throw new Error("SORRY, DEMO USER CANNOT DELETE A POST🙏🏻");
-      // }
-
       console.log(args.id + " - PostID 👆🏻");
 
       // post は prisma.schema で定義済みのモデル
@@ -304,13 +281,10 @@ const resolvers = {
       // Delete the actual Image File if the post exists
       if (deletedPost) {
         const url = deletedPost.imgUrl;
-        // console.log(url); // ex) http://localhost:5001/uploads/img-1698041204833.jpg
-
         // 実際の画像ファイルが存在しないpostがある場合処理をここで停止 (エラー対策)
         if (url.includes("noImg.jpeg")) {
           return deletedPost;
         }
-
         // Get the current directory path (ESM module)
         // '.' は現在のディレクトリを示し、それを import.meta.url の基準として解釈することで、ディレクトリのフルURLが得られる
         const __dirname = fileURLToPath(new URL(".", import.meta.url));
@@ -321,7 +295,6 @@ const resolvers = {
         // 正規表現 ^\/+ を使用して、文字列の先頭にある1つ以上のスラッシュ (/) を検出し、currentURL に置き換える
         const path = new URL(url).pathname.replace(/^\/+/, currentURL);
         // ex)  /Full-Stack/MailMinder-GraphQL/backend/../uploads/img-1698041204305.jpg
-
         // Pass the path defined above to the Function
         deleteFile(path);
       }
@@ -332,6 +305,8 @@ const resolvers = {
     //* UPDATE A POST
     //* ===============================================
     updatePost: async (_, args, context) => {
+      await console.log("😾", args); // typeDefsで定義済み
+
       await console.log(
         args.postUpdate.imgCloudinaryUrl + "- imgCloudinaryUrl -",
       );
@@ -363,11 +338,6 @@ const resolvers = {
         );
       }
 
-      // DEMO LOGGED IN USER
-      // if (context.userId === 25 || context.userId === 2) {
-      //   throw new Error("SORRY, DEMO USER CANNOT UPDATE A POST🙏🏻");
-      // }
-
       // post は prisma.schema で定義済みのモデル
       const updatedPost = await prisma.post.update({
         where: {
@@ -396,11 +366,6 @@ const resolvers = {
           "You must be logged in (Contextにトークンがありません)😱",
         );
       }
-
-      // DEMO LOGGED IN USER
-      // if (context.userId === 25 || context.userId === 2) {
-      //   return;
-      // }
 
       // postモデルから投稿を取得
       const post = await prisma.post.findUnique({
@@ -440,11 +405,7 @@ const resolvers = {
     //* DELETE CLOUDINARY IMAGE FILE ON SERVER
     //* ===============================================
     deleteCloudinaryImage: async (_, { publicId }, context) => {
-      // DEMO LOGGED IN USER
-      // if (context.userId === 25 || context.userId === 2) {
-      //   return;
-      // }
-
+      if (!context.userId) throw Error("You must be logged in 😱");
       try {
         const result = await cloudinary.uploader.destroy(publicId);
         return result.result === "ok";
@@ -454,7 +415,30 @@ const resolvers = {
         return false;
       }
     },
+
+    //* ===============================================
+    //* CHANGE EMAIL ADDRESS
+    //* ===============================================
+    updateUserEmail: async (_, args, context) => {
+      if (!context.userId) throw Error("You must be logged in 😱");
+      const { email } = args;
+      // Save to DB
+      try {
+        const updatedUser = await prisma.user.update({
+          where: {
+            id: context.userId,
+          },
+          data: {
+            email,
+          },
+        });
+        return updatedUser;
+      } catch (error) {
+        console.error(error);
+        throw new Error("Failed to update email.");
+      }
+    },
   },
 };
 
-export default resolvers;
+export default mutations;

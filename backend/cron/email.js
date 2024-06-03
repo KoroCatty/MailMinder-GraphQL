@@ -1,4 +1,4 @@
-// 各ユーザーに、そのユーザーだけが持っている投稿をランダムに5件送る場合のロジック
+// 各ユーザーに、そのユーザーだけが持っている投稿をランダムに5件送るロジック
 
 // Logic
 // すべてのユーザーを取得する
@@ -9,19 +9,16 @@
 
 import path from "path";
 const __dirname = path.resolve();
-
 // プリズマのクライアントをインポート
 import { PrismaClient } from "../../prisma/generated/client/index.js";
 const prisma = new PrismaClient();
-
 // node mailer
 import nodemailer from "nodemailer";
-
 // node cron
 import cron from "node-cron";
 
-//! Send Email every 3 minutes
-// const sendEmail = cron.schedule('*/3 * * * *', async () => {
+//! Send Email every 1 minutes (Test Purpose)
+// const sendEmail = cron.schedule('*/1 * * * *', async () => {
 
 //! Send Email at 10:00 AM JST every day (日本時間の毎朝10時に)
 const sendEmail = cron.schedule(
@@ -95,7 +92,7 @@ const sendEmail = cron.schedule(
 
             // Cloudinary files
             if (post.imgCloudinaryUrl) {
-              imgTag = `<img src="${post.imgCloudinaryUrl}" alt="Post Image"  style="width: 300px; height: 200px;">`;
+              imgTag = `<img src="${post.imgCloudinaryUrl}" alt="Post Image"  style="width: 320px; height: 212px;">`;
 
               // Local files (uploaded img or noImg.jpeg)
             } else if (
@@ -124,8 +121,8 @@ const sendEmail = cron.schedule(
           <h2 style="font-size: 16px; margin: 0 0 10px;">Title: ${post.title}</h2>
           <p className="card-content">
             ${
-              post.content.replace(/\n/g, "").length > 100
-                ? post.content.replace(/\n/g, "").slice(0, 100) + "..."
+              post.content.replace(/\n/g, "").length > 200
+                ? post.content.replace(/\n/g, "").slice(0, 200) + "..."
                 : post.content.replace(/\n/g, "")
             }
           </p>
@@ -150,8 +147,8 @@ const sendEmail = cron.schedule(
 
         let mailContent;
 
-        // E メールの内容を定義 (Demoユーザー, admin ユーザーにはメールを送らない)
-        if (user.email !== "demo@demo.com" && "admin@admin.com") {
+        //* emailSend のステータスが true の場合のみメールを送信
+        if (user.emailSend) {
           mailContent = {
             from: process.env.EMAIL_FROM,
             to: user.email,

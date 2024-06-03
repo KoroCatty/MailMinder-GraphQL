@@ -18,7 +18,7 @@ interface ToggleSwitchProps {
 const EmailToggle: React.FC<ToggleSwitchProps> = () => {
   return (
     <section css={toggleSwitch}>
-      <h2>Stop Sending Emails</h2>
+      <h2>Sending Email</h2>
 
       {/* Toggle button component */}
       <ToggleBtn id="toggleEmailStop" />

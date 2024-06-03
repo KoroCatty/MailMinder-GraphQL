@@ -26,6 +26,10 @@ const globalCss = css`
     color: white !important;
   }
 
+  address {
+    color: white !important;
+  }
+
   img {
     filter: brightness(0.8);
   }

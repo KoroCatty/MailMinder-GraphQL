@@ -11,12 +11,21 @@ const typeDefs = gql`
     token: String
   }
 
+  type Image {
+    userId: ID
+    imageUrl: String
+    imgCloudinaryUrl: String
+    imgCloudinaryId: String
+  }
+
   # QUERY
   type Query {
     users: [User!]! # return an array
     PostsByUser(id: ID!, first: Int, skip: Int): PostTotalCount #(pagination & total数を実装)
     PostsByUserLimit(id: ID!, limit: Int!): [Post!]! # limit を使ったresolver関数
     isLoggedIn: Boolean! # login しているかどうか
+    getLoggedInUserDetails: User # login しているユーザーの詳細情報
+    getUserImgByUserId(userId: ID!): Image
   }
 
   #//!  実際にクライエントに返すデータの型(これを使い回す)
@@ -25,6 +34,7 @@ const typeDefs = gql`
     firstName: String!
     lastName: String!
     email: String
+    emailSend: Boolean
     # password: String # never return password to client
   }
 
@@ -66,10 +76,7 @@ const typeDefs = gql`
   input PostInput {
     title: String!
     content: String!
-    # imgUrl: String
-    # imgUrl: File
     imgUrl: Upload
-    # imgFile: Upload
     imgCloudinaryUrl: String
     imgCloudinaryId: String
   }
@@ -82,6 +89,13 @@ const typeDefs = gql`
     imgCloudinaryUrl: String
     imgCloudinaryId: String
     updatedAt: Date
+  }
+
+  # //! MONGO - CREATE A USER PROFILE IMAGE (Client to Server)
+  input UserProfileImgInput {
+    userId: ID!
+    imgCloudinaryUrl: String!
+    imgCloudinaryId: String!
   }
 
   # MUTATION (これらを resolver で使う)
@@ -99,6 +113,12 @@ const typeDefs = gql`
     # The mutation expects an id and a postUpdate object of type PostUpdateInput. This PostUpdateInput has fields title, content, imgUrl, and updatedAt.
     updatePost(id: ID!, postUpdate: PostUpdateInput!): Post!
 
+    # UPDATE A USER EMAIL
+    updateUserEmail(userId: ID!, email: String!): User!
+
+    # UPDATE A SEND EMAIL STATUS
+    updateEmailSendStatus(userId: ID!, emailSend: Boolean!): User
+
     # DELETE A POST IMAGE FILE
     deletePostImage(id: ID!): Post!
 
@@ -106,6 +126,10 @@ const typeDefs = gql`
     logout: Boolean! # return a boolean
     # DELETE A CLOUDINARY IMAGE FILE ON SERVER
     deleteCloudinaryImage(publicId: String): Boolean
+
+    # MONGO - CRUD For USER PROFILE IMAGE
+    create_profile_img_mongo(input: UserProfileImgInput!): Image!
+    update_profile_img_mongo(input: UserProfileImgInput!): Image!
   }
 `;
 

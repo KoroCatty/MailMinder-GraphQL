@@ -8,7 +8,7 @@ export const GET_POSTS_BY_ID = gql`
       # resolver で定義した名前
       # 以下はフロント側で使えるように定義(consoleで確認可能になる)
       items {
-        id
+        id # MySQL の id
         title
         content
         imgUrl
@@ -44,5 +44,28 @@ export const GET_POSTS_BY_ID_LIMIT = gql`
 export const IS_LOGGED_IN_QUERY = gql`
   query IsLoggedIn {
     isLoggedIn
+  }
+`;
+
+//! GET LOGGED IN USER'S DETAILS
+export const GET_LOGGEDIN_USER_DETAILS = gql`
+  query GetLoggedInUserDetails {
+    getLoggedInUserDetails {
+      id
+      firstName
+      lastName
+      email
+      emailSend
+    }
+  }
+`;
+
+//! MongoDB - GET USER IMG By USER ID
+export const GET_USER_IMG_BY_USER_ID = gql`
+  query getUserImage($userId: ID!) {
+    getUserImgByUserId(userId: $userId) {
+      imgCloudinaryUrl
+      imgCloudinaryId
+    }
   }
 `;

@@ -136,23 +136,6 @@ const paginationBarCss = css`
     ${min[1] + max[1]} {
       display: flex;
     }
-
-    .pagination-previous__sp,
-    .pagination-next__sp {
-      border: 1px solid #ddd;
-      background-color: #fff;
-      color: #000;
-      padding: 10px 15px;
-      margin: 0 5px;
-      cursor: pointer;
-      border-radius: 4px;
-      width: 50%;
-
-      &:disabled {
-        color: #aaa;
-        cursor: not-allowed;
-      }
-    }
   }
 `;
 
@@ -205,28 +188,6 @@ function PaginationBar({
       >
         &#x25B6;
       </button>
-
-      {/* SP / Tablet */}
-      <div className="paginationBtnSP">
-        {/* Previous Button */}
-        <button
-          className="pagination-previous__sp"
-          aria-label="Previous page"
-          disabled={currentPage === 1}
-          onClick={() => onPageChange(currentPage - 1)}
-        >
-          &#x25C0;
-        </button>
-        {/* Next Button */}
-        <button
-          className="pagination-next__sp"
-          arial-label="Next page"
-          disabled={currentPage === totalPages}
-          onClick={() => onPageChange(currentPage + 1)}
-        >
-          &#x25B6;
-        </button>
-      </div>
 
       {/* Page Links */}
       <ul className="pagination-list">

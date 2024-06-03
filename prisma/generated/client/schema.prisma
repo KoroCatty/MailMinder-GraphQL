@@ -21,6 +21,7 @@ model User {
   email     String   @unique
   password  String
   createdAt DateTime @default(now())
+  emailSend Boolean @default(true) 
 
   // Post Table との関係性
   posts Post[] // 1対多の関係なので配列 (a user can have many posts)
